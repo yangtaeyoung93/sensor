@@ -1,6 +1,8 @@
 package com.seoulsi.service;
 
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,8 +117,61 @@ public class CommonService implements CommonMapper {
 
 	@Override
 	public List<DailySenDto> getDailyCntForData(ParamDto paramDto) throws Exception {
+
+		List<DailySenDto> returnDto;
+
+		System.out.println("검색날짜 : " + paramDto.getToDate() + "부터 " + paramDto.getFromDate() + "까지");
+
+		// 오늘 날짜 tm8형식으로 구하기
+		Date now = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		String today = dateFormat.format(now);
+		System.out.println("today : " + today);
+
+		// 분 구하기 : 30분마다 통계 -> 30분 이하면 15를 곱함
+		System.out.println(now.getMinutes());
+		if (now.getMinutes() <= 30) {
+			paramDto.setMm("15");
+		} else {
+			paramDto.setMm("30");
+		}
+		System.out.println("mm값 : " + paramDto.getMm());
+
+		// 검색 끝 날짜가 오늘인경우
+		if (paramDto.getFromDate().equals(today)) {
+
+			// 검색 시작 날짜가 오늘인경우(오늘~오늘)
+			if (paramDto.getToDate().equals(today)) {
+				System.out.println("오늘~오늘");
+				returnDto = commonMapper.getDailyCntForDataForToday(paramDto);
+				System.out.println("DTO : " + returnDto);
+
+			} else {// 검색 시작날짜가 과거인경우(과거~오늘)
+				System.out.println("과거~오늘");
+				returnDto = commonMapper.getDailyCntForDataForPastToday(paramDto);
+				System.out.println("DTO : " + returnDto);
+			}
+
+		} else {// 검색날짜가 과거~과거
+			System.out.println("과거~과거");
+			returnDto = commonMapper.getDailyCntForData(paramDto);
+			System.out.println("DTO : " + returnDto);
+
+		}
+		System.out.println("returnDto값: " + returnDto);
+		return returnDto;
+	}
+
+	@Override
+	public List<DailySenDto> getDailyCntForDataForPastToday(ParamDto paramDto) throws Exception {
 		// TODO Auto-generated method stub
-		return commonMapper.getDailyCntForData(paramDto);
+		return commonMapper.getDailyCntForDataForPastToday(paramDto);
+	}
+
+	@Override
+	public List<DailySenDto> getDailyCntForDataForToday(ParamDto paramDto) throws Exception {
+		// TODO Auto-generated method stub
+		return commonMapper.getDailyCntForDataForToday(paramDto);
 	}
 
 	@Override

@@ -24,7 +24,7 @@
 									<div class="col-xs-1 title">기기종류</div>
 									<div class="col-xs-3">
 										<select id="m-sel-2">
-											<option value="">가기종류 선택</option>
+											<option value="">기기종류 선택</option>
 										</select>
 									</div>
 									<div class="col-xs-1 title">기기코드</div>
