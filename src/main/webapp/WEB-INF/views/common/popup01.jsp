@@ -202,7 +202,7 @@
 <!-- 이상장비현황 리스트 -->
 		<div class="con02">
 			<div class="con_title1">
-				<div class="tt">
+				<div class="tt" style="width:120px;">
 				이상장비 현황
 				</div>
 				<!-- <div style="float: left;font-size: 0.855em;padding-top: 10px;">
@@ -420,11 +420,11 @@
 		$('#moveType').click(function(){
 			if($('#moveType').prop('checked')){
 				alert("체크함");
-				searchMoveEquiDate(toDate, fromDate);
+				//searchMoveEquiDate(toDate, fromDate);
 
 			}else{
 				alert("체크해제");
-				searchDate(toDate, fromDate);
+				//searchDate(toDate, fromDate);
 			}
 		})
 
