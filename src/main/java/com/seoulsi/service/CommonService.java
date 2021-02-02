@@ -186,4 +186,10 @@ public class CommonService implements CommonMapper {
 		return commonMapper.getDailyCntForEquiSensorWind(paramDto);
 	}
 
+	@Override
+	public List<DailySenDto> getDailyCntForMoveEqui(ParamDto paramDto) throws Exception {
+		// TODO Auto-generated method stub
+		return commonMapper.getDailyCntForMoveEqui(paramDto);
+	}
+
 }
