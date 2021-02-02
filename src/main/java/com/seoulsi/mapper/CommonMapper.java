@@ -54,4 +54,7 @@ public interface CommonMapper {
 	public List<DailySenDto> getDailyCntForDataForPastToday(ParamDto paramDto) throws Exception;
 
 	public List<DailySenDto> getDailyCntForDataForToday(ParamDto paramDto) throws Exception;
+
+	public List<DailySenDto> getDailyCntForMoveEqui(ParamDto paramDto) throws Exception;
+
 }

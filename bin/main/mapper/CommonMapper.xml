@@ -163,6 +163,11 @@
     ORDER BY GU_TP, EQUI_INFO_KEY_HAN
   </select>
 
+<select id="getDailyCntForMoveEqui" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
+
+</select>
+
+
   <select id="getDailyCntForEquiSensorWind" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
     SELECT EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY IN (SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO)
           AND BARAM_YN='Y'

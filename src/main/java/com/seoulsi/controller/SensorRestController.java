@@ -414,4 +414,13 @@ public class SensorRestController {
 		return new ResponseEntity<ResultDto>(rdto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@PostMapping("/sensor/getDailyCntForMoveEqui")
+	public Map<String, Object> getDailyCntForMoveEqui(ParamDto paramDto) throws Exception {
+
+		Map<String, Object> data = new HashMap<>();
+		data.put("data", commonService.getDailyCntForMoveEqui(paramDto));
+		logger.info("{}", data);
+		return data;
+	}
+
 }

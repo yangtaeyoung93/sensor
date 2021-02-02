@@ -205,6 +205,9 @@
 				<div class="tt">
 				이상장비 현황
 				</div>
+				<div style="float: left;font-size: 0.855em;padding-top: 10px;">
+				<input id="moveType"  type="checkbox" style="width:15px;height:15px;display:inline;vertical-align:middle;"> 이동형 장비 현황보기
+				</div>
 				<div class="datett" style="width:345px;">
 					<!-- <div class="date_select">
 						<select id="day">
@@ -412,6 +415,19 @@
 
 
 		})
+
+		//이동형 장비 현황보기 클릭이벤트
+		$('#moveType').click(function(){
+			if($('#moveType').prop('checked')){
+				alert("체크함");
+				searchMoveEquiDate(toDate, fromDate);
+
+			}else{
+				alert("체크해제");
+				searchDate(toDate, fromDate);
+			}
+		})
+
 		function searchEqui(toDate, fromDate, type) {
 			$.ajax({
 					url: '/api/sensor/getDailyCntForEquiSensor',
@@ -491,6 +507,70 @@
                 }
             })
 		}
+
+
+		// 이동형 장비 데이터 가져오기
+		function searchMoveEquiDate(toDate, fromDate) {
+            $.ajax({
+                url: '/api/sensor/getDailyCntForMoveEqui',
+                method: 'POST',
+                data: {
+                    toDate: toDate,
+                    fromDate: fromDate
+                }, success: function(r) {
+                    const equiTypeName = {"pm25" : "초미세먼지", "humi" : "습도", "o3" : "오존", "wind_speed" : "풍속", "nh3" : "암모니아", "temp" : "온도", "inte_illu" : "조도", "so2" : "이산화황", "effe_temp" : "흑구", "pm10" : "미세먼지", "vibr" : "진동", "wind_dire" : "풍향", "h2s" : "황화수소", "noise" : "소음", "ultra_rays" : "자외선", "co" : "일산화탄소", "no2" : "이산화질소"};
+                    // console.log(r.data);
+                    var totalBadCnt = 0;
+                    $('#listCnt').html('');
+                    $('#totalCnt').html('');
+                    r.data.map(function(list) {
+                        var bad = list.badEquiCnt < 0 ? 0 : list.badEquiCnt;
+
+                        if(list.equiType == "all") {
+                            $('#totalCnt').html(
+                                '<div class="total01">'+
+                                '    <div class="title1">'+
+                                '    총 설치장비'+
+                                '    </div>'+
+                                '    <div class="number">'+
+                                '    '+numberWithCommas(list.equiCnt)+'대'+
+                                '    </div>'+
+                                '</div>'+
+                                '<div class="total02">'+
+                                '    <div class="title1">'+
+                                '    총 이상장비'+
+                                '    </div>'+
+                                '    <div class="number">'+
+                                '        '+bad+'대'+
+                                '    </div>'+
+                                '</div>'
+                            )
+                        } else {
+
+                            $('#listCnt').append(
+                                '<div class="tbody_tr">'+
+                                '    <div class="tbody_td1">'+
+                                '    '+equiTypeName[list.equiType]+''+
+                                '    </div>'+
+                                '    <div class="tbody_td1">'+
+                                '    '+numberWithCommas(list.equiCnt)+''+
+                                '    </div>'+
+                                '    <div class="tbody_td2">'+
+                                '    '+numberWithCommas(list.normalEquiCnt)+''+
+                                '    </div>'+
+                                '    <div class="tbody_td3">'+
+                                '    '+bad+''+
+                                '    </div>'+
+                                '</div>'
+                            )
+                        }
+                    })
+
+                }
+            })
+		}
+
+
 		function init() {
 			var month = (new Date().getMonth() + 1) < 10 ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1);
 			var day = (new Date().getDate()) < 10 ? '0' + (new Date().getDate()) : (new Date().getDate());
