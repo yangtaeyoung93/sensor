@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.AdminMapper">
+  <select id ="adminList" resultType="com.seoulsi.dto.AdminDto">
+ 	  	SELECT * FROM (SELECT A.USER_ID, A.OBST_MGR_KEY,A.EQUI_INFO_KEY,A.OBST_TEXT,A.OBST_DATE,A.OBST_MODEL,A.OBST_RECO_DATE,A.OBST_RECO_TEXT,A.OBST_RECO_COMP,A.OBST_RECO_MAN,
+ 	  	 ROWNUM NUM FROM TB_MI_OBST_MNG A WHERE OBST_DATE BETWEEN #{toDate} AND #{fromDate} ORDER BY A.OBST_DATE DESC) WHERE NUM BETWEEN #{pageStart} AND #{pageEnd} ORDER BY NUM
+  </select>
+  <insert id ='modal' parameterType="com.seoulsi.dto.AdminInsertDto">
+		insert into TB_MI_OBST_MNG (OBST_MGR_KEY,OBST_TEXT,OBST_DATE,OBST_MODEL,OBST_RECO_DATE,OBST_RECO_TEXT,OBST_RECO_COMP,OBST_RECO_MAN,OBST_FILE_ROOT)
+		values(#{obstMgrKey},#{obstText},#{obstDate},#{obstModel},#{obstRecoDate},#{obstRecoText},#{obstRecoComp},#{obstRecoMan},#{obstFileRoot})
+  </insert>
+  <select id="cardInfo" parameterType="String" resultType="com.seoulsi.dto.CardDto">
+  	SELECT A.*, B.EQUI_KEY, B.INST_MONTH, B.INST_YEAR FROM TB_MM_EQU_INFO_CARD A, (SELECT UF_GETCODENAME('설치년도',INST_YEAR)||'-'||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도2',USE_TP2)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',GU_TP)||'-'||MNG_NUM AS EQUI_KEY, INST_MONTH, INST_YEAR
+	FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY = #{equiInfoKey}) B WHERE A.EQUI_INFO_KEY=#{equiInfoKey}
+  </select>
+  <update id="cardInfoUpdate" parameterType="com.seoulsi.dto.CardDto">
+  	UPDATE TB_MM_EQU_INFO_CARD SET MANU_COM=#{manuCom},SIZE_WIDTH=#{sizeWidth},SIZE_HEIGHT=#{sizeHeight},SIZE_THICK=#{sizeThick},SENSOR_PM10=#{sensorPm10},SENSOR_PM25=#{sensorPm25},SENSOR_WIND=#{sensorWind},SENSOR_WIND_SP=#{sensorWindSp},SENSOR_TEMP=#{sensorTemp},SENSOR_HUMI=#{sensorHumi},SENSOR_ILLU=#{sensorIllu},SENSOR_NOISE=#{sensorNoise},SENSOR_UV=#{sensorUv},SENSOR_VISITOR=#{sensorVisitor},SENSOR_ETC=#{sensorEtc}, SENSOR_CO=#{sensorCo},SENSOR_NO2=#{sensorNo2},SENSOR_SO2=#{sensorSo2},SENSOR_NH3=#{sensorNh3},SENSOR_H2S=#{sensorH2S},SENSOR_O3=#{sensorO3}, SENSOR_EFFE_TEMP=#{sensorEffeTemp}, SENSOR_VIBR=#{sensorVibr}, COMM_TP=#{commTp},ELEC_TP=#{elecTp},SW_VERSION=#{swVersion, jdbcType=VARCHAR},WORK_ID=#{workId, jdbcType=VARCHAR},WORK_TM=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  <update id="cardFileSide" parameterType="com.seoulsi.dto.CardDto">
+  	UPDATE TB_MM_EQU_INFO_CARD 
+  	<trim prefix="SET" suffixOverrides=",">
+	    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(picFrontTp)'>
+	        PIC_FRONT=#{picFront}, PIC_FRONT_TP=#{picFrontTp},
+	    </if>
+	    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(picSideTp)'>
+	        PIC_SIDE=#{picSide}, PIC_SIDE_TP=#{picSideTp},
+	    </if>
+	    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(picBackTp)'>
+	        PIC_BACK=#{picBack}, PIC_BACK_TP=#{picBackTp},
+	    </if>
+    </trim>
+    WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  <update id="cardFileFront" parameterType="com.seoulsi.dto.CardDto">
+  	UPDATE TB_MM_EQU_INFO_CARD SET PIC_FRONT=#{picFront}, PIC_FRONT_TP=#{picFrontTp} WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  <update id="cardFileBack" parameterType="com.seoulsi.dto.CardDto">
+  	UPDATE TB_MM_EQU_INFO_CARD SET PIC_BACK=#{picBack}, PIC_BACK_TP=#{picBackTp} WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  <select id="getCardFile" parameterType="String" resultType="com.seoulsi.dto.CardDto">
+  	SELECT * FROM TB_MM_EQU_INFO_CARD WHERE EQUI_INFO_KEY=#{id}
+  </select>
+  <select id="getCardLoc" parameterType="String" resultType="com.seoulsi.dto.EquiDto">
+  	SELECT 
+	EI.EQUI_INFO_KEY, EI.STA_NAME, EI.INST_LOC, EI.INST_LOC2, EI.GPS_ABB, EI.GPS_LAT, UF_GETCODENAME('서울시구정의',EI.GU_TP), UF_GETCODEREL('용도2',EI.USE_TP2) AS USE_TP2, UF_GETCODEREL('용도3',EI.USE_TP3) AS USE_TP3,EI.USE_YN, EI.ETC, EIL.*, EILD.*
+	FROM TB_MM_EQU_INFO EI, TB_MM_EQU_INFO_LOC EIL, TB_MM_EQU_INFO_LOC_DETAIL EILD
+	WHERE EI.EQUI_INFO_KEY = EIL.EQUI_INFO_KEY and EI.EQUI_INFO_KEY = EILD.EQUI_INFO_KEY
+	and EI.EQUI_INFO_KEY = #{equiInfoKey}
+  </select>
+
+  
+  
+  <update id="updateLoc" parameterType="com.seoulsi.dto.EquiDto">
+  	UPDATE TB_MM_EQU_INFO_LOC SET EQUI_STRU=#{equiStru},SUPER_DEPT_CD=#{superDeptCd}, DEPT_CD=#{deptCd}, MNG_NM_JUNG=#{mngNmJung}, MNG_NM_JUNG_TEL=#{mngNmJungTel}, MNG_NM_BU=#{mngNmBu}, TOT_OPIN=#{totOpin}, WORK_YMD=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  <update id="updateLocDetail" parameterType="com.seoulsi.dto.EquLoc">
+  	MERGE INTO
+    	TB_MM_EQU_INFO_LOC_DETAIL A
+	USING DUAL
+	ON (A.EQUI_INFO_KEY = #{equiInfoKey, jdbcType=VARCHAR} AND A.LOC_DETAIL_TP = #{locDetailTp, jdbcType=NUMERIC})
+	WHEN MATCHED THEN
+		UPDATE SET WORK_YMD=SYSDATE, EAST_REL1 = #{eastRel1, jdbcType=VARCHAR}, WEST_REL1 = #{westRel1, jdbcType=VARCHAR}, NORTH_REL1 = #{northRel1, jdbcType=VARCHAR}, SOUTH_REL1 = #{southRel1, jdbcType=VARCHAR}, EAST_REL2 = #{eastRel2, jdbcType=VARCHAR}, WEST_REL2 = #{westRel2, jdbcType=VARCHAR}, NORTH_REL2 = #{northRel2, jdbcType=VARCHAR}, SOUTH_REL2 = #{southRel2, jdbcType=VARCHAR}, BIGO = #{bigo, jdbcType=VARCHAR}
+	WHEN NOT MATCHED THEN
+		INSERT (EQUI_INFO_KEY, LOC_DETAIL_TP, EAST_REL1, WEST_REL1, NORTH_REL1, SOUTH_REL1, EAST_REL2, WEST_REL2, NORTH_REL2, SOUTH_REL2, BIGO, WORK_YMD)
+			VALUES (#{equiInfoKey, jdbcType=VARCHAR}, #{locDetailTp, jdbcType=NUMERIC}, #{eastRel1, jdbcType=VARCHAR}, #{westRel1, jdbcType=VARCHAR}, #{northRel1, jdbcType=VARCHAR}, #{southRel1, jdbcType=VARCHAR}, #{eastRel2, jdbcType=VARCHAR}, #{westRel2, jdbcType=VARCHAR}, #{northRel2, jdbcType=VARCHAR}, #{southRel2, jdbcType=VARCHAR}, #{bigo, jdbcType=VARCHAR}, SYSDATE)
+  </update>
+  <update id="equiCardImgUpdate" parameterType="com.seoulsi.dto.EquLocPic">
+	  	UPDATE TB_MM_EQU_INFO_LOC_PIC
+	    <trim prefix="SET" suffixOverrides=",">
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(equiInsLocTp)'>
+		        EQUI_INS_LOC=#{equiInsLoc}, EQUI_INS_LOC_TP=#{equiInsLocTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(equiArdWestTp)'>
+		        EQUI_ARD_WEST=#{equiArdWest}, EQUI_ARD_WEST_TP=#{equiArdWestTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(equiArdEastTp)'>
+		        EQUI_ARD_EAST=#{equiArdEast}, EQUI_ARD_EAST_TP=#{equiArdEastTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(equiArdSouthTp)'>
+		        EQUI_ARD_SOUTH=#{equiArdSouth}, EQUI_ARD_SOUTH_TP=#{equiArdSouthTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(equiArdNorthTp)'>
+		        EQUI_ARD_NORTH=#{equiArdNorth}, EQUI_ARD_NORTH_TP=#{equiArdNorthTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(instBefFrtTp)'>
+		        INST_BEF_FRT=#{instBefFrt}, INST_BEF_FRT_TP=#{instBefFrtTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(instBefBackTp)'>
+		        INST_BEF_BACK=#{instBefBack}, INST_BEF_BACK_TP=#{instBefBackTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(instAftFrtTp)'>
+		        INST_AFT_FRT=#{instAftFrt}, INST_AFT_FRT_TP=#{instAftFrtTp},
+		    </if>
+		    <if test='@com.seoulsi.util.MybatisUtil@isFileEmpty(instAftBackTp)'>
+		        INST_AFT_BACK=#{instAftBack}, INST_AFT_BACK_TP=#{instAftBackTp},
+		    </if>
+		</trim>
+		WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+
+  <select id="equiCardImgSelect" parameterType="String" resultType="com.seoulsi.dto.EquLocPic">
+	SELECT * FROM TB_MM_EQU_INFO_LOC_PIC A, (SELECT GPS_ABB, GPS_LAT FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY=#{equiInfoKey}) B WHERE A.EQUI_INFO_KEY=#{equiInfoKey} AND ROWNUM=1
+  </select>
+  
+  <insert id="insertMngDept" parameterType="com.seoulsi.dto.MngDeptDto">
+  	INSERT INTO TB_MI_MNG_DEPT (BIGO, CHG_CONTENT, CHG_REASON, DEPT_CD, INST_CD, MNG_NM_BU, MNG_NM_BU_TEL, MNG_NM_JUNG, MNG_NM_JUNG_TEL, SUPER_DEPT_CD, WORK_DT, WORK_TM, WORK_YMD) 
+  	VALUES(#{bigo},#{chgContent},#{chgReason},#{deptCd},#{instCd},#{mngNmBu},#{mngNmBuTel},#{mngNmJung},#{mngNmJungTel},#{superDeptCd},#{workDt},#{workTm}, SYSDATE)
+  </insert>
+  
+  <select id="mngDeptSearch" parameterType="com.seoulsi.dto.MngDeptDto" resultType="com.seoulsi.dto.MngDeptDto">
+  	SELECT * FROM TB_MI_MNG_DEPT WHERE WORK_DT BETWEEN #{toDate} AND #{fromDate} 
+  	<choose>
+  		<when test='!instCd.equals("all")'>
+		  	AND INST_CD=#{instCd}
+  		</when>
+  	</choose>
+  </select>
+  
+  <update id="mngDeptUpdate" parameterType="com.seoulsi.dto.MngDeptDto">
+  	UPDATE TB_MI_MNG_DEPT SET MNG_NM_JUNG=#{mngNmJung},MNG_NM_JUNG_TEL=#{mngNmJungTel},MNG_NM_BU=#{mngNmBu},MNG_NM_BU_TEL=#{mngNmBuTel},CHG_CONTENT=#{chgContent},CHG_REASON=#{chgReason},BIGO=#{bigo},WORK_YMD=SYSDATE WHERE INST_CD=#{instCd} AND SUPER_DEPT_CD=#{superDeptCd} AND DEPT_CD=#{deptCd} AND WORK_DT=#{workDt} AND WORK_TM=#{workTm}
+  </update>
+  
+  <delete id="mngDeptDelete" parameterType="com.seoulsi.dto.MngDeptDto">
+  	DELETE FROM TB_MI_MNG_DEPT WHERE MNG_NM_JUNG=#{mngNmJung} AND MNG_NM_JUNG_TEL=#{mngNmJungTel} AND MNG_NM_BU=#{mngNmBu} AND MNG_NM_BU_TEL=#{mngNmBuTel} AND CHG_CONTENT=#{chgContent} AND CHG_REASON=#{chgReason} AND BIGO=#{bigo} AND INST_CD=#{instCd} AND SUPER_DEPT_CD=#{superDeptCd} AND DEPT_CD=#{deptCd} AND WORK_DT=#{workDt} AND WORK_TM=#{workTm}
+  </delete>
+  
+  <insert id="insertWare" parameterType="com.seoulsi.dto.WareDto">
+  	INSERT INTO TB_MI_OBST_MNG (WORK_DT, WORK_TM, SW_HW_TP, CHG_TP, CHG_REASON, BIGO, WORK_YMD, EQUI_INFO_KEY) 
+  	VALUES(#{workDt}, #{workTm}, #{swHwTp}, #{chgTp}, #{chgReason}, #{bigo}, SYSDATE, #{equiInfoKey})
+  </insert>
+
+  <select id="wareSearch" parameterType="com.seoulsi.dto.WareDto" resultType="com.seoulsi.dto.WareDto">
+  	SELECT 
+	    TO_CHAR(TO_DATE(WORK_DT, 'YYYY-MM-DD') , 'YYYY-MM-DD')||' '|| SUBSTR(WORK_TM, 0, 2)||':'||SUBSTR(WORK_TM, 3,2) AS WORK_DT,
+	    WORK_TM, 
+	    SW_HW_TP, 
+	    (SELECT REL_CD1 FROM TB_CC_CODE WHERE SORT_CD = '변동구분' AND CODE = CHG_TP) AS CHG_TP, 
+	    CHG_REASON, 
+	    BIGO, 
+	    TO_CHAR(WORK_YMD, 'YYYY-MM-DD HH:MI') AS WORK_YMD,
+		EQUI_INFO_KEY
+	FROM 
+		TB_MI_OBST_MNG 
+	WHERE 
+		WORK_DT BETWEEN #{toDate} AND #{fromDate} 
+  	<if test='chgTp neq "all"'>
+	  	AND CHG_TP=#{chgTp} 
+  	</if>
+  	<if test='swHwTp neq "all"'>
+	  	AND SW_HW_TP=#{swHwTp}
+  	</if>
+		AND EQUI_INFO_KEY=#{equiInfoKey}
+  	ORDER BY CHG_TP, WORK_DT 
+  </select>
+  
+  <update id="wareUpdate" parameterType="com.seoulsi.dto.WareDto">
+  	UPDATE TB_MI_OBST_MNG 
+  	SET CHG_TP=#{chgTp}, CHG_REASON=#{chgReason}, BIGO=#{bigo} 
+  	WHERE TO_CHAR(WORK_YMD, 'YYYY-MM-DD HH24:MI:SS')=#{workYmd} AND CHG_TP=#{chgTp} AND CHG_REASON=#{chgReason} AND BIGO=#{bigo}
+  </update>
+
+  <delete id="wareDelete" parameterType="com.seoulsi.dto.WareDto">
+  	DELETE TB_MI_OBST_MNG WHERE 
+	  EQUI_INFO_KEY = #{equiInfoKey}
+		AND CHG_TP = (select code from (select code, code_nm from tb_cc_code where sort_nm='변동구분') where code_nm= #{chgTp})
+		AND work_dt = #{workDt}
+		AND work_tm = #{workTm}
+		AND CHG_REASON = #{chgReason}
+		AND BIGO = #{bigo}
+	
+  </delete>
+  
+  <select id="getWriteGrant" parameterType="com.seoulsi.dto.MenuDto" resultType="com.seoulsi.dto.MenuDto">
+  	SELECT A.* FROM TB_CC_USER_MENU A, (SELECT MENU_ID FROM TB_CC_MENU WHERE PATH = #{path} AND DECODE(MOD(MENU_ID, 100), '0', 'ROOT', MENU_ID) != 'ROOT') B
+		WHERE A.MENU_ID = B.MENU_ID AND A.USER_ID=#{userId} GROUP BY A.USER_ID, A.MENU_ID, A.GRANT_YN, A.WORK_TIME, A.WRITE_GRANT_YN
+  </select>
+
+  <select id="getGuEquiList" parameterType="String" resultType="com.seoulsi.dto.EquiDto">
+	SELECT UF_GETCODENAME('기기종류', EQUI_TYPE) EQUI_TYPE, STA_NAME, EQUI_INFO_KEY, GPS_ABB, GPS_LAT, UF_GETCODEREL('센서유형', SENSE_TP) SENSE_TP, UF_GETCODEREL('용도1', USE_TP1) USE_TP1, UF_GETCODEREL('용도2', USE_TP2) USE_TP2, UF_GETCODEREL('용도3', USE_TP3) USE_TP3, UF_GETCODEREL('설치년도', INST_YEAR) INST_YEAR, INST_MONTH, MNG_NUM, UF_GETCODEREL('서울시구정의', GU_TP) GU_TP, INST_LOC, INST_LOC2, SET_YN, USE_YN, BARAM_YN, BARAM_MNG_NUM, BARAM_NM, AIR_YN, AIR_MNG_NUM, VISTOR_SEN_ID, VISTOR_SEN_VIEW_NM FROM TB_MM_EQU_INFO WHERE 
+	<choose>
+  		<when test='guTp.equals("25")'>
+		  	BARAM_YN='Y'
+  		</when>
+		  <when test='guTp.equals("26")'>
+		  	AIR_YN='Y'
+  		</when>
+		<otherwise>
+			GU_TP=#{guTp}
+		</otherwise>
+  	</choose>
+  </select>
+
+  <select id="getGuCardList" parameterType="String" resultType="com.seoulsi.dto.CardDto">
+  	SELECT A.EQUI_INFO_KEY, A.SERIAL_NM, A.MANU_COM, A.SIZE_WIDTH, A.SIZE_HEIGHT, A.SIZE_THICK, A.SENSOR_PM10, A.SENSOR_PM25, A.SENSOR_WIND, A.SENSOR_WIND_SP, A.SENSOR_TEMP, A.SENSOR_HUMI, A.SENSOR_EFFE_TEMP, A.SENSOR_VIBR, A.SENSOR_ILLU, A.SENSOR_NOISE, A.SENSOR_UV, A.SENSOR_VISITOR, A.SENSOR_ETC, UF_GETCODEREL('통신방법', A.COMM_TP) COMM_TP, UF_GETCODEREL('전력공급', A.ELEC_TP) ELEC_TP, A.SW_VERSION, A.WORK_ID, A.WORK_TM, A.SENSOR_CO, A.SENSOR_NO2, A.SENSOR_SO2, A.SENSOR_NH3, A.SENSOR_H2S, A.SENSOR_O3, B.EQUI_KEY, B.INST_MONTH, UF_GETCODENAME('설치년도',B.INST_YEAR) INST_YEAR, B.GU_TP 
+	FROM 
+	TB_MM_EQU_INFO_CARD A, 
+	(SELECT UF_GETCODENAME('설치년도',INST_YEAR)||'-'||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도2',USE_TP2)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',GU_TP)||'-'||MNG_NUM AS EQUI_KEY, INST_MONTH, INST_YEAR, BARAM_YN, EQUI_INFO_KEY, UF_GETCODEREL('서울시구정의', GU_TP) GU_TP FROM TB_MM_EQU_INFO WHERE 
+	<choose>
+		<when test='guTp.equals("25")'>
+			BARAM_YN='Y'
+		</when>
+			<when test='guTp.equals("26")'>
+			AIR_YN='Y'
+		</when>
+		<otherwise>
+			GU_TP=#{guTp}
+		</otherwise>
+	</choose>
+	order by MNG_NUM) B 
+	WHERE A.EQUI_INFO_KEY=B.EQUI_INFO_KEY
+  </select>
+
+  <select id="getCardLocExcel" parameterType="String" resultType="com.seoulsi.dto.EquiDto">
+  	SELECT 
+	EI.EQUI_INFO_KEY, EI.STA_NAME, EI.INST_LOC, EI.INST_LOC2, EI.GPS_ABB, EI.GPS_LAT, UF_GETCODENAME('서울시구정의',EI.GU_TP) GU_TP, UF_GETCODEREL('용도2',EI.USE_TP2) AS USE_TP2, UF_GETCODEREL('용도3',EI.USE_TP3) AS USE_TP3,EI.USE_YN, EI.ETC, EIL.*, EILD.*
+	FROM TB_MM_EQU_INFO EI, TB_MM_EQU_INFO_LOC EIL, TB_MM_EQU_INFO_LOC_DETAIL EILD
+	WHERE EI.EQUI_INFO_KEY = EIL.EQUI_INFO_KEY and EI.EQUI_INFO_KEY = EILD.EQUI_INFO_KEY
+	and 
+	<choose>
+		<when test='guTp.equals("25")'>
+			EI.BARAM_YN='Y'
+		</when>
+			<when test='guTp.equals("26")'>
+			EI.AIR_YN='Y'
+		</when>
+		<otherwise>
+			EI.GU_TP=#{guTp}
+		</otherwise>
+	</choose>
+	ORDER BY EI.EQUI_INFO_KEY, LOC_DETAIL_TP
+  </select>
+</mapper>

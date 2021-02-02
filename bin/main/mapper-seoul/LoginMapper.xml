@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.LoginMapper">
+	<insert id="insertLoginHistory" parameterType="com.seoulsi.dto.LoginDto">
+		INSERT INTO TB_CC_USER_HISTORY(USER_ID, USER_ACTION, USER_IP, USER_REASON, USER_STATUS, REG_DATE) VALUES (#{userId}, #{userAction}, #{userIp}, #{userReason, jdbcType=VARCHAR}, #{userStatus, jdbcType=INTEGER}, SYSDATE)
+	</insert>
+	<select id="selectLoginHistory" parameterType="com.seoulsi.dto.LoginDto" resultType="int">
+		SELECT COUNT(*) FROM TB_CC_USER_HISTORY WHERE USER_ID=#{userId} AND USER_ACTION=#{userAction} AND USER_STATUS=1
+	</select>
+	<update id="updateLoginHistoryStatus" parameterType="com.seoulsi.dto.LoginDto">
+		UPDATE TB_CC_USER_HISTORY SET USER_STATUS=#{userStatus} WHERE USER_ID=#{userId} AND USER_ACTION=#{userAction}
+	</update>
+	<select id="getChangeDate" parameterType="String" resultType="com.seoulsi.dto.LoginDto">
+		SELECT ROUND(SYSDATE - CHANGE_DATE,0) AS REG_DATE FROM TB_CC_USER WHERE USER_ID=#{userId}
+	</select>
+</mapper>

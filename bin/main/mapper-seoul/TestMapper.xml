@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.TestMapper">
+  <select id="guList" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT * FROM SEOUL_COMMON_CODE WHERE SORT_CD='서울시구정의'
+  </select>
+  
+  <select id="getUserCode" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT A.CODE_NM AS code, WM_CONCAT(B.USER_NAME) AS user_name, WM_CONCAT(B.USER_ID) AS user_id FROM TB_CC_CODE A, TB_CC_USER B WHERE A.SORT_CD='부서' AND A.CODE = B.DEPT_CD GROUP BY A.CODE_NM
+  </select>
+  
+  <insert id="testFile" parameterType="com.seoulsi.dto.TestDto">
+  	INSERT INTO PIC_TEST(PIC_FRONT, PIC_BACK, PIC_SIDE) VALUES (#{picFront}, #{picBack}, #{picSide})
+  </insert>
+  
+  <select id="getTestFile" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.CardDto">
+  	SELECT * FROM (SELECT A.*, ROWNUM NUM FROM (SELECT * FROM TB_MM_EQU_INFO_CARD) A) WHERE NUM between #{pageStart} and #{pageEnd}
+  </select>
+</mapper>

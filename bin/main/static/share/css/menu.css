@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+.gnb{ padding: 20px 0 0 0; font-size: 15px; overflow: hidden; }
+.gnb .logo{ float: left; }
+.gnb .logo img{ width: auto; max-width: 100%; }
+.gnb .my{ float: right; }
+.gnb .my a{ display: inline-block; margin:0 0 0 10px; padding:5px; border:1px solid #ddd; }
+
+nav { position: relative; z-index: 20; background: #fff; }
+nav .menu_wrap{ position: relative; font-size: 20px; font-weight: 800; line-height: 1.5em; background: url('../../img/common/menu_bg.jpg') 0 bottom repeat-x; }
+nav .top_menu{ text-align: center; padding: 0 0 25px 0; }
+nav .top_menu > ul > li{ position: relative; }
+
+/*서브메뉴*/
+nav .sub_menu{ visibility: hidden; opacity: 0; transition: .2s ease-in-out; position: absolute; left: 0; top: 62px; z-index: 30; width: 100%; padding: 15px 0; font-size: 16px; text-align: center; }
+nav .sub_menu a{ display: block; }
+nav .top_menu > ul > li:hover > a{ color: #0c82e9; }
+nav .top_menu:hover .bg{ visibility: visible; opacity: 1; }
+nav .top_menu:hover .sub_menu{ visibility: visible;	opacity: 1; }
+/*nav .top_menu:hover .dim{ display: block; }*/
+
+nav .top_menu .sub_menu a:hover{ color: #0c82e9; }
+
+/*호버시 배경*/
+nav .top_menu .bg{ visibility: hidden; opacity: 0; transition: .2s ease-in-out; position: absolute; top: 55px; left: 0; z-index: 10; width: 100%; height: 280px; background: #f3f9fe; }
+.dim{ display: none; position: absolute; top: 0; left: 0; bottom: 0; z-index: 10; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+.dim_search{ display: none; position: absolute; top: 0; left: 0; bottom: 0; z-index: 10; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+
+/*모바일메뉴*/
+.mob_nav{ position: fixed; width: 100%; height: 50px; padding:10px 0; top: 0; z-index: 999; /*border-bottom:1px solid #ababab;*/ background: #003774; }
+
+html.open { overflow: hidden; } /*메뉴가 열렸을때 본문이 스크롤 되지 않는다.*/
+
+.mob_nav .logo{ float: left; width: 30%; padding: 5px 10px; }
+.mob_nav .search{ float: left; width: 60%; }
+.mob_nav .mob_btn { float: right; width: 10%; text-align: center; }
+.mob_nav .mob_btn img{ width: initial; height: 30px; }
+.mob_nav .search input[type="text"]{ float: left; width: 75%; height: 30px; }
+.mob_nav .search input[type="submit"]{ float: left; width: 25%; height: 30px; background-size: 70%; }
+
+#menu .close { width: 50px; height: 50px; padding: 15px; position: absolute; right: 0px; top: 0px; cursor: pointer; }/*닫기 버튼*/
+
+#menu { width: 70%; height: 100%; background: #fff; overflow-y: auto;
+		position: fixed; top: 0px; right: -70%; z-index: 999999; transition: All 0.2s ease; -webkit-transition: All 0.2s ease; -moz-transition: All 0.2s ease; -o-transition: All 0.2s ease; } /*메뉴 영역*/
+
+#menu .menu_log{ padding: 14px 20px; text-align: center; background: #003774; }
+#menu .menu_log img{ width: auto; height: 30px; }
+
+#nav-left > li > div { position: relative; padding: 16px 0 16px 10px; font-size: 1.2em; border-bottom: 1px solid #ebebeb; }
+#nav-left .open_menu div:after { content: "\e914"; position: absolute; right: 15px; font-family: 'xeicon'; width: 16px; height: 16px; line-height: 15px; text-align: center; border: 1px solid #000; border-radius: 10px; }
+
+#nav-left .open_menu.open > div{ color: #fff; background: #002957; }
+#nav-left .open_menu.open > div:after { content: "\e91b"; font-family: 'xeicon'; border: 1px solid #fff; }
+
+/* 모바일 서브 */
+#nav-left > li > ul{display: none;}
+#nav-left > .open_menu > ul{ display: none; border-bottom: 1px solid #ebebeb; }
+#nav-left > .open_menu > ul > li > a{ display: block; position: relative; padding: 10px 0 10px 30px; font-size: 1.2em; }
+#menu.open { right: 0px; }
+
+.mob_login .tab03 li{ float: left; width: 33.3%; }
+.mob_login li a{ display: block; text-align: center; line-height: 40px; }
+.mob_login .tab02 li{ float: left; width: 50%; }
+
+.mob_nsn{ padding: 10px 0; }
+.mob_nsn li{ float: left; width: 33.3%; text-align: center; }
+.mob_nsn li img{ width: auto; }
+
+/*하단*/
+footer { position: relative; padding: 15px 0; background: #ddd; }
+footer img{ width: auto; max-width: 100%; }
+footer span{ display: inline-block; vertical-align: middle; padding:10px 0 0 20px; }
+footer a{ float: right; display: inline-block; vertical-align: middle; padding:5px 20px; border:1px solid #000; }

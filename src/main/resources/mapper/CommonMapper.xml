@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.CommonMapper">
+  <select id="guList" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT * FROM TB_CC_CODE WHERE SORT_CD='서울시구정의' ORDER BY CODE_NM
+  </select>
+
+  <select id="partList" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT * FROM TB_CC_CODE WHERE SORT_CD='기관'
+  </select>
+  <select id="getCCList" parameterType="String" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT * FROM TB_CC_CODE WHERE SORT_CD=#{sortCd}
+  </select>
+  <select id="codeList" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT SORT_CD FROM TB_CC_CODE GROUP BY SORT_CD ORDER BY SORT_CD ASC
+  </select>
+
+  <select id="codeListOne" parameterType="String" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT CONCAT(SORT_CD,','||CODE) AS ID, SORT_CD, SORT_NM, CODE, CODE_NM, REL_CD1, REL_CD2, REL_CD3, EDIT_YN, HIDE_YN, BIGO, WORK_USER, WORK_TIME FROM TB_CC_CODE WHERE SORT_CD=#{sortCd} ORDER BY TO_NUMBER(CODE) ASC
+  </select>
+  <!--   추가 -->
+  <select id="getMenu" parameterType="String" resultType="com.seoulsi.dto.MenuDto">
+  	SELECT * FROM TB_CC_MENU A, TB_CC_USER_MENU B WHERE B.USER_ID=#{userId} AND A.MENU_ID=B.MENU_ID ORDER BY A.STEP ASC, B.MENU_ID ASC
+  </select>
+  <select id="getMenuId" resultType="com.seoulsi.dto.MenuDto">
+  	SELECT MENU_ID, PATH FROM TB_CC_MENU
+  </select>
+  <select id="menuList" resultType="com.seoulsi.dto.CommonDto">
+	SELECT WM_CONCAT('"'||STEP||'"') as step ,WM_CONCAT('"'||MENU_ID||'"') as menu_id, WM_CONCAT('"'||CAPTION||'"') as caption FROM (SELECT * FROM TB_CC_MENU ORDER BY MENU_ID ASC)
+  </select>
+  <select id="getGrantMenu" parameterType="String" resultType="com.seoulsi.dto.MenuDto">
+  	SELECT A.*, B.CAPTION, B.STEP, B.PATH FROM TB_CC_USER_MENU A, TB_CC_MENU B WHERE A.USER_ID=#{userId} AND A.MENU_ID = B.MENU_ID AND A.GRANT_YN='Y' ORDER BY A.MENU_ID ASC
+  </select>
+
+  <select id="getGrantMenuRequest" parameterType="com.seoulsi.dto.MemberDto" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT * FROM TB_CC_MENU A, TB_CC_USER_MENU B WHERE A.PATH=#{path} AND B.USER_ID=#{userId} AND B.GRANT_YN='Y' AND A.MENU_ID=B.MENU_ID
+  </select>
+
+  <insert id="insertGrantMenu" parameterType="com.seoulsi.dto.MenuDto">
+  	INSERT INTO TB_CC_USER_MENU(USER_ID, MENU_ID, GRANT_YN, WORK_TIME) VALUES(#{userId}, #{menuId}, 'Y', SYSDATE)
+  </insert>
+
+  <insert id="insertGrantMenuN" parameterType="com.seoulsi.dto.MenuDto">
+  	INSERT INTO TB_CC_USER_MENU(USER_ID, MENU_ID, GRANT_YN, WORK_TIME) VALUES(#{userId}, #{menuId}, 'N', SYSDATE)
+  </insert>
+
+  <update id="codeListUpdate" parameterType="com.seoulsi.dto.CommonDto">
+  	UPDATE TB_CC_CODE SET CODE=#{code}, CODE_NM=#{codeNm}, REL_CD1=#{relCd1}, REL_CD2=#{relCd2}, REL_CD3=#{relCd3}, EDIT_YN=#{editYn}, HIDE_YN=#{hideYn}, BIGO=#{bigo}, WORK_USER=#{workUser}, WORK_TIME=SYSDATE WHERE CODE=#{code} AND SORT_CD=#{sortCd}
+  </update>
+
+  <insert id="codeListSave" parameterType="com.seoulsi.dto.CommonDto">
+  	INSERT INTO TB_CC_CODE(SORT_CD, SORT_NM,CODE, CODE_NM, REL_CD1, REL_CD2, REL_CD3, EDIT_YN, HIDE_YN, BIGO, WORK_USER, WORK_TIME) VALUES (#{sortCd}, #{sortNm}, #{code}, #{codeNm}, #{relCd1}, #{relCd2}, #{relCd3}, #{editYn}, #{hideYn}, #{bigo},#{workUser}, SYSDATE)
+  </insert>
+
+  <delete id="codeListRemove" parameterType="com.seoulsi.dto.CommonDto">
+  	DELETE FROM TB_CC_CODE WHERE CODE=#{code} AND SORT_CD=#{sortCd}
+  </delete>
+
+  <select id="getDailySenForDate" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
+    SELECT * FROM TB_ST_DAILY_SEN WHERE tm8 BETWEEN #{toDate} AND #{fromDate}
+    <if test='type != null'>
+      AND EQUI_TYPE=#{type}
+    </if>
+  </select>
+
+  <select id="getDailyCntForEqui" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
+     SELECT EQUI_TYPE, AVG(EQUI_CNT) EQUI_CNT, SUM(NORMAL_EQUI_CNT) NORMAL_EQUI_CNT, SUM(EQUI_CNT - NORMAL_EQUI_CNT) BAD_EQUI_CNT,
+    CASE WHEN NVL(SUM(EQUI_CNT), 0) > 0 THEN 
+      CASE WHEN ROUND((SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT)) * 100) > 100 THEN 
+        100
+      ELSE 
+        ROUND((SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT)) * 100) 
+      END
+    ELSE 
+      0 
+    END PERCENT
+    FROM TB_ST_DAILY_SEN WHERE tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+  </select>
+
+  <select id="getDailyCntForEquiSensor" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
+    SELECT EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY IN (SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO)
+
+    MINUS 
+
+    SELECT DISTINCT A.EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN
+        FROM TB_SL_DOT_SEN A 
+        INNER JOIN 
+        TB_MM_EQU_INFO B 
+        ON A.EQUI_INFO_KEY=B.EQUI_INFO_KEY 
+        WHERE 
+        A.EQUI_INFO_KEY IN 
+        (SELECT 
+          EQUI_INFO_KEY 
+          FROM TB_MM_EQU_INFO
+    ) 
+    AND A.tm8 BETWEEN #{toDate} AND #{fromDate}
+    <choose>
+      <when test='type.equals("pm25")'>
+          AND PM25 IS NOT NULL
+      </when>
+      <when test='type.equals("pm10")'>
+          AND PM10 IS NOT NULL
+      </when>
+      <when test='type.equals("temp")'>
+          AND TEMP IS NOT NULL
+      </when>
+      <when test='type.equals("humi")'>
+          AND HUMI IS NOT NULL
+      </when>
+      <when test='type.equals("windDire")'>
+          AND WIND_DIRE IS NOT NULL
+      </when>
+      <when test='type.equals("windSpeed")'>
+          AND WIND_SPEED IS NOT NULL
+      </when>
+      <when test='type.equals("gustDire")'>
+          AND GUST_DIRE IS NOT NULL
+      </when>
+      <when test='type.equals("gustSpeed")'>
+          AND GUST_SPEED IS NOT NULL
+      </when>
+      <when test='type.equals("inteIllu")'>
+          AND INTE_ILLU IS NOT NULL
+      </when>
+      <when test='type.equals("ultraRays")'>
+          AND ULTRA_RAYS IS NOT NULL
+      </when>
+      <when test='type.equals("noise")'>
+          AND NOISE IS NOT NULL
+      </when>
+      <when test='type.equals("vibr")'>
+          AND VIBR_X IS NOT NULL
+      </when>
+      <when test='type.equals("effeTemp")'>
+          AND EFFE_TEMP IS NOT NULL
+      </when>
+      <when test='type.equals("pm25Std")'>
+          AND PM25_STD IS NOT NULL
+      </when>
+      <when test='type.equals("pm10Std")'>
+          AND PM10_STD IS NOT NULL
+      </when>
+      <when test='type.equals("co")'>
+          AND CO IS NOT NULL
+      </when>
+      <when test='type.equals("no2")'>
+          AND NO2 IS NOT NULL
+      </when>
+      <when test='type.equals("so2")'>
+          AND SO2 IS NOT NULL
+      </when>
+      <when test='type.equals("nh3")'>
+          AND NH3 IS NOT NULL
+      </when>
+      <when test='type.equals("h2S")'>
+          AND H2S IS NOT NULL
+      </when>
+      <when test='type.equals("o3")'>
+          AND O3 IS NOT NULL
+      </when>
+    </choose>
+    ORDER BY GU_TP, EQUI_INFO_KEY_HAN
+  </select>
+
+  <select id="getDailyCntForEquiSensorWind" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
+    SELECT EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY IN (SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO)
+          AND BARAM_YN='Y'
+    MINUS 
+
+    SELECT DISTINCT A.EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN
+        FROM TB_SL_DOT_SEN A 
+        INNER JOIN 
+        TB_MM_EQU_INFO B 
+        ON A.EQUI_INFO_KEY=B.EQUI_INFO_KEY 
+        WHERE 
+        A.EQUI_INFO_KEY IN 
+        (SELECT 
+          EQUI_INFO_KEY 
+          FROM TB_MM_EQU_INFO
+          WHERE BARAM_YN='Y'
+    ) 
+    AND A.tm8 BETWEEN #{toDate} AND #{fromDate}
+    <choose>
+      <when test='type.equals("pm25")'>
+          AND PM25 IS NOT NULL
+      </when>
+      <when test='type.equals("pm10")'>
+          AND PM10 IS NOT NULL
+      </when>
+      <when test='type.equals("temp")'>
+          AND TEMP IS NOT NULL
+      </when>
+      <when test='type.equals("humi")'>
+          AND HUMI IS NOT NULL
+      </when>
+      <when test='type.equals("windDire")'>
+          AND WIND_DIRE IS NOT NULL
+      </when>
+      <when test='type.equals("windSpeed")'>
+          AND WIND_SPEED IS NOT NULL
+      </when>
+      <when test='type.equals("gustDire")'>
+          AND GUST_DIRE IS NOT NULL
+      </when>
+      <when test='type.equals("gustSpeed")'>
+          AND GUST_SPEED IS NOT NULL
+      </when>
+      <when test='type.equals("inteIllu")'>
+          AND INTE_ILLU IS NOT NULL
+      </when>
+      <when test='type.equals("ultraRays")'>
+          AND ULTRA_RAYS IS NOT NULL
+      </when>
+      <when test='type.equals("noise")'>
+          AND NOISE IS NOT NULL
+      </when>
+      <when test='type.equals("vibr")'>
+          AND VIBR_X IS NOT NULL
+      </when>
+      <when test='type.equals("effeTemp")'>
+          AND EFFE_TEMP IS NOT NULL
+      </when>
+      <when test='type.equals("pm25Std")'>
+          AND PM25_STD IS NOT NULL
+      </when>
+      <when test='type.equals("pm10Std")'>
+          AND PM10_STD IS NOT NULL
+      </when>
+      <when test='type.equals("co")'>
+          AND CO IS NOT NULL
+      </when>
+      <when test='type.equals("no2")'>
+          AND NO2 IS NOT NULL
+      </when>
+      <when test='type.equals("so2")'>
+          AND SO2 IS NOT NULL
+      </when>
+      <when test='type.equals("nh3")'>
+          AND NH3 IS NOT NULL
+      </when>
+      <when test='type.equals("h2S")'>
+          AND H2S IS NOT NULL
+      </when>
+      <when test='type.equals("o3")'>
+          AND O3 IS NOT NULL
+      </when>
+    </choose>
+    ORDER BY GU_TP, EQUI_INFO_KEY_HAN
+  </select>
+
+  <select id="getDailyCntForData" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
+    SELECT EQUI_TYPE, AVG(EQUI_CNT) EQUI_CNT, SUM(DATA_CNT) DATA_CNT, SUM(720 * EQUI_CNT) NORMAL_DATA_CNT, 
+    SUM(720 * EQUI_CNT) - SUM(DATA_CNT)  BAD_DATA_CNT
+    FROM "TB_ST_DAILY_SEN" WHERE tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+  </select>
+</mapper>

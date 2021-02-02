@@ -1,0 +1,55 @@
+@charset "utf-8";
+
+/* 서울남산체 */
+
+@font-face {
+    font-style: normal;
+    font-weight: 200;
+    font-family: "SeoulNamsan";
+    src: url("../../share/font/SeoulNamsanL.woff2") format("woff2"),
+         url("../../share/font/SeoulNamsanL.woff") format("woff"),
+         url('../../share/font/SeoulNamsanL.ttf') format('truetype'),
+         url("../../share/font/SeoulNamsanL.otf") format("opentype");
+}
+
+@font-face {
+    font-style: normal;
+    font-weight: 300;
+    font-family: "SeoulNamsan";
+    src: url("../../share/font/SeoulNamsanM.woff2") format("woff2"),
+         url("../../share/font/SeoulNamsanM.woff") format("woff"),
+         url('../../share/font/SeoulNamsanM.ttf') format('truetype'),
+         url("../../share/font/SeoulNamsanM.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "SeoulNamsan";
+    font-style: normal;
+    font-weight: 700;
+    src: url("../../share/font/SeoulNamsanB.woff2") format("woff2"),
+         url("../../share/font/SeoulNamsanB.woff") format("woff"),
+         url('../../share/font/SeoulNamsanB.ttf') format('truetype'),
+         url("../../share/font/SeoulNamsanB.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "SeoulNamsan";
+    font-style: normal;
+    font-weight: 800;
+    src: url("../../share/font/SeoulNamsanEB.woff2") format("woff2"),
+         url("../../share/font/SeoulNamsanEB.woff") format("woff"),
+         url('../../share/font/SeoulNamsanEB.ttf') format('truetype'),
+         url("../../share/font/SeoulNamsanEB.otf") format("opentype");
+}
+
+@font-face {
+  font-family: 'Tahoma';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../share/font/Tahoma.eot');
+  src: local('sdf51'),
+       local('sdf51'),
+       url('../../share/font/Tahoma.eot?#iefix') format('embedded-opentype'),
+       url('../../share/font/Tahoma.woff') format('woff'),
+       url('../../share/font/Tahoma.otf') format('opentype');
+}

@@ -1,0 +1,133 @@
+html {
+  overflow-x: hidden;
+}
+.map_wrap {
+  /* height: 840px !important; */
+  height: 100%;
+  overflow: hidden;
+}
+.leaflet-marker-icon {
+  width: 36px !important;
+}
+.leaflet-popup-content-wrapper {
+  background: none;
+  box-shadow: none;
+}
+.map-control {
+  position: absolute;
+  z-index: 9;
+  left: 50px;
+  top: 15px;
+}
+.map-control a {
+  background: white;
+  padding: 6px;
+}
+.map-control > * {
+  vertical-align: top;
+  cursor: pointer;
+}
+.dropdown-menu {
+  top: 24px !important;
+  left: -1px !important;
+}
+
+.notice,
+.notice-box {
+  position: absolute;
+  z-index: 9;
+  background: white;
+  padding: 5px;
+  box-shadow: 1px 1px 1px #d9d9d9;
+  top: 10px;
+  right: 10px;
+  background: #44c8f5;
+  display: none;
+}
+.notice a {
+  cursor: pointer;
+  color: #2f2ffb;
+}
+.notice-box {
+  top: 46px;
+  padding: 10px;
+}
+.pm-divide {
+  display: none;
+  position: absolute;
+  z-index: 9;
+  width: 350px;
+  background: white;
+  bottom: 10px;
+  left: 10px;
+}
+.pm-divide tr > * {
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #c9c9c9;
+}
+.pm-divide thead tr th {
+  color: white;
+}
+
+.pm-divide thead tr th:nth-child(1) {
+  background: #44c8f5;
+}
+
+.pm-divide thead tr th:nth-child(2) {
+  background: #8cc63f;
+}
+
+.pm-divide thead tr th:nth-child(3) {
+  background: #f37021;
+}
+
+.pm-divide thead tr th:nth-child(4) {
+  background: #ed1c24;
+}
+#top {
+  top: 10px;
+  left: 430px;
+  position: absolute;
+  width: 100%;
+  z-index: 9;
+}
+.dropdown-menu {
+  max-height: 720px;
+  overflow-y: scroll;
+}
+.leaflet-popup-tip-container {
+  height: 14px !important;
+}
+#top > div {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.marker-count.leaflet-bar {
+  background: #44c8f5;
+  padding: 4px;
+  color: black;
+  max-width: 70px;
+  text-align: center;
+}
+
+#receive_count {
+  background: #d9edf7;
+  padding: 4px;
+  color: black;
+  max-width: 70px;
+  text-align: center;
+}
+
+#unreceive_count {
+  background: #f59644;
+  padding: 4px;
+  color: black;
+  max-width: 120px;
+  text-align: center;
+}
+.info-wrap {
+  height: 600px;
+  overflow: auto;
+}

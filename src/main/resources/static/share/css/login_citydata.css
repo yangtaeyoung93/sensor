@@ -1,0 +1,79 @@
+
+/* LOGIN */
+/********* reset.css **********/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ul, ol, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
+body{font-family: 'Noto Sans KR', 'sans-serif'; font-size: 14px; line-height: 1.3; color: #222; letter-spacing: -0.02em;}
+
+h1,h2,h3,h4,h5,h6 {font-size: 1em; font-weight: normal;}
+ul,ol,li {list-style-type: none;}
+a {color: inherit; text-decoration: none;}
+img {max-width: 100%; border: 0 none;}
+address {font-style: normal;}
+button {margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; border: 0 none; background-color: transparent; font-family: inherit; font-size: inherit; cursor: pointer;}
+
+.login{background: #f1f4f8 url(../images/common/bg_login.png) no-repeat center;}
+.lg_head{background: #fff; box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.05);}
+.lg_cont{max-width: 1580px; margin: auto; padding: 15px;}
+.lg_cont:after{content: ""; display: block; clear: both;}
+.lg_logo{float: left;}
+.lg_logo2{float: right;}
+.lg_body{padding: 100px 15px 40px; text-align: center;}
+.lg_tit{display: inline-block; margin-bottom: 30px; padding-left: 85px; font-size: 38px; background: url(../images/common/logo_iot.png) no-repeat left center;}
+.lg_box{max-width: 480px; margin: auto; padding: 30px 55px; background: #fff; border-top-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.05);}
+.lg_inp{margin-top: 20px;}
+.lg_inp>li{margin-top: 10px;}
+.lg_inp input{width: 100%; padding: 13px 15px 13px 40px; font-size: 15px; color: #666; border: 1px solid #d2d6de; border-radius: 4px;}
+.lg_inp input::placeholder{color: #999;}
+.lg_id, .lg_pw{position: relative;}
+.lg_id:after, .lg_pw:after{content:""; display: block; width: 20px; height: 20px; background: url(../images/common/icon_login1.png) no-repeat; position: absolute; top: 13px; left: 15px;}
+.lg_inp .lg_pw:after{background-image: url(../images/common/icon_login2.png);}
+.btn_login{width: 100%; margin-top: 15px; padding: 15px; font-size: 18px; color: #fff; background: #2d8ecd; border-radius: 4px;}
+
+.lg_hide{clip: rect(0 0 0 0); width: 1px; height: 1px; position: absolute; overflow: hidden; margin: -1px; padding: 0; border: 0;}
+.lg_chk{margin: 10px 0 22px;}
+.lg_chk:after{content: ""; display: block; clear: both;}
+.lg_chk li{float: left;}
+.check_each{display:inline-block; margin-right: 23px; vertical-align:middle;}
+.check_each:last-child {margin-right:0;}
+.check_each label {position:relative; z-index:1; padding-top: 3px; padding-left:29px; color: #999; cursor:pointer;}
+.check_each .vcheck {display:block; position:absolute; left:0; top:2px; z-index:1; width:22px; height:22px; background: #fff; border: 1px solid #d2d6de; border-radius: 2px;}
+.check_each input:checked + label .vcheck {background: url(../images/common/icon_chk.png) no-repeat center;}
+.check_each input:focus + label .vcheck {outline:1px dotted #222; outline:-webkit-focus-ring-color auto 5px;}
+.btn_box:after{content: ""; display: block; clear: both;}
+.btn_box a{float: left; display: block; padding: 10px; font-size: 15px; text-align: center; border-radius: 4px;}
+.btn_box>span{float: left; display: block; padding: 10px; font-size: 15px; text-align: center; border-radius: 4px;}
+.btn_join{width: 110px; color: #0079c7; border: 1px solid #21a3f8;}
+.btn_pw_sch{width: calc(100% - 115px); margin-left: 5px; color: #888; border: 1px solid #ccc;}
+.btn_pw_sch span{display: inline-block; padding-left: 20px; color: #444; font-weight: 500; position: relative;}
+.btn_pw_sch span:before{content: ""; display: block; width: 1px; height: 12px; background: #ddd; position: absolute; top: 4px; left: 10px;}
+
+@media screen and (max-width: 720px){
+	.lg_body{padding: 50px 15px 30px;}
+	.lg_tit{margin-bottom: 20px; padding-left: 70px; line-height: 30px; font-size: 20px; background-size: auto 30px;}
+	.lg_box{padding: 30px 15px;}
+	.lg_box>img{display: inline-block; width: 80%;}
+	.btn_join{width: 25%;}
+	.btn_pw_sch{width: calc(75% - 5px);}
+}

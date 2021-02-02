@@ -1,0 +1,9 @@
+@charset "UTF-8";
+#board .list td{ position: relative; }
+
+#board .list .info{ display: none; position: absolute; right: 0; z-index: 10; width: 490px; padding:20px; border: 1px solid rgba(221, 221, 221, 0.5); background: rgba(255,255,255,1); box-shadow: 0 0 5px rgba(0,0,0,0.3);  }
+#board .list .info h5{ padding:0 0 10px 0; text-align: left; }
+#board .list .info p{ padding: 3px 0 10px 0; font-size: 15px; }
+#board .list .info table{ border-bottom: 1px solid #ddd; }
+#board .list .info th{ border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; width: 30%; padding: 10px 0; text-align: center; background: #f3f9fe; }
+#board .list .info td{ border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; width: 20%; padding: 10px 0; text-align: center; }

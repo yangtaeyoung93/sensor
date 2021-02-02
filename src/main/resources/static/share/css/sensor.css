@@ -1,0 +1,136 @@
+@charset "UTF-8";
+
+.map_wrap {
+  position: relative;
+}
+.map {
+  height: 100%;
+  background: #e5e5e5;
+}
+
+.map_wrap .info {
+  position: absolute;
+  width: 550px;
+  padding: 20px;
+  border: 1px solid rgba(221, 221, 221, 0.5);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.map_wrap .info h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+.map_wrap .info p {
+  padding: 3px 0 10px 0;
+  font-size: 15px;
+}
+.map_wrap .info table {
+  border-bottom: 1px solid #ddd;
+}
+.map_wrap .info th {
+  border-top: 1px solid #ddd;
+  width: 30%;
+  padding: 10px 0;
+  text-align: center;
+  background: #f3f9fe;
+}
+.map_wrap .info td {
+  border-top: 1px solid #ddd;
+  width: 20%;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.map_wrap .state {
+  position: absolute;
+  top: 50px;
+  left: 5%;
+  width: 550px;
+  padding: 20px;
+  border: 1px solid rgba(221, 221, 221, 0.5);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.map_wrap .state .pd_0 {
+  padding: 0;
+}
+
+.map_wrap .note {
+  position: absolute;
+  top: 50px;
+  right: 5%;
+  width: 435px;
+  padding: 20px;
+  border: 1px solid rgba(221, 221, 221, 0.5);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.map_wrap .note li {
+  padding: 0 2px 5px 2px;
+}
+.map_wrap .note a {
+  display: block;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: #fff;
+  border: 1px solid #ddd;
+  background: #ddd;
+}
+.map_wrap .note li:nth-child(3) a {
+  line-height: 30px;
+}
+.map_wrap .note .on {
+  color: #0c82e9;
+  border: 1px solid #0c82e9;
+  background: #f3f9fe;
+}
+
+.map_wrap .note .graph {
+  height: 230px;
+  border: 1px solid #ddd;
+}
+.map_wrap .note .graph td {
+  text-align: center;
+}
+.map_wrap .note .graph td div {
+  position: relative;
+  width: 13px;
+  height: 150px;
+  margin: 0 auto;
+}
+.map_wrap .note .graph td div span {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.map_wrap .note .graph td p {
+  padding: 10px 0 5px 0;
+}
+.map_wrap .note .graph th {
+  vertical-align: top;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.map_wrap .note h5 {
+  overflow: hidden;
+  padding: 10px 0;
+  line-height: 25px;
+}
+.map_wrap .note h5 div {
+  float: right;
+}
+.map_wrap .note h5 div a {
+  float: left;
+  padding: 0 10px;
+}
+
+.map_wrap .note .board i {
+  display: block;
+  margin: 0 auto;
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+}

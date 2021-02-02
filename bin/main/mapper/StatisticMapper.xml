@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.StatisticMapper">
+	<select id="getSensId" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT VISTOR_SEN_ID FROM TB_MM_EQU_INFO WHERE VISTOR_SEN_ID IS NOT NULL
+  </select>
+
+	<update id="setSensId" parameterType="com.seoulsi.dto.SensorDto">
+  	MERGE INTO TB_MM_EQU_SENSE_INFO
+	  USING DUAL
+	  ON(VISTOR_SEN_ID=#{vistorSenId} AND VISTOR_TM10=#{vistorTm10})
+	  WHEN MATCHED THEN
+	  UPDATE SET VISTOR_CNT=#{vistorCnt}, REG_TIME=SYSDATE
+	  WHEN NOT MATCHED THEN
+	  INSERT (VISTOR_SEN_ID, VISTOR_TM10, VISTOR_CNT, REG_TIME) VALUES(
+	   #{vistorSenId},#{vistorTm10}, #{vistorCnt}, SYSDATE
+	   )
+  </update>
+
+	<select id="getSensData" resultType="com.seoulsi.dto.SensorDto">
+		<![CDATA[
+		SELECT * FROM (
+		SELECT A.VISTOR_SEN_ID, A.VISTOR_CNT, A.VISTOR_TM8||A.VISTOR_TM4 VISTOR_TM10 ,B.GPS_ABB,B.GU_TP, B.GPS_LAT,B.EQUI_INFO_KEY,UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('용도1',B.USE_TP1)||UF_GETCODENAME('용도2',B.USE_TP2)||UF_GETCODENAME('용도3',B.USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM 
+			AS EQUI_INFO_KEY_HAN 
+		FROM (SELECT VISTOR_SEN_ID, VISTOR_CNT, VISTOR_TM8, VISTOR_TM4
+			, ROW_NUMBER() OVER(PARTITION BY VISTOR_SEN_ID ORDER BY VISTOR_TM8 DESC, VISTOR_TM4 DESC) as RowIdx
+		FROM TB_SL_WND_INFO) A, TB_MM_EQU_INFO B 
+		WHERE A.VISTOR_SEN_ID=B.VISTOR_SEN_ID AND A.VISTOR_TM8 = (SELECT MAX(VISTOR_TM8) FROM TB_SL_WND_INFO) AND A.RowIdx=1 
+		ORDER BY VISTOR_CNT DESC)
+	]]>
+	</select>
+
+	<select id="getEquiPerson" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+		<![CDATA[
+	SELECT VISTOR_SEN_ID, VISTOR_TM8, VISTOR_TM4,
+		CASE WHEN VISTOR_CNT < 0 THEN TO_NUMBER(UF_GETPRIOR_VISTOR(VISTOR_TM8, VISTOR_TM4, VISTOR_SEN_ID))
+		ELSE VISTOR_CNT END AS VISTOR_CNT,
+		REG_TIME FROM tb_sl_wnd_info WHERE VISTOR_SEN_ID=#{vistorSenId} AND VISTOR_TM8 BETWEEN #{toDate} AND #{fromDate} ORDER BY VISTOR_TM8, VISTOR_TM4
+	]]>
+	</select>
+
+	<select id="getEquiPersonHour" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+  select VISTOR_TM8, SUBSTR(VISTOR_TM4,1,2) VISTOR_TM4, sum(VISTOR_CNT) VISTOR_CNT
+	from tb_sl_wnd_info
+	where VISTOR_TM8 BETWEEN #{toDate} AND #{fromDate}
+	and VISTOR_SEN_ID= #{vistorSenId}
+	group by  VISTOR_TM8, SUBSTR(VISTOR_TM4,1,2)
+	order by VISTOR_TM8, SUBSTR(VISTOR_TM4,1,2)
+  </select>
+
+	<select id="getSensorList" resultType="com.seoulsi.dto.SensorDto">
+  SELECT VISTOR_SEN_ID, VISTOR_SEN_VIEW_NM, UF_GETCODENAME('설치년도',INST_YEAR)||'-'||UF_GETCODENAME('센서유형',SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',GU_TP)||'-'||MNG_NUM 
+		AS EQUI_INFO_KEY_HAN,INST_LOC, EQUI_INFO_KEY FROM TB_MM_EQU_INFO WHERE VISTOR_SEN_ID IS NOT NULL ORDER BY VISTOR_SEN_VIEW_NM
+  </select>
+</mapper>

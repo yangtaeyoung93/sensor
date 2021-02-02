@@ -1,0 +1,1219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.SensorMapper">
+	<select id="sensorList" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT * FROM TB_SL_DOT_SEN WHERE TM6 = (SELECT max(TM6) FROM TB_SL_DOT_SEN) ORDER BY TM6 DESC
+  </select>
+
+	<select id="sensorEquiList" parameterType="String" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT 
+  			UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN
+  	, EQUI_INFO_KEY, VISTOR_SEN_ID from TB_MM_EQU_INFO B where gu_tp = #{guNum} AND DECODE(B.AIR_YN, 'Y', B.AIR_YN, NULL) IS NULL AND DECODE(B.BARAM_YN, 'Y', B.AIR_YN, NULL) IS NULL ORDER BY B.MNG_NUM
+  </select>
+
+	<select id="sensorEquiListBaram" parameterType="String" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT '바람길'||B.BARAM_MNG_NUM||' ('||UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM||')' AS EQUI_INFO_KEY_HAN, EQUI_INFO_KEY, VISTOR_SEN_ID, BARAM_MNG_NUM from TB_MM_EQU_INFO B where BARAM_YN = 'Y' ORDER BY EQUI_INFO_KEY_HAN
+  </select>
+
+	<select id="sensorEquiListAir" parameterType="String" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT '대기측정소'||B.AIR_MNG_NUM||' ('||UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM||')' AS EQUI_INFO_KEY_HAN, EQUI_INFO_KEY, VISTOR_SEN_ID, AIR_MNG_NUM from TB_MM_EQU_INFO B where AIR_YN = 'Y' ORDER BY EQUI_INFO_KEY_HAN
+  </select>
+
+	<select id="equiSearchAllList" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT 
+ UF_GETCALCDATA('PM10_STD', PM10_STD) AS PM10
+, UF_GETCALCDATA('PM25_STD', PM25_STD) AS PM25
+, UF_GETCALCDATA('TEMP', TEMP) AS TEMP
+, UF_GETCALCDATA('EFFE_TEMP', EFFE_TEMP) AS EFFE_TEMP
+, UF_GETCALCDATA('NOISE', NOISE) AS NOISE
+, UF_GETCALCDATA('HUMI', HUMI) AS HUMI
+, UF_GETCALCDATA('VIBR_X', VIBR_X) AS VIBR_X
+, UF_GETCALCDATA('VIBR_Y', VIBR_Y) AS VIBR_Y
+, UF_GETCALCDATA('VIBR_Z', VIBR_Z) AS VIBR_Z
+, UF_GETCALCDATA('ULTRA_RAYS', ULTRA_RAYS) AS ULTRA_RAYS
+, UF_GETCALCDATA('INTE_ILLU', INTE_ILLU) AS INTE_ILLU
+, UF_GETCALCDATA('wind_dire', WIND_DIRE) WIND_DIRE
+, CO, NO2, SO2, NH3, H2S, O3, ETC1, ETC2, ETC3
+, SUBSTR(TM8, 0, 4)||'-'||SUBSTR(TM8, 5,2)||'-'||SUBSTR(TM8, 7,2)||' '||SUBSTR(TM6, 0, 2)||':'||SUBSTR(TM6, 3,2) TM8 FROM TB_SL_DOT_SEN WHERE TM8 BETWEEN #{toDate} AND #{fromDate} AND EQUI_INFO_KEY=#{equiInfoKey} ORDER BY TM8 ASC, TM6 ASC
+  </select>
+
+	<select id="equiSearchAllListCorrection" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT 
+ UF_GETCALCDATA('PM10', PM10) AS PM10
+, UF_GETCALCDATA('PM25', PM25) AS PM25
+, UF_GETCALCDATA('PM10_STD', PM10_STD) AS PM10_STD
+, UF_GETCALCDATA('PM25_STD', PM25_STD) AS PM25_STD
+,SUBSTR(TM8, 0, 4)||'-'||SUBSTR(TM8, 5,2)||'-'||SUBSTR(TM8, 7,2)||' '||SUBSTR(TM6, 0, 2)||':'||SUBSTR(TM6, 3,2) TM8 FROM TB_SL_DOT_SEN WHERE TM8 BETWEEN #{toDate} AND #{fromDate} AND EQUI_INFO_KEY=#{equiInfoKey} ORDER BY TM8 ASC, TM6 ASC
+  </select>
+
+	<select id="equiSearchListCount" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+  	SELECT COUNT(*) AS total FROM TB_SL_DOT_SEN WHERE TM8 BETWEEN #{toDate} AND #{fromDate} AND EQUI_INFO_KEY=#{equiInfoKey}
+  </select>
+
+	<select id="equiSearchList" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+		<![CDATA[
+  	SELECT A.* FROM (SELECT AA.*, ROWNUM NUM FROM (SELECT UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',B.USE_TP1)||UF_GETCODENAME('용도3',B.USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM 
+	AS EQUI_INFO_KEY, A.TM6, A.TM8, UF_GETCALCDATA('PM25', A.PM25_STD) PM25,  UF_GETCALCDATA('PM10', A.PM10_STD) PM10, A.EFFE_TEMP,
+	 UF_GETCALCDATA('HUMI', A.HUMI) HUMI,  UF_GETCALCDATA('NOISE', A.NOISE) NOISE,  A.TEMP, UF_GETCALCDATA('WIND_DIRE', A.WIND_DIRE) WIND_DIRE,  UF_GETCALCDATA('WIND_SPEED', A.WIND_SPEED) WIND_SPEED,  UF_GETCALCDATA('INTE_ILLU', A.INTE_ILLU) INTE_ILLU,  UF_GETCALCDATA('ULTRA_RAYS', A.ULTRA_RAYS) ULTRA_RAYS, 
+	 UF_GETCALCDATA('VIBR_X', A.VIBR_X) VIBR_X,  UF_GETCALCDATA('VIBR_Y', A.VIBR_Y) VIBR_Y,  UF_GETCALCDATA('VIBR_Z', A.VIBR_Z) VIBR_Z, A.CO, A.NO2, A.SO2, A.NH3, A.H2S, A.O3, A.ETC1, A.ETC2, A.ETC3 FROM TB_SL_DOT_SEN A, TB_MM_EQU_INFO B 
+	WHERE A.TM8 BETWEEN #{toDate} AND #{fromDate} AND A.EQUI_INFO_KEY=#{equiInfoKey} AND A.EQUI_INFO_KEY = B.EQUI_INFO_KEY AND B.USE_YN='Y' 
+	ORDER BY TM8 DESC, TM6 DESC) AA ) A
+  	]]>
+	</select>
+
+	<select id="equiSearchListCorrection" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+		<![CDATA[
+  	SELECT A.* FROM (SELECT AA.*, ROWNUM NUM FROM (SELECT UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',B.USE_TP1)||UF_GETCODENAME('용도3',B.USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM 
+	AS EQUI_INFO_KEY, A.TM6, A.TM8, UF_GETCALCDATA('PM25', A.PM25) PM25,  UF_GETCALCDATA('PM10', A.PM10) PM10, UF_GETCALCDATA('PM25', A.PM25_STD) PM25_STD,  UF_GETCALCDATA('PM10', A.PM10_STD) PM10_STD FROM TB_SL_DOT_SEN A, TB_MM_EQU_INFO B 
+	WHERE A.TM8 BETWEEN #{toDate} AND #{fromDate} AND A.EQUI_INFO_KEY=#{equiInfoKey} AND A.EQUI_INFO_KEY = B.EQUI_INFO_KEY AND B.USE_YN='Y' 
+	ORDER BY TM8 DESC, TM6 DESC) AA ) A
+  	]]>
+	</select>
+
+	<select id="guData" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.GuDto">
+		SELECT 
+	  TM8,
+		<choose>
+			<when test='type.equals("0")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(PM10),-1,0,PM10)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(PM10),-1,0,PM10)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(PM10),-1,0,PM10)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(PM10),-1,0,PM10)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(PM10),-1,0,PM10)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(PM10),-1,0,PM10)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(PM10),-1,0,PM10)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(PM10),-1,0,PM10)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(PM10),-1,0,PM10)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(PM10),-1,0,PM10)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(PM10),-1,0,PM10)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(PM10),-1,0,PM10)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(PM10),-1,0,PM10)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(PM10),-1,0,PM10)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(PM10),-1,0,PM10)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(PM10),-1,0,PM10)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(PM10),-1,0,PM10)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(PM10),-1,0,PM10)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(PM10),-1,0,PM10)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(PM10),-1,0,PM10)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(PM10),-1,0,PM10)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(PM10),-1,0,PM10)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(PM10),-1,0,PM10)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(PM10),-1,0,PM10)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(PM10),-1,0,PM10)))) jg
+		</when>
+			<when test='type.equals("1")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(PM25),-1,0,PM25)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(PM25),-1,0,PM25)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(PM25),-1,0,PM25)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(PM25),-1,0,PM25)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(PM25),-1,0,PM25)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(PM25),-1,0,PM25)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(PM25),-1,0,PM25)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(PM25),-1,0,PM25)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(PM25),-1,0,PM25)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(PM25),-1,0,PM25)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(PM25),-1,0,PM25)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(PM25),-1,0,PM25)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(PM25),-1,0,PM25)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(PM25),-1,0,PM25)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(PM25),-1,0,PM25)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(PM25),-1,0,PM25)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(PM25),-1,0,PM25)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(PM25),-1,0,PM25)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(PM25),-1,0,PM25)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(PM25),-1,0,PM25)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(PM25),-1,0,PM25)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(PM25),-1,0,PM25)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(PM25),-1,0,PM25)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(PM25),-1,0,PM25)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(PM25),-1,0,PM25)))) jg
+		</when>
+			<when test='type.equals("2")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(NOISE),-1,0,NOISE)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(NOISE),-1,0,NOISE)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(NOISE),-1,0,NOISE)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(NOISE),-1,0,NOISE)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(NOISE),-1,0,NOISE)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(NOISE),-1,0,NOISE)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(NOISE),-1,0,NOISE)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(NOISE),-1,0,NOISE)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(NOISE),-1,0,NOISE)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(NOISE),-1,0,NOISE)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(NOISE),-1,0,NOISE)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(NOISE),-1,0,NOISE)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(NOISE),-1,0,NOISE)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(NOISE),-1,0,NOISE)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(NOISE),-1,0,NOISE)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(NOISE),-1,0,NOISE)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(NOISE),-1,0,NOISE)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(NOISE),-1,0,NOISE)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(NOISE),-1,0,NOISE)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(NOISE),-1,0,NOISE)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(NOISE),-1,0,NOISE)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(NOISE),-1,0,NOISE)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(NOISE),-1,0,NOISE)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(NOISE),-1,0,NOISE)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(NOISE),-1,0,NOISE)))) jg
+		</when>
+			<when test='type.equals("3")'>
+		    (round(AVG(decode(GU_TP, '0', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gn,
+			(round(AVG(decode(GU_TP, '1', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gd,
+			(round(AVG(decode(GU_TP, '2', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gb,
+			(round(AVG(decode(GU_TP, '3', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gs,
+			(round(AVG(decode(GU_TP, '4', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ga,
+			(round(AVG(decode(GU_TP, '5', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gi,
+			(round(AVG(decode(GU_TP, '6', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gr,
+			(round(AVG(decode(GU_TP, '7', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gc,
+			(round(AVG(decode(GU_TP, '8', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 no,
+			(round(AVG(decode(GU_TP, '9', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 db,
+			(round(AVG(decode(GU_TP, '10', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ddm,
+			(round(AVG(decode(GU_TP, '11', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 dj,
+			(round(AVG(decode(GU_TP, '12', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 mp,
+			(round(AVG(decode(GU_TP, '13', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sdm,
+			(round(AVG(decode(GU_TP, '14', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sc,
+			(round(AVG(decode(GU_TP, '15', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sd,
+			(round(AVG(decode(GU_TP, '16', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sb,
+			(round(AVG(decode(GU_TP, '17', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sp,
+			(round(AVG(decode(GU_TP, '18', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 yc,
+			(round(AVG(decode(GU_TP, '19', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ydp,
+			(round(AVG(decode(GU_TP, '20', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ys,
+			(round(AVG(decode(GU_TP, '21', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ep,
+			(round(AVG(decode(GU_TP, '22', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jr,
+			(round(AVG(decode(GU_TP, '23', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jn,
+			(round(AVG(decode(GU_TP, '24', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jg
+		</when>
+			<when test='type.equals("4")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(HUMI),-1,0,HUMI)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(HUMI),-1,0,HUMI)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(HUMI),-1,0,HUMI)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(HUMI),-1,0,HUMI)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(HUMI),-1,0,HUMI)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(HUMI),-1,0,HUMI)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(HUMI),-1,0,HUMI)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(HUMI),-1,0,HUMI)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(HUMI),-1,0,HUMI)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(HUMI),-1,0,HUMI)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(HUMI),-1,0,HUMI)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(HUMI),-1,0,HUMI)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(HUMI),-1,0,HUMI)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(HUMI),-1,0,HUMI)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(HUMI),-1,0,HUMI)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(HUMI),-1,0,HUMI)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(HUMI),-1,0,HUMI)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(HUMI),-1,0,HUMI)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(HUMI),-1,0,HUMI)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(HUMI),-1,0,HUMI)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(HUMI),-1,0,HUMI)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(HUMI),-1,0,HUMI)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(HUMI),-1,0,HUMI)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(HUMI),-1,0,HUMI)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(HUMI),-1,0,HUMI)))) jg
+		</when>
+			<when test='type.equals("5")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jg
+		</when>
+			<when test='type.equals("6")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jg
+		</when>
+			<when test='type.equals("7")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jg
+		</when>
+			<when test='type.equals("8")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jg
+		</when>
+			<when test='type.equals("9")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(CO),-1,0,CO)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(CO),-1,0,CO)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(CO),-1,0,CO)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(CO),-1,0,CO)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(CO),-1,0,CO)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(CO),-1,0,CO)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(CO),-1,0,CO)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(CO),-1,0,CO)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(CO),-1,0,CO)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(CO),-1,0,CO)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(CO),-1,0,CO)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(CO),-1,0,CO)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(CO),-1,0,CO)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(CO),-1,0,CO)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(CO),-1,0,CO)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(CO),-1,0,CO)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(CO),-1,0,CO)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(CO),-1,0,CO)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(CO),-1,0,CO)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(CO),-1,0,CO)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(CO),-1,0,CO)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(CO),-1,0,CO)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(CO),-1,0,CO)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(CO),-1,0,CO)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(CO),-1,0,CO)))) jg
+		</when>
+			<when test='type.equals("10")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(NO2),-1,0,NO2)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(NO2),-1,0,NO2)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(NO2),-1,0,NO2)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(NO2),-1,0,NO2)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(NO2),-1,0,NO2)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(NO2),-1,0,NO2)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(NO2),-1,0,NO2)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(NO2),-1,0,NO2)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(NO2),-1,0,NO2)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(NO2),-1,0,NO2)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(NO2),-1,0,NO2)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(NO2),-1,0,NO2)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(NO2),-1,0,NO2)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(NO2),-1,0,NO2)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(NO2),-1,0,NO2)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(NO2),-1,0,NO2)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(NO2),-1,0,NO2)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(NO2),-1,0,NO2)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(NO2),-1,0,NO2)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(NO2),-1,0,NO2)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(NO2),-1,0,NO2)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(NO2),-1,0,NO2)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(NO2),-1,0,NO2)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(NO2),-1,0,NO2)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(NO2),-1,0,NO2)))) jg
+		</when>
+			<when test='type.equals("11")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(SO2),-1,0,SO2)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(SO2),-1,0,SO2)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(SO2),-1,0,SO2)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(SO2),-1,0,SO2)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(SO2),-1,0,SO2)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(SO2),-1,0,SO2)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(SO2),-1,0,SO2)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(SO2),-1,0,SO2)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(SO2),-1,0,SO2)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(SO2),-1,0,SO2)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(SO2),-1,0,SO2)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(SO2),-1,0,SO2)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(SO2),-1,0,SO2)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(SO2),-1,0,SO2)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(SO2),-1,0,SO2)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(SO2),-1,0,SO2)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(SO2),-1,0,SO2)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(SO2),-1,0,SO2)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(SO2),-1,0,SO2)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(SO2),-1,0,SO2)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(SO2),-1,0,SO2)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(SO2),-1,0,SO2)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(SO2),-1,0,SO2)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(SO2),-1,0,SO2)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(SO2),-1,0,SO2)))) jg
+		</when>
+			<when test='type.equals("12")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(NH3),-1,0,NH3)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(NH3),-1,0,NH3)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(NH3),-1,0,NH3)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(NH3),-1,0,NH3)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(NH3),-1,0,NH3)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(NH3),-1,0,NH3)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(NH3),-1,0,NH3)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(NH3),-1,0,NH3)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(NH3),-1,0,NH3)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(NH3),-1,0,NH3)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(NH3),-1,0,NH3)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(NH3),-1,0,NH3)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(NH3),-1,0,NH3)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(NH3),-1,0,NH3)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(NH3),-1,0,NH3)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(NH3),-1,0,NH3)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(NH3),-1,0,NH3)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(NH3),-1,0,NH3)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(NH3),-1,0,NH3)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(NH3),-1,0,NH3)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(NH3),-1,0,NH3)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(NH3),-1,0,NH3)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(NH3),-1,0,NH3)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(NH3),-1,0,NH3)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(NH3),-1,0,NH3)))) jg
+		</when>
+			<when test='type.equals("13")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(H2S),-1,0,H2S)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(H2S),-1,0,H2S)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(H2S),-1,0,H2S)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(H2S),-1,0,H2S)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(H2S),-1,0,H2S)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(H2S),-1,0,H2S)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(H2S),-1,0,H2S)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(H2S),-1,0,H2S)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(H2S),-1,0,H2S)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(H2S),-1,0,H2S)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(H2S),-1,0,H2S)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(H2S),-1,0,H2S)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(H2S),-1,0,H2S)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(H2S),-1,0,H2S)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(H2S),-1,0,H2S)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(H2S),-1,0,H2S)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(H2S),-1,0,H2S)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(H2S),-1,0,H2S)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(H2S),-1,0,H2S)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(H2S),-1,0,H2S)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(H2S),-1,0,H2S)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(H2S),-1,0,H2S)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(H2S),-1,0,H2S)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(H2S),-1,0,H2S)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(H2S),-1,0,H2S)))) jg
+		</when>
+			<when test='type.equals("14")'>
+		    round(AVG(decode(GU_TP, '0', decode(   sign(O3),-1,0,O3)))) gn,
+			round(AVG(decode(GU_TP, '1', decode(   sign(O3),-1,0,O3)))) gd,
+			round(AVG(decode(GU_TP, '2', decode(   sign(O3),-1,0,O3)))) gb,
+			round(AVG(decode(GU_TP, '3', decode(   sign(O3),-1,0,O3)))) gs,
+			round(AVG(decode(GU_TP, '4', decode(   sign(O3),-1,0,O3)))) ga,
+			round(AVG(decode(GU_TP, '5', decode(   sign(O3),-1,0,O3)))) gi,
+			round(AVG(decode(GU_TP, '6', decode(   sign(O3),-1,0,O3)))) gr,
+			round(AVG(decode(GU_TP, '7', decode(   sign(O3),-1,0,O3)))) gc,
+			round(AVG(decode(GU_TP, '8', decode(   sign(O3),-1,0,O3)))) no,
+			round(AVG(decode(GU_TP, '9', decode(   sign(O3),-1,0,O3)))) db,
+			round(AVG(decode(GU_TP, '10', decode(   sign(O3),-1,0,O3)))) ddm,
+			round(AVG(decode(GU_TP, '11', decode(   sign(O3),-1,0,O3)))) dj,
+			round(AVG(decode(GU_TP, '12', decode(   sign(O3),-1,0,O3)))) mp,
+			round(AVG(decode(GU_TP, '13', decode(   sign(O3),-1,0,O3)))) sdm,
+			round(AVG(decode(GU_TP, '14', decode(   sign(O3),-1,0,O3)))) sc,
+			round(AVG(decode(GU_TP, '15', decode(   sign(O3),-1,0,O3)))) sd,
+			round(AVG(decode(GU_TP, '16', decode(   sign(O3),-1,0,O3)))) sb,
+			round(AVG(decode(GU_TP, '17', decode(   sign(O3),-1,0,O3)))) sp,
+			round(AVG(decode(GU_TP, '18', decode(   sign(O3),-1,0,O3)))) yc,
+			round(AVG(decode(GU_TP, '19', decode(   sign(O3),-1,0,O3)))) ydp,
+			round(AVG(decode(GU_TP, '20', decode(   sign(O3),-1,0,O3)))) ys,
+			round(AVG(decode(GU_TP, '21', decode(   sign(O3),-1,0,O3)))) ep,
+			round(AVG(decode(GU_TP, '22', decode(   sign(O3),-1,0,O3)))) jr,
+			round(AVG(decode(GU_TP, '23', decode(   sign(O3),-1,0,O3)))) jn,
+			round(AVG(decode(GU_TP, '24', decode(   sign(O3),-1,0,O3)))) jg
+		</when>
+
+		</choose>
+		FROM  TB_SL_DOT_SEN  SEN, TB_MM_EQU_INFO  INFO
+	WHERE SEN.EQUI_INFO_KEY = INFO.EQUI_INFO_KEY 
+	AND TM8 BETWEEN #{toDate} AND #{fromDate} 
+	GROUP BY TM8
+	ORDER BY TM8 ASC
+	</select>
+	<select id="guDataAvg" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.GuDto">
+		SELECT 
+		round(AVG(gn)) gn,
+		round(AVG(gd)) gd,
+		round(AVG(gb)) gb,
+		round(AVG(gs)) gs,
+		round(AVG(ga)) ga,
+		round(AVG(gi)) gi,
+		round(AVG(gr)) gr,
+		round(AVG(gc)) gc,
+		round(AVG(no)) no,
+		round(AVG(db)) db,
+		round(AVG(ddm)) ddm,
+		round(AVG(dj)) dj,
+		round(AVG(mp)) mp,
+		round(AVG(sdm)) sdm,
+		round(AVG(sc)) sc,
+		round(AVG(sd)) sd,
+		round(AVG(sb)) sb,
+		round(AVG(sp)) sp,
+		round(AVG(yc)) yc,
+		round(AVG(ydp)) ydp,
+		round(AVG(ys)) ys,
+		round(AVG(ep)) ep,
+		round(AVG(jr)) jr,
+		round(AVG(jn)) jn,
+		round(AVG(jg)) jg
+	FROM (SELECT
+		<choose>
+			<when test='type.equals("0")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(PM10),-1,0,PM10)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(PM10),-1,0,PM10)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(PM10),-1,0,PM10)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(PM10),-1,0,PM10)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(PM10),-1,0,PM10)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(PM10),-1,0,PM10)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(PM10),-1,0,PM10)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(PM10),-1,0,PM10)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(PM10),-1,0,PM10)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(PM10),-1,0,PM10)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(PM10),-1,0,PM10)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(PM10),-1,0,PM10)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(PM10),-1,0,PM10)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(PM10),-1,0,PM10)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(PM10),-1,0,PM10)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(PM10),-1,0,PM10)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(PM10),-1,0,PM10)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(PM10),-1,0,PM10)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(PM10),-1,0,PM10)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(PM10),-1,0,PM10)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(PM10),-1,0,PM10)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(PM10),-1,0,PM10)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(PM10),-1,0,PM10)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(PM10),-1,0,PM10)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(PM10),-1,0,PM10)))) jg
+	  </when>
+			<when test='type.equals("1")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(PM25),-1,0,PM25)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(PM25),-1,0,PM25)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(PM25),-1,0,PM25)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(PM25),-1,0,PM25)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(PM25),-1,0,PM25)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(PM25),-1,0,PM25)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(PM25),-1,0,PM25)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(PM25),-1,0,PM25)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(PM25),-1,0,PM25)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(PM25),-1,0,PM25)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(PM25),-1,0,PM25)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(PM25),-1,0,PM25)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(PM25),-1,0,PM25)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(PM25),-1,0,PM25)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(PM25),-1,0,PM25)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(PM25),-1,0,PM25)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(PM25),-1,0,PM25)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(PM25),-1,0,PM25)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(PM25),-1,0,PM25)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(PM25),-1,0,PM25)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(PM25),-1,0,PM25)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(PM25),-1,0,PM25)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(PM25),-1,0,PM25)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(PM25),-1,0,PM25)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(PM25),-1,0,PM25)))) jg
+	  </when>
+			<when test='type.equals("2")'>
+		round(AVG(decode(GU_TP, '0', decode(   sign(NOISE),-1,0,NOISE)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(NOISE),-1,0,NOISE)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(NOISE),-1,0,NOISE)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(NOISE),-1,0,NOISE)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(NOISE),-1,0,NOISE)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(NOISE),-1,0,NOISE)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(NOISE),-1,0,NOISE)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(NOISE),-1,0,NOISE)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(NOISE),-1,0,NOISE)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(NOISE),-1,0,NOISE)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(NOISE),-1,0,NOISE)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(NOISE),-1,0,NOISE)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(NOISE),-1,0,NOISE)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(NOISE),-1,0,NOISE)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(NOISE),-1,0,NOISE)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(NOISE),-1,0,NOISE)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(NOISE),-1,0,NOISE)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(NOISE),-1,0,NOISE)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(NOISE),-1,0,NOISE)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(NOISE),-1,0,NOISE)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(NOISE),-1,0,NOISE)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(NOISE),-1,0,NOISE)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(NOISE),-1,0,NOISE)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(NOISE),-1,0,NOISE)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(NOISE),-1,0,NOISE)))) jg
+	  </when>
+			<when test='type.equals("3")'>
+		  (round(AVG(decode(GU_TP, '0', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gn,
+		  (round(AVG(decode(GU_TP, '1', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gd,
+		  (round(AVG(decode(GU_TP, '2', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gb,
+		  (round(AVG(decode(GU_TP, '3', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gs,
+		  (round(AVG(decode(GU_TP, '4', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ga,
+		  (round(AVG(decode(GU_TP, '5', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gi,
+		  (round(AVG(decode(GU_TP, '6', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gr,
+		  (round(AVG(decode(GU_TP, '7', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 gc,
+		  (round(AVG(decode(GU_TP, '8', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 no,
+		  (round(AVG(decode(GU_TP, '9', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 db,
+		  (round(AVG(decode(GU_TP, '10', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ddm,
+		  (round(AVG(decode(GU_TP, '11', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 dj,
+		  (round(AVG(decode(GU_TP, '12', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 mp,
+		  (round(AVG(decode(GU_TP, '13', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sdm,
+		  (round(AVG(decode(GU_TP, '14', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sc,
+		  (round(AVG(decode(GU_TP, '15', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sd,
+		  (round(AVG(decode(GU_TP, '16', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sb,
+		  (round(AVG(decode(GU_TP, '17', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 sp,
+		  (round(AVG(decode(GU_TP, '18', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 yc,
+		  (round(AVG(decode(GU_TP, '19', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ydp,
+		  (round(AVG(decode(GU_TP, '20', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ys,
+		  (round(AVG(decode(GU_TP, '21', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 ep,
+		  (round(AVG(decode(GU_TP, '22', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jr,
+		  (round(AVG(decode(GU_TP, '23', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jn,
+		  (round(AVG(decode(GU_TP, '24', decode(   sign(TEMP),-1,0,TEMP))))/10	) - 100 jg
+	  </when>
+			<when test='type.equals("4")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(HUMI),-1,0,HUMI)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(HUMI),-1,0,HUMI)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(HUMI),-1,0,HUMI)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(HUMI),-1,0,HUMI)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(HUMI),-1,0,HUMI)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(HUMI),-1,0,HUMI)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(HUMI),-1,0,HUMI)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(HUMI),-1,0,HUMI)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(HUMI),-1,0,HUMI)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(HUMI),-1,0,HUMI)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(HUMI),-1,0,HUMI)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(HUMI),-1,0,HUMI)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(HUMI),-1,0,HUMI)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(HUMI),-1,0,HUMI)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(HUMI),-1,0,HUMI)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(HUMI),-1,0,HUMI)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(HUMI),-1,0,HUMI)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(HUMI),-1,0,HUMI)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(HUMI),-1,0,HUMI)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(HUMI),-1,0,HUMI)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(HUMI),-1,0,HUMI)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(HUMI),-1,0,HUMI)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(HUMI),-1,0,HUMI)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(HUMI),-1,0,HUMI)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(HUMI),-1,0,HUMI)))) jg
+	  </when>
+			<when test='type.equals("5")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(WIND_DIRE),-1,0,WIND_DIRE)))) jg
+	  </when>
+			<when test='type.equals("6")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(WIND_SPEED),-1,0,WIND_SPEED)))) jg
+	  </when>
+			<when test='type.equals("7")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(INTE_ILLU),-1,0,INTE_ILLU)))) jg
+	  </when>
+			<when test='type.equals("8")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(ULTRA_RAYS),-1,0,ULTRA_RAYS/10)))) jg
+	  </when>
+			<when test='type.equals("9")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(CO),-1,0,CO)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(CO),-1,0,CO)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(CO),-1,0,CO)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(CO),-1,0,CO)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(CO),-1,0,CO)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(CO),-1,0,CO)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(CO),-1,0,CO)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(CO),-1,0,CO)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(CO),-1,0,CO)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(CO),-1,0,CO)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(CO),-1,0,CO)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(CO),-1,0,CO)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(CO),-1,0,CO)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(CO),-1,0,CO)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(CO),-1,0,CO)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(CO),-1,0,CO)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(CO),-1,0,CO)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(CO),-1,0,CO)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(CO),-1,0,CO)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(CO),-1,0,CO)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(CO),-1,0,CO)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(CO),-1,0,CO)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(CO),-1,0,CO)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(CO),-1,0,CO)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(CO),-1,0,CO)))) jg
+	  </when>
+			<when test='type.equals("10")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(NO2),-1,0,NO2)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(NO2),-1,0,NO2)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(NO2),-1,0,NO2)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(NO2),-1,0,NO2)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(NO2),-1,0,NO2)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(NO2),-1,0,NO2)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(NO2),-1,0,NO2)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(NO2),-1,0,NO2)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(NO2),-1,0,NO2)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(NO2),-1,0,NO2)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(NO2),-1,0,NO2)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(NO2),-1,0,NO2)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(NO2),-1,0,NO2)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(NO2),-1,0,NO2)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(NO2),-1,0,NO2)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(NO2),-1,0,NO2)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(NO2),-1,0,NO2)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(NO2),-1,0,NO2)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(NO2),-1,0,NO2)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(NO2),-1,0,NO2)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(NO2),-1,0,NO2)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(NO2),-1,0,NO2)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(NO2),-1,0,NO2)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(NO2),-1,0,NO2)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(NO2),-1,0,NO2)))) jg
+	  </when>
+			<when test='type.equals("11")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(SO2),-1,0,SO2)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(SO2),-1,0,SO2)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(SO2),-1,0,SO2)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(SO2),-1,0,SO2)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(SO2),-1,0,SO2)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(SO2),-1,0,SO2)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(SO2),-1,0,SO2)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(SO2),-1,0,SO2)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(SO2),-1,0,SO2)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(SO2),-1,0,SO2)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(SO2),-1,0,SO2)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(SO2),-1,0,SO2)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(SO2),-1,0,SO2)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(SO2),-1,0,SO2)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(SO2),-1,0,SO2)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(SO2),-1,0,SO2)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(SO2),-1,0,SO2)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(SO2),-1,0,SO2)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(SO2),-1,0,SO2)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(SO2),-1,0,SO2)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(SO2),-1,0,SO2)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(SO2),-1,0,SO2)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(SO2),-1,0,SO2)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(SO2),-1,0,SO2)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(SO2),-1,0,SO2)))) jg
+	  </when>
+			<when test='type.equals("12")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(NH3),-1,0,NH3)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(NH3),-1,0,NH3)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(NH3),-1,0,NH3)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(NH3),-1,0,NH3)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(NH3),-1,0,NH3)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(NH3),-1,0,NH3)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(NH3),-1,0,NH3)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(NH3),-1,0,NH3)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(NH3),-1,0,NH3)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(NH3),-1,0,NH3)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(NH3),-1,0,NH3)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(NH3),-1,0,NH3)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(NH3),-1,0,NH3)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(NH3),-1,0,NH3)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(NH3),-1,0,NH3)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(NH3),-1,0,NH3)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(NH3),-1,0,NH3)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(NH3),-1,0,NH3)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(NH3),-1,0,NH3)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(NH3),-1,0,NH3)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(NH3),-1,0,NH3)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(NH3),-1,0,NH3)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(NH3),-1,0,NH3)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(NH3),-1,0,NH3)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(NH3),-1,0,NH3)))) jg
+	  </when>
+			<when test='type.equals("13")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(H2S),-1,0,H2S)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(H2S),-1,0,H2S)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(H2S),-1,0,H2S)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(H2S),-1,0,H2S)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(H2S),-1,0,H2S)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(H2S),-1,0,H2S)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(H2S),-1,0,H2S)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(H2S),-1,0,H2S)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(H2S),-1,0,H2S)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(H2S),-1,0,H2S)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(H2S),-1,0,H2S)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(H2S),-1,0,H2S)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(H2S),-1,0,H2S)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(H2S),-1,0,H2S)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(H2S),-1,0,H2S)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(H2S),-1,0,H2S)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(H2S),-1,0,H2S)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(H2S),-1,0,H2S)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(H2S),-1,0,H2S)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(H2S),-1,0,H2S)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(H2S),-1,0,H2S)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(H2S),-1,0,H2S)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(H2S),-1,0,H2S)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(H2S),-1,0,H2S)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(H2S),-1,0,H2S)))) jg
+	  </when>
+			<when test='type.equals("14")'>
+		  round(AVG(decode(GU_TP, '0', decode(   sign(O3),-1,0,O3)))) gn,
+		  round(AVG(decode(GU_TP, '1', decode(   sign(O3),-1,0,O3)))) gd,
+		  round(AVG(decode(GU_TP, '2', decode(   sign(O3),-1,0,O3)))) gb,
+		  round(AVG(decode(GU_TP, '3', decode(   sign(O3),-1,0,O3)))) gs,
+		  round(AVG(decode(GU_TP, '4', decode(   sign(O3),-1,0,O3)))) ga,
+		  round(AVG(decode(GU_TP, '5', decode(   sign(O3),-1,0,O3)))) gi,
+		  round(AVG(decode(GU_TP, '6', decode(   sign(O3),-1,0,O3)))) gr,
+		  round(AVG(decode(GU_TP, '7', decode(   sign(O3),-1,0,O3)))) gc,
+		  round(AVG(decode(GU_TP, '8', decode(   sign(O3),-1,0,O3)))) no,
+		  round(AVG(decode(GU_TP, '9', decode(   sign(O3),-1,0,O3)))) db,
+		  round(AVG(decode(GU_TP, '10', decode(   sign(O3),-1,0,O3)))) ddm,
+		  round(AVG(decode(GU_TP, '11', decode(   sign(O3),-1,0,O3)))) dj,
+		  round(AVG(decode(GU_TP, '12', decode(   sign(O3),-1,0,O3)))) mp,
+		  round(AVG(decode(GU_TP, '13', decode(   sign(O3),-1,0,O3)))) sdm,
+		  round(AVG(decode(GU_TP, '14', decode(   sign(O3),-1,0,O3)))) sc,
+		  round(AVG(decode(GU_TP, '15', decode(   sign(O3),-1,0,O3)))) sd,
+		  round(AVG(decode(GU_TP, '16', decode(   sign(O3),-1,0,O3)))) sb,
+		  round(AVG(decode(GU_TP, '17', decode(   sign(O3),-1,0,O3)))) sp,
+		  round(AVG(decode(GU_TP, '18', decode(   sign(O3),-1,0,O3)))) yc,
+		  round(AVG(decode(GU_TP, '19', decode(   sign(O3),-1,0,O3)))) ydp,
+		  round(AVG(decode(GU_TP, '20', decode(   sign(O3),-1,0,O3)))) ys,
+		  round(AVG(decode(GU_TP, '21', decode(   sign(O3),-1,0,O3)))) ep,
+		  round(AVG(decode(GU_TP, '22', decode(   sign(O3),-1,0,O3)))) jr,
+		  round(AVG(decode(GU_TP, '23', decode(   sign(O3),-1,0,O3)))) jn,
+		  round(AVG(decode(GU_TP, '24', decode(   sign(O3),-1,0,O3)))) jg
+	  </when>
+
+		</choose>
+		FROM  TB_SL_DOT_SEN  SEN, TB_MM_EQU_INFO  INFO
+  WHERE SEN.EQUI_INFO_KEY = INFO.EQUI_INFO_KEY 
+  AND TM8 BETWEEN #{toDate} AND #{fromDate} 
+  GROUP BY TM8
+  ORDER BY TM8 ASC)
+	</select>
+	<select id="baramGuData" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.GuDto">
+   SELECT INFO.BARAM_NM,
+UF_WINDVECTORAVG(AVG(SEN.WIND_DIRE)) WIND_DIRE, ROUND(AVG(SEN.WIND_SPEED)/10,1) WIND_SPEED 
+FROM TB_MM_EQU_INFO INFO LEFT OUTER JOIN TB_SL_DOT_SEN
+SEN ON SEN.EQUI_INFO_KEY = INFO.EQUI_INFO_KEY and SEN.TM8 = #{toDate} AND SEN.wind_dire not in ('-999','0','-1') and SEN.wind_dire is not null
+and baram_yn='Y'
+where INFO.BARAM_NM is not null
+group by INFO.BARAM_NM
+  </select>
+	<select id="getEquiGpsInfo" resultType="com.seoulsi.dto.SensorDto">
+		SELECT AA.*, DECODE(AA.WIND_DIRE_CALC, -999, AA.WIND_DIRE_CALC, AA.WIND_DIRE_CALC/10) AS WIND_DIRE  FROM (
+			SELECT A.*,AE AS EQUI_INFO_KEY,CC_DUST_RANGE('미세먼지', A.PM10) AS PM10_HAN,CC_DUST_RANGE('초미세먼지', A.PM25) AS PM25_HAN,UF_GETCODENAME('설치년도',A.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',A.SENSE_TP)||UF_GETCODENAME('용도1',A.USE_TP1)||UF_GETCODENAME('용도3',A.USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',A.GU_TP)||'-'||A.MNG_NUM AS EQUI_INFO_KEY_HAN , UF_GETCODENAME('설치년도',A.INST_YEAR) TO_DATE,
+			case when REG_DATE > sysdate - 10/24/60 then 1 else 0 end TIME_CHECK
+			FROM (
+				SELECT A.VISTOR_SEN_ID,B.TM8,B.PM1,B.TEMP,B.HUMI,B.WIND_DIRE AS WIND_DIRE_CALC,DECODE(B.WIND_SPEED, '-999', '-', B.WIND_SPEED/10) WIND_SPEED,B.GUST_DIRE,
+			B.GUST_SPEED,B.INTE_ILLU,B.ULTRA_RAYS/10 ULTRA_RAYS,B.NOISE,B.VIBR_X/100 VIBR_X ,B.VIBR_Y/100 VIBR_Y ,B.VIBR_Z/100 VIBR_Z ,B.VIBR_X_MAX/100 VIBR_X_MAX ,
+			B.VIBR_Y_MAX/100 VIBR_Y_MAX ,B.VIBR_Z_MAX/100 VIBR_Z_MAX ,B.EFFE_TEMP AS EFFE_TEMP,B.SEN_STAT,B.ETC1,B.ETC2,B.ETC3,B.PM25_STD AS PM25,B.PM10_STD AS PM10, B.CO, B.NO2, B.SO2, B.NH3, B.H2S, B.O3, 
+			B.PM1_STD,B.REG_DATE, A.MNG_NUM, A.GU_TP,A.SENSE_TP, A.BARAM_YN, A.BARAM_MNG_NUM, A.AIR_YN, A.AIR_MNG_NUM, A.USE_TP1, A.USE_TP2, A.USE_TP3, A.INST_YEAR, A.GPS_ABB, A.GPS_LAT, A.EQUI_INFO_KEY AE, B.EQUI_INFO_KEY BE FROM TB_MM_EQU_INFO A LEFT OUTER JOIN TB_SL_DOT_SEN_LAST B 
+				ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY and B.tm8=to_char(SYSDATE,'YYYYMMDD') where A.use_yn='Y'
+				) A
+				) AA
+  </select>
+
+	<select id="getStatList" parameterType="com.seoulsi.dto.StatDto" resultType="com.seoulsi.dto.StatDto">
+  	SELECT * FROM (SELECT A.*, ROWNUM NUM FROM (
+	    SELECT * FROM (
+	    SELECT A.*,B.GU_TP, UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN, UF_GETCODENAME('서울시구정의',B.GU_TP) 
+	    FROM TB_SL_DOD_MON A, TB_MM_EQU_INFO B 
+	    WHERE TO_DATE(TM8,'YYYYMMDD') BETWEEN TO_DATE(#{toDate},'YYYYMMDD') AND TO_DATE(#{fromDate},'YYYYMMDD') AND A.EQUI_INFO_KEY=B.EQUI_INFO_KEY AND A.EQUI_INFO_KEY=#{equiInfoKey}
+	    ORDER BY TO_DATE(A.TM8||A.TM6,'YYYY-MM-DD HH24:MI:SS') DESC)
+	) A )
+  </select>
+
+	<select id="getStatAllList" parameterType="com.seoulsi.dto.StatDto" resultType="com.seoulsi.dto.StatDto">
+  	SELECT A.* FROM (
+	    SELECT ROWNUM NUM, AA.* FROM (
+	    SELECT A.*,UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN, UF_GETCODENAME('서울시구정의',B.GU_TP) 
+	    FROM TB_SL_DOD_MON A, TB_MM_EQU_INFO B 
+	    WHERE TM8 BETWEEN #{toDate} AND #{fromDate} AND A.EQUI_INFO_KEY=B.EQUI_INFO_KEY
+	    ORDER BY TO_DATE(A.TM8||A.TM6,'YYYY-MM-DD HH24:MI:SS') DESC) AA
+	) A WHERE NUM BETWEEN #{pageStart} AND #{pageEnd} 
+  </select>
+
+	<select id="getStatLastUpdate" parameterType="String" resultType="com.seoulsi.dto.StatDto">
+  	SELECT 
+  		TO_CHAR(MAX(reg_date), 'YYYY-MM-DD HH:MM') AS reg_date
+  	FROM 
+  		TB_SL_DOD_MON
+    WHERE 
+    	equi_info_key = #{wareName}
+  </select>
+
+	<select id="getTotalList" resultType="com.seoulsi.dto.TotalDto">
+  	SELECT 
+    	UF_GETCODENAME('서울시구정의', gu_tp) AS ware_tp, time_check AS data_check, count(EQUI_INFO_KEY) AS ware_cnt
+	FROM 
+    	(SELECT gu_tp,  case when b.reg_date > sysdate -10/24/60 then 1 else 0 end as time_check,a.EQUI_INFO_KEY
+       		FROM tb_mm_equ_info a LEFT OUTER JOIN TB_SL_DOD_MON_LAST b
+        	ON a.EQUI_INFO_KEY = b.EQUI_INFO_KEY)
+	GROUP BY gu_tp, time_check
+	ORDER BY gu_tp, time_check
+  </select>
+	<select id="getTotalWareDataList" resultType="com.seoulsi.dto.TotalDto">
+	SELECT 
+		equ_tp AS ware_tp, equ_stat AS data_check, cnt AS ware_cnt, ware_name 
+	FROM 
+		VW_SL_DON_MON_LAST
+  </select>
+
+	<select id="getReceiveWareList" resultType="com.seoulsi.dto.TotalDto">
+		SELECT 
+        UF_GETCODENAME('서울시구정의', gu_tp) AS ware_tp, 
+        a.EQUI_INFO_KEY AS ware_name,
+        b.reg_date AS last_date
+    FROM 
+        tb_mm_equ_info a LEFT OUTER JOIN TB_SL_DOT_SEN_LAST b
+    ON a.EQUI_INFO_KEY = b.EQUI_INFO_KEY
+    WHERE b.reg_date
+		<![CDATA[ > ]]>
+		sysdate -10/24/60
+	</select>
+
+	<select id="getUnreceiveWareList" resultType="com.seoulsi.dto.TotalDto">
+		SELECT 
+        UF_GETCODENAME('서울시구정의', gu_tp) AS ware_tp, 
+        a.EQUI_INFO_KEY AS ware_name,
+        b.reg_date AS last_date
+    FROM 
+        tb_mm_equ_info a LEFT OUTER JOIN TB_SL_DOT_SEN_LAST b
+    ON a.EQUI_INFO_KEY = b.EQUI_INFO_KEY
+    WHERE b.reg_date
+		<![CDATA[ < ]]>
+		sysdate -10/24/60 OR b.reg_date IS NULL
+	</select>
+
+	<select id="getBadWareList" parameterType="com.seoulsi.dto.TotalDto" resultType="com.seoulsi.dto.TotalDto">
+		SELECT 
+	    UF_GETCODEREL('서울시구정의', a.gu_tp) AS ware_tp,  a.EQUI_INFO_KEY AS ware_name
+	FROM 
+	    tb_mm_equ_info a LEFT OUTER JOIN TB_SL_DOD_MON_LAST b
+		ON a.EQUI_INFO_KEY = b.EQUI_INFO_KEY
+	WHERE
+		<choose>
+			<when test="!wareTp.equals('not') and wareName.equals('PM25')">
+				b.PM25_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('PM10')">
+				b.PM10_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('TEMP')">
+				b.TEMP_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('HUMI')">
+				b.HUMI_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('WIND_DIRE')">
+				b.WIND_DIRE_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('WIND_SPEED')">
+				b.WIND_SPEED_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('GUST_DIRE')">
+				b.GUST_DIRE_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('GUST_SPEED')">
+				b.GUST_SPEED_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('INTE_ILLU')">
+				b.INTE_ILLU_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('ULTRA_RAYS')">
+				b.ULTRA_RAYS_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('NOISE')">
+				b.NOISE_STAT = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('CO')">
+				b.CO = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('NO2')">
+				b.NO2 = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('SO2')">
+				b.SO2 = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('NH3')">
+				b.NH3 = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('H2S')">
+				b.H2S = 0 
+			</when>
+			<when test="!wareTp.equals('not') and wareName.equals('O3')">
+				b.O3 = 0 
+			</when>
+		</choose>
+		<choose>
+			<when test="wareTp.equals('not')">
+				b.reg_date
+				<![CDATA[ < ]]>
+				sysdate -10/24/60
+			</when>
+			<when test="!wareTp.equals('not')">
+				AND b.reg_date
+				<![CDATA[ > ]]>
+				sysdate -10/24/60
+			</when>
+		</choose>
+		<choose>
+			<when test="wareName.equals('WIND_DIRE')">
+				AND a.BARAM_YN='Y'
+			</when>
+			<when test="wareName.equals('WIND_SPEED')">
+				AND a.BARAM_YN='Y'
+			</when>
+			<when test="wareName.equals('GUST_DIRE')">
+				AND a.BARAM_YN='Y'
+			</when>
+			<when test="wareName.equals('GUST_SPEED')">
+				AND a.BARAM_YN='Y'
+			</when>
+		</choose>
+		ORDER BY 1,2
+	</select>
+
+	<select id="getStatisticData" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+		SELECT A.* FROM (SELECT AA.*, ROWNUM NUM FROM (SELECT 
+  	UF_GETCODENAME ( '설치년도', B.INST_YEAR ) || '-' || UF_GETCODENAME ( '센서유형', B.SENSE_TP ) || UF_GETCODENAME ( '용도1', B.USE_TP1 ) || UF_GETCODENAME ( '용도3', B.USE_TP3 ) || '-' || UF_GETCODENAME ( '서울시구정의', B.GU_TP ) || '-' || B.MNG_NUM AS EQUI_INFO_KEY,
+			A.TM6,
+			A.TM8,
+			UF_GETCALCDATA ( 'PM25_STD', A.PM25_STD ) PM25,
+			UF_GETCALCDATA ( 'PM10_STD', PM10_STD ) PM10,
+			UF_GETCALCDATA ( 'EFFE_TEMP', UF_GETWBGT ( A.EFFE_TEMP ) ) AS EFFE_TEMP,
+			UF_GETCALCDATA ( 'HUMI', A.HUMI ) HUMI,
+			UF_GETCALCDATA ( 'NOISE', A.NOISE) NOISE, 
+			TEMP,
+			UF_GETCALCDATA ( 'WIND_DIRE', A.WIND_DIRE ) WIND_DIRE,
+			UF_GETCALCDATA ( 'WIND_SPEED', A.WIND_SPEED ) WIND_SPEED,
+			UF_GETCALCDATA ( 'INTE_ILLU', A.INTE_ILLU ) INTE_ILLU,
+			UF_GETCALCDATA ( 'ULTRA_RAYS', A.ULTRA_RAYS ) ULTRA_RAYS,
+			UF_GETCALCDATA ( 'VIBR_X', A.VIBR_X ) VIBR_X,
+			UF_GETCALCDATA ( 'VIBR_Y', A.VIBR_Y ) VIBR_Y,
+			UF_GETCALCDATA ( 'VIBR_Z', A.VIBR_Z ) VIBR_Z,
+			A.CO, 
+			A.NO2, 
+			A.SO2, 
+			A.NH3, 
+			A.H2S, 
+			A.O3
+  	 FROM
+		<choose>
+			<when test='type.equals("10")'>
+		  	TB_ST_10DOT_SEN_GRP A
+  		</when>
+			<when test='type.equals("60")'>
+		  	TB_ST_60DOT_SEN_GRP A
+  		</when>
+			<when test='type.equals("24")'>
+		  	TB_ST_24DOT_SEN_GRP A
+  		</when>
+		</choose>
+		, TB_MM_EQU_INFO B 
+	WHERE A.EQUI_INFO_KEY=#{equiInfoKey} AND A.TM8 BETWEEN #{toDate} AND #{fromDate} AND A.EQUI_INFO_KEY = B.EQUI_INFO_KEY AND B.USE_YN='Y' AND
+		<choose>
+			<when test='statisticType.equals("avg")'>
+      GRP_FLAG='1'
+    </when>
+			<when test='statisticType.equals("max")'>
+      GRP_FLAG='2'
+    </when>
+			<when test='statisticType.equals("min")'>
+      GRP_FLAG='3'
+    </when>
+		</choose>
+		ORDER BY TM8 DESC, TM6 DESC) AA ) A
+	</select>
+	<select id="getStatisticAllData" parameterType="com.seoulsi.dto.SensorDto" resultType="com.seoulsi.dto.SensorDto">
+		SELECT 
+  		UF_GETCALCDATA ( 'PM25_STD', PM25_STD ) PM25,
+		UF_GETCALCDATA ( 'PM10_STD', PM10_STD ) PM10,
+		UF_GETCALCDATA ( 'TEMP', TEMP ) TEMP,
+		UF_GETCALCDATA ( 'HUMI', HUMI ) HUMI,
+		UF_GETCALCDATA ( 'WIND_DIRE', WIND_DIRE ) WIND_DIRE,
+		UF_GETCALCDATA ( 'NOISE', NOISE ) NOISE ,
+		UF_GETCALCDATA ( 'ULTRA_RAYS', ULTRA_RAYS ) ULTRA_RAYS,
+		UF_GETCALCDATA ( 'INTE_ILLU', INTE_ILLU ) INTE_ILLU,
+		UF_GETCALCDATA ( 'VIBR_X', VIBR_X ) VIBR_X,
+		UF_GETCALCDATA ( 'VIBR_Y', VIBR_Y ) VIBR_Y,
+		UF_GETCALCDATA ( 'VIBR_Z', VIBR_Z ) VIBR_Z ,
+		( TO_DATE( TM8 || TM6, 'YYYYMMDDHH24MISS' ) + 1 / 24 ) TM8 
+  	FROM
+		<choose>
+			<when test='type.equals("10")'>
+		  	TB_ST_10DOT_SEN_GRP 
+  		</when>
+			<when test='type.equals("60")'>
+		  	TB_ST_60DOT_SEN_GRP 
+  		</when>
+			<when test='type.equals("24")'>
+		  	TB_ST_24DOT_SEN_GRP 
+  		</when>
+		</choose>
+		WHERE TM8 BETWEEN #{toDate} AND #{fromDate} AND EQUI_INFO_KEY=#{equiInfoKey} AND
+		<choose>
+			<when test='statisticType.equals("avg")'>
+  	 		GRP_FLAG='1'
+  	 	</when>
+			<when test='statisticType.equals("max")'>
+  	 		GRP_FLAG='2'
+  	 	</when>
+			<when test='statisticType.equals("min")'>
+  	 		GRP_FLAG='3'
+  	 	</when>
+		</choose>
+		ORDER BY TM8 ASC, TM6 ASC
+	</select>
+
+	<select id="getEquiCnt" resultType="com.seoulsi.dto.DailySenDto">
+		SELECT A.GU_TP EQUI_TYPE , badCnt BAD_EQUI_CNT, (totalCnt - badCnt) NORMAL_EQUI_CNT FROM (
+			SELECT UF_GETCODENAME('서울시구정의', gu_tp) gu_tp, count(gu_tp) badCnt
+			FROM TB_MM_EQU_INFO A
+			WHERE EQUI_INFO_KEY IN (
+			SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO
+			MINUS 
+			SELECT DISTINCT(EQUI_INFO_KEY) FROM "TB_SL_DOT_SEN_LAST" WHERE tm8 = to_char(sysdate, 'yyyymmdd')
+			) GROUP BY GU_TP order by gu_tp) A, (SELECT UF_GETCODENAME('서울시구정의', gu_tp) gu_tp, count(gu_tp) totalCnt FROM TB_MM_EQU_INFO GROUP BY GU_TP  order by gu_tp) B WHERE A.GU_TP=B.GU_TP
+	</select>
+</mapper>

@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+.map_wrap{ position: relative; }
+.map{ min-height: 500px; background: #e5e5e5; }
+
+.map_wrap .info{ position: absolute; width: 550px; padding:20px; border: 1px solid rgba(221, 221, 221, 0.5); background: rgba(255,255,255,0.8); box-shadow: 0 0 5px rgba(0,0,0,0.3);  }
+.map_wrap .info h3{ padding:0 0 10px 0; font-size: 18px; font-weight: 800; }
+.map_wrap .info .graph { height: 50px; border: 1px solid #ddd;  }
+
+.graph_wrap{ min-height: 500px; background: #e5e5e5; }

@@ -1,0 +1,510 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<jsp:include page="../common/header.jsp"></jsp:include>
+<%-- <jsp:include page="../common/header_resource.jsp"></jsp:include> --%>
+
+<script type="text/javascript" src="/share/js/amchart/amcharts.js"></script>
+<script type="text/javascript" src="/share/js/amchart/lang/ko.js"></script>
+<script type="text/javascript" src="/share/js/amchart/pie.js"></script>
+<script type="text/javascript" src="/share/js/amchart/serial.js"></script>
+<script type="text/javascript" src="/share/js/gms.util.chart.tools.js"></script>
+<script type="text/javascript" src="/share/js/gms.util.chart.tools.new.js"></script>
+<script type="text/javascript" src="/share/js/gms.util.js"></script>
+<script type="text/javascript" src="/share/js/amchart4/core.js"></script>
+<script type="text/javascript" src="/share/js/amchart4/charts.js"></script>
+<script type="text/javascript" src="/share/js/amchart4/animated.js"></script>
+<script type="text/javascript" src="/share/js/amchart4/ko_KR.js"></script>
+<script src="/share/js/page.js"></script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
+
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
+
+    <script src="/share/js/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
+
+    <script type='text/javascript'>
+
+    $(function(){
+
+        $('#to').datepicker({
+
+            calendarWeeks: false,
+
+            todayHighlight: true,
+
+            autoclose: true,
+
+            format: "yyyy/mm/dd",
+
+            language: "kr"
+
+        });
+        
+        $('#from').datepicker({
+
+            calendarWeeks: false,
+
+            todayHighlight: true,
+
+            autoclose: true,
+
+            format: "yyyy/mm/dd",
+
+            language: "kr"
+
+        });
+
+    });
+
+    </script>
+<style>
+#page {
+	padding-bottom: 60px;
+}
+.detail-box {
+	height:250px;
+	overflow-y: auto;
+}
+.list-detail * {
+    text-align: center;
+    padding: 3px;
+}
+.detail .graph {
+	background: transparent;
+}
+.datepicker {
+	width: 220px;
+}
+#to, #from {
+	height: 30px;
+}
+    .data-list {
+        width: 1580px;
+        height: 200px;
+        font-size:12px;
+        display: none;
+    }
+
+    .data-list>.header {
+        height: 57px;
+    }
+    .body {
+        height: calc(200px - 57px);
+        overflow:auto;
+    }
+    .body > div{
+        height:45px;
+    }
+    .data-list .header {
+        text-align: center;
+        color:#0c82e9;
+        border-top: 1px solid #0c82e9;
+        border-bottom: 1px solid #0c82e9;
+        background: #f3f9fe;
+    }
+    .data-list ul {
+        padding:0;
+        margin:0;
+        height:100%;
+    }
+    .data-list ul li {
+        list-style: none;
+        display: block;
+        float:left;
+        width: calc((100% / 16) - 1px);
+        position: relative;
+        height: 100%;
+    }
+    .data-list ul li div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        text-align: center;
+    }
+	.header > ul {
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+	
+    .loader {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top:50%;
+      left: 50%;
+    }
+    .fhBtn {
+    	color: #0c82e9;
+		border: 1px solid #0c82e9;
+		background: #f3f9fe;
+		padding: 6px 20px;
+		margin-bottom: 10px;
+		position: absolute;
+		top: 367px;
+    }
+    #board, #board2, #board3 {
+    	position: relative;
+	    border-top: 1px solid #c9c9c9;
+	    border-bottom: 1px solid #c9c9c9;
+		padding: 10px 0;
+		margin-bottom: 30px;
+	}
+</style>
+<div id="sensor" class="body_wrap">
+
+			<div class="container">
+				
+				<div class="sub_title">
+					<h1 class="main_co">수치/농도 통계 조회</h1>
+				</div>
+
+				<div class="row array">
+					
+					<div class="col-xs-12">
+							<form>
+								<div class="form-group">
+									<ul class="row">
+										<li class="col-xs-1 title">기간</li>
+										<li class="col-xs-4">
+											<div class="col-xs-5">
+												<input type="text" id="to" autocomplete=off placeholder="날짜선택" class="form-control"><span style="display: none;" class="input-group-addon"></span>
+											</div>
+											<div class="col-xs-2" style="text-align: center; line-height: 30px;">
+												~
+											</div>
+											<div class="col-xs-5">
+												<input type="text" id="from" autocomplete=off placeholder="날짜선택" class="form-control"><span style="display: none;" class="input-group-addon"></span>
+											</div>
+										</li>
+										<li class="col-xs-1">
+											<select id="type">
+												<option>시간 선택</option>
+												<option value="10">10분</option>
+												<option value="60">60분</option>
+												<option value="24">1일</option>
+											</select>
+										</li>
+										<li class="col-xs-1">
+											<select id="gu">
+												<option>구 선택</option>
+												<c:forEach items="${gus}" var="gu">
+													<option value="${gu.code}">${gu.codeNm}</option>
+												</c:forEach>
+											</select>
+											<script>
+												$('#gu').change(function() {
+													var value = $(this).val();
+													$.ajax({
+														url: '/api/sensor/list/'+value,
+														type: 'GET',
+														success: function(r) {
+															var text = '<option>기기 선택</option>';
+															console.log(r.length);
+															if(r.length != 0) {
+																$.each(r, function(a,b) {
+																	text += '<option value="'+b.equiInfoKey+'">'+b.equiInfoKeyHan+'</option>';
+																})
+															}
+															
+															$('#equi').html(text);
+														}
+													})
+												})
+											</script>
+										</li>
+										
+										<li class="col-xs-2">
+											<select id="equi">
+												<option>기기 선택</option>
+												
+											</select>
+										</li>
+										<li class="col-xs-1">
+											<input class="equi_search_btn search_btn" type="submit" value="검색">
+											<script>
+											
+												$(document).ready(function() {
+// 													sensor.amChart('amChart', '');
+													var count = 2;
+													$('.equi_search_btn').click(function(e) {
+														e.preventDefault();
+														var to = $('#to').val();
+														var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2)
+														var from = $('#from').val();
+														var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)
+														var gu = $('#gu').val();
+														var equi = $('#equi').val();
+														var type = $('#type').val();
+														var statisticType = $('#statisticType').val();
+														
+														count = 2;
+														$('.list').html('');
+														if(to!='' && from!='' && gu!='구 선택' && equi!='기기 선택') {
+															var pageNum = "${param.page}";
+															if(pageNum == "") pageNum = "1";
+															
+															
+															console.log(getData(toDate, fromDate, gu, type, "avg", equi, "1"))
+															console.log(getData(toDate, fromDate, gu, type, "max", equi, "2"))
+															console.log(getData(toDate, fromDate, gu, type, "min", equi, "3"))
+														} else {
+															alert('비어있는 값이 있습니다.')
+														}
+														
+													})
+													
+													
+												})
+												function getData(toDate, fromDate, gu, type, statisticType, equi, num) {
+													$.ajax({
+														url: '/api/sensor/statistic',
+														type: 'POST',
+														data: {
+															"toDate":toDate, "fromDate":fromDate, "gu":gu, "equiInfoKey": equi,
+															"type": type, "statisticType": statisticType,
+															"${_csrf.parameterName}" : "${_csrf.token}",
+															"pageStart": 1
+														},
+														beforeSend: function() {
+															$('.loader').show();
+														},
+														success: function(r) {
+															console.log(r.data)
+															$('.loader').hide();
+															console.log("text",sensor.rowSetType(r.data));
+															var rows = r.allData
+															console.log(r.allData)
+															
+															$('.body'+num).html(sensor.rowSetType(r.data));
+															am4Generate(r.allData, {"pm10" : "미세먼지", "pm25": "초미세먼지", "temp" : "온도", "noise" : "소음", "humi": "습도", "ultraRays": "자외선", "vibrX": "진동 X축", "vibrY": "진동 Y축", "vibrZ": "진동 Z축"}, "amChart"+num )
+															
+															var recreateFlag ;
+															
+															if (r.data.length == 0) {
+																alert("조건에 만족하는 데이터가 없습니다.");
+															}
+														}
+													})
+												}
+											</script>
+										</li>
+									</ul>
+								</div>
+							</form>
+					</div>
+					
+					
+				
+				</div><!-- array -->
+				<div class="loader" id="loader-1"></div>
+				<div id="board">
+					<div class="test" style="height: 400px;">
+						<p style="text-weight: bold">평균값</p>
+						<div style="height: 400px;" id="amChart1"></div>
+					</div>
+					<button data-target="1" class="fhBtn" onclick="hideFade(this)">보기</button>
+					<div class="data-list">
+					    <div class="header">
+					        <ul>
+					            <li><div>순번</div></li>
+					            <li><div>기기번호</div></li>
+					            <li><div>데이터시각</div></li>
+					            <li><div>미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>초미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>소음<br>(dB)</div></li>
+					            <li><div>온도<br>(℃)</div></li>
+					            <li><div>습도<br>(%)</div></li>
+					            <li><div>풍향<br></div></li>
+					            <li><div>풍속<br>(㎧)</div></li>
+					            <li><div>조도<br>(lx)</div></li>
+					            <li><div>자외선<br>(UVI)</div></li>
+					            <li><div>진동<br>-X축(g)</div></li>
+					            <li><div>진동<br>-Y축(g)</div></li>
+					            <li><div>진동<br>-Z축(g)</div></li>
+					            <li><div>흑구</div></li>
+					        </ul>
+					    </div>
+					    <div class="body body1">
+					    </div>
+				    </div>
+
+				</div><!-- board -->
+				<div id="board2">
+					<div class="test" style="height: 400px;">
+						<p style="text-weight: bold">최대값</p>
+						<div style="height: 400px;" id="amChart2"></div>
+					</div>
+					<div>
+				    	<button data-target="2" class="fhBtn" onclick="hideFade(this)">보기</button>
+				    </div>
+					<div class="data-list">
+					    <div class="header">
+					        <ul>
+					            <li><div>순번</div></li>
+					            <li><div>기기번호</div></li>
+					            <li><div>데이터시각</div></li>
+					            <li><div>미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>초미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>소음<br>(dB)</div></li>
+					            <li><div>온도<br>(℃)</div></li>
+					            <li><div>습도<br>(%)</div></li>
+					            <li><div>풍향<br></div></li>
+					            <li><div>풍속<br>(㎧)</div></li>
+					            <li><div>조도<br>(lx)</div></li>
+					            <li><div>자외선<br>(UVI)</div></li>
+					            <li><div>진동<br>-X축(g)</div></li>
+					            <li><div>진동<br>-Y축(g)</div></li>
+					            <li><div>진동<br>-Z축(g)</div></li>
+					            <li><div>흑구</div></li>
+					        </ul>
+					    </div>
+					    
+					    <div class="body body2">
+					    </div>
+				    </div>
+
+				</div><!-- board -->
+				<script>
+				function hideFade(e) {
+					console.log(e)
+					var t = $(e).data('target');
+					var d = $('.body'+t).parent().css('display');
+					if(d == "none")
+						$(e).html('감추기')
+					else
+						$(e).html('보기')
+						
+					$('.body'+t).parent().toggle();
+				}
+				</script>
+				
+				<div id="board3">
+					<div class="test" style="height: 400px;">
+						<p style="text-weight: bold">최소값</p>
+						<div style="height: 400px;" id="amChart3"></div>
+					</div>
+					<button data-target="3" class="fhBtn" onclick="hideFade(this)">보기</button>
+					<div class="data-list">
+					    <div class="header">
+					        <ul>
+					            <li><div>순번</div></li>
+					            <li><div>기기번호</div></li>
+					            <li><div>데이터시각</div></li>
+					            <li><div>미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>초미세먼지<br>(㎍/㎥)</div></li>
+					            <li><div>소음<br>(dB)</div></li>
+					            <li><div>온도<br>(℃)</div></li>
+					            <li><div>습도<br>(%)</div></li>
+					            <li><div>풍향<br></div></li>
+					            <li><div>풍속<br>(㎧)</div></li>
+					            <li><div>조도<br>(lx)</div></li>
+					            <li><div>자외선<br>(UVI)</div></li>
+					            <li><div>진동<br>-X축(g)</div></li>
+					            <li><div>진동<br>-Y축(g)</div></li>
+					            <li><div>진동<br>-Z축(g)</div></li>
+					            <li><div>흑구</div></li>
+					        </ul>
+					    </div>
+					    <div class="body body3">
+					    </div>
+				    </div>
+
+				</div><!-- board -->
+			</div><!-- container -->
+
+        </div><!-- sensor -->
+    <script src="/share/js/sensor/index.js"></script>
+<script>
+function ieTime(data) {
+	var a = data.split(' ');
+	var ymd = a[0].split('-');
+	var hm = a[1].split(':');
+
+	return new Date(ymd[0], Number(ymd[1])-1, ymd[2], hm[0], hm[1]);
+}
+function am4Generate(data, field, target) {
+	
+	am4core.ready(function() {
+
+	
+		// Create chart instance
+		var chart = am4core.create(target, am4charts.XYChart);
+		chart.language.locale = am4lang_ko_KR;
+		$.each(data, function(a,b) {
+			data[a]['tm8'] = ieTime(data[a]['tm8'])
+			console.log(a, data[a]['tm8'])
+		})
+		//2019-11-08 00:01
+		// Increase contrast by taking evey second color
+		chart.colors.step = 0;
+		
+		// Add data
+		chart.data = data;
+
+		//Create axes
+		var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+		dateAxis.renderer.grid.template.location = 2;
+// 		dateAxis.renderer.minGridDistance = 50;
+		chart.dateFormatter.dateFormat = "MMM dd일 HH시";
+	     dateAxis.dateFormats.setKey("hour", "MMM dd일 HH시");
+	     dateAxis.periodChangeDateFormats.setKey("hour", "MMM dd일 HH시");
+	     dateAxis.dateFormats.setKey("minute", "dd일 HH시 mm분");
+	     dateAxis.periodChangeDateFormats.setKey("minute", "dd일 HH시 mm분");
+		var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+		// Create series
+		function createSeries(field, name, count) {
+		  var interfaceColors = [
+				"#5571c6",
+				"#55c6c2",
+				"#db9d61",
+				"#0D8ECF",
+				"#2A0CD0",
+				"#CD0D74",
+				"#CC0000",
+				"#00CC00",
+				"#0000CC",
+				"#DDDDDD",
+				"#999999",
+				"#333333",
+				"#990000"
+		  ];
+		  var series = chart.series.push(new am4charts.LineSeries());
+		  series.dataFields.valueY = field;
+		  series.dataFields.dateX = "tm8";
+		  series.name = name;
+		  series.tooltipText = name+": [b]{valueY}[/]";
+		  series.strokeWidth = 2;
+		  series.minBulletDistance = 100;
+		  series.fill = interfaceColors[count];
+          series.stroke = interfaceColors[count];
+          
+// 		  if(name != "미세먼지" || name != "초미세먼지") {
+		  if(count > 1) {
+			  series.hidden = true;
+		  }
+		  var bullet = series.bullets.push(new am4charts.CircleBullet());
+		  bullet.circle.stroke = interfaceColors[count];
+		  bullet.circle.strokeWidth = 2;
+		  
+		  return series;
+		}
+		var scrollbarX = new am4charts.XYChartScrollbar();
+		var count = 0;
+		$.each(field, function(a,b) {
+			console.log(a,b)
+			var series = createSeries(a, b, count);
+			count++;
+// 			scrollbarX.series.push(series);
+		})
+		chart.scrollbarX = scrollbarX;
+		chart.legend = new am4charts.Legend();
+		chart.cursor = new am4charts.XYCursor();
+
+		}); // end am4core.ready()
+}
+</script>
+<!-- <div id="chartdiv" style="height: 400px;"></div> -->
+<jsp:include page="../common/footer.jsp"></jsp:include>

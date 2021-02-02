@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.MemberMapper">
+  <select id ="getDetailByUserName" parameterType="String" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT * FROM TB_CC_USER WHERE USER_ID = #{userId}
+  </select>
+  
+  <update id="loginSuccess" parameterType="com.seoulsi.dto.MemberDto">
+  	UPDATE TB_CC_USER SET LOGIN_STATUS=#{loginStatus} WHERE USER_ID=#{userId}
+  </update>
+</mapper>

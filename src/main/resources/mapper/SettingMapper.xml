@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoulsi.mapper.SettingMapper">
+   <select id ="getGuEquiList" resultType="com.seoulsi.dto.SettingDto">
+  	SELECT '대기측정소' AS GU, 'airYn='||AIR_YN AS GU_TP,  WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO WHERE AIR_YN='Y' GROUP BY AIR_YN
+	UNION
+	SELECT '바람길' AS GU, 'baramYn='||BARAM_YN AS GU_TP,  WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO WHERE BARAM_YN='Y' GROUP BY BARAM_YN
+	UNION 
+	SELECT UF_GETCODENAME('서울시구정의',GU_TP) AS GU ,GU_TP , WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO GROUP BY UF_GETCODENAME('서울시구정의',GU_TP), GU_TP ORDER BY GU
+  </select> 
+
+  <select id="getCommList" resultType="com.seoulsi.dto.CommonDto">
+  	SELECT SORT_CD, REL_CD1, CODE, CODE_NM FROM TB_CC_CODE ORDER BY SORT_CD ASC ,TO_NUMBER(CODE) ASC
+  </select>
+  
+  <select id="getEquiInfo" parameterType="java.lang.String" resultType="com.seoulsi.dto.EquiDto">
+  	SELECT * FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </select>
+  
+  <update id="saveEquiInfo" parameterType="com.seoulsi.dto.EquiDto">
+  	UPDATE TB_MM_EQU_INFO SET EQUI_TYPE=#{equiType}, STA_NAME=#{staName}, INST_LOC=#{instLoc}, INST_LOC2=#{instLoc2}, SENSE_TP=#{senseTp}, USE_TP1=#{useTp1}
+	,USE_TP2=#{useTp2}, USE_TP3=#{useTp3}, GU_TP=#{guTp}, INST_YEAR=#{instYear}, MNG_NUM=#{mngNum}, SET_YN=#{setYn}, USE_YN=#{useYn}, GPS_ABB=#{gpsAbb}, GPS_LAT=#{gpsLat}, INST_MONTH=#{instMonth}, VISTOR_SEN_VIEW_NM=#{vistorSenViewNm}, VISTOR_SEN_ID=#{vistorSenId}
+	,BARAM_YN=#{baramYn}, BARAM_MNG_NUM=#{baramMngNum}, AIR_YN=#{airYn}, AIR_MNG_NUM=#{airMngNum}, BARAM_NM=#{baramNm} WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </update>
+  
+  <insert id="insertEquiInfo" parameterType="com.seoulsi.dto.EquiDto">
+  	INSERT ALL 
+  	INTO TB_MM_EQU_INFO 
+	(
+	EQUI_TYPE,
+	STA_NAME,
+	INST_LOC,
+	INST_LOC2,
+	SENSE_TP,
+	USE_TP1,
+	USE_TP2,
+	USE_TP3,
+	GU_TP,
+	INST_YEAR,
+	MNG_NUM,
+	SET_YN,
+	USE_YN,
+	BARAM_YN,
+	BARAM_MNG_NUM,
+	BARAM_NM,
+	AIR_YN,
+	AIR_MNG_NUM,
+	GPS_ABB,
+	GPS_LAT,
+	INST_MONTH,
+	EQUI_INFO_KEY,
+	VISTOR_SEN_ID,
+	VISTOR_SEN_VIEW_NM,
+	REG_DATE
+	) 
+	VALUES (
+	#{equiType, jdbcType=VARCHAR},
+	#{staName, jdbcType=VARCHAR},
+	#{instLoc, jdbcType=VARCHAR},
+	#{instLoc2, jdbcType=VARCHAR},
+	#{senseTp, jdbcType=VARCHAR},
+	#{useTp1, jdbcType=VARCHAR},
+	#{useTp2, jdbcType=VARCHAR},
+	#{useTp3, jdbcType=VARCHAR},
+	#{guTp, jdbcType=VARCHAR},
+	#{instYear, jdbcType=VARCHAR},
+	#{mngNum, jdbcType=VARCHAR},
+	#{setYn, jdbcType=VARCHAR},
+	#{useYn, jdbcType=VARCHAR},
+	#{baramYn, jdbcType=VARCHAR},
+	#{baramMngNum, jdbcType=VARCHAR},
+	#{baramNm, jdbcType=VARCHAR},
+	#{airYn, jdbcType=VARCHAR},
+	#{airMngNum, jdbcType=VARCHAR},
+	#{gpsAbb, jdbcType=VARCHAR},
+	#{gpsLat, jdbcType=VARCHAR},
+	#{instMonth, jdbcType=VARCHAR},
+	#{equiInfoKey, jdbcType=VARCHAR},
+	#{vistorSenId, jdbcType=INTEGER},
+	#{vistorSenViewNm, jdbcType=VARCHAR},
+	SYSDATE
+	)
+	INTO TB_MM_EQU_INFO_CARD(EQUI_INFO_KEY, SERIAL_NM) VALUES(#{equiInfoKey, jdbcType=VARCHAR}, #{staName, jdbcType=VARCHAR})
+	INTO TB_MM_EQU_INFO_LOC(EQUI_INFO_KEY, EQUI_STRU) VALUES(#{equiInfoKey, jdbcType=VARCHAR}, #{instLoc, jdbcType=VARCHAR})
+	INTO TB_MM_EQU_INFO_LOC_DETAIL(EQUI_INFO_KEY) VALUES(#{equiInfoKey, jdbcType=VARCHAR})
+	INTO TB_MM_EQU_INFO_LOC_PIC(EQUI_INFO_KEY) VALUES(#{equiInfoKey, jdbcType=VARCHAR})
+	SELECT * FROM DUAL
+  </insert>
+  
+  <delete id="deleteEquiByEquiInfoKey" parameterType="com.seoulsi.dto.EquiDto">
+  	DELETE FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </delete>
+  <delete id="deleteCardByEquiInfoKey" parameterType="com.seoulsi.dto.EquiDto">
+  	DELETE FROM TB_MM_EQU_INFO_CARD WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </delete>
+  <delete id="deleteLocByEquiInfoKey" parameterType="com.seoulsi.dto.EquiDto">
+  	DELETE FROM TB_MM_EQU_INFO_LOC WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </delete>
+  <delete id="deleteLocDetailByEquiInfoKey" parameterType="com.seoulsi.dto.EquiDto">
+  	DELETE FROM TB_MM_EQU_INFO_LOC_DETAIL WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </delete>
+  <delete id="deleteLocPicByEquiInfoKey" parameterType="com.seoulsi.dto.EquiDto">
+  	DELETE FROM TB_MM_EQU_INFO_LOC_PIC WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  </delete>
+  
+   <select id="getUserCode" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT A.CODE_NM AS code, WM_CONCAT(B.USER_NAME) AS user_name, WM_CONCAT(B.USER_ID) AS user_id FROM TB_CC_CODE A, TB_CC_USER B WHERE A.SORT_CD='기관' AND A.CODE = B.DEPT_CD GROUP BY A.CODE_NM
+  </select>
+ 
+  <select id="getUserByCode" parameterType="String" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT B.USER_ID, B.USER_NAME, B.HAND_PHONE, B.TEL_NO, B.EMAIL_ADDR, UF_GETCODENAME('기관',B.DEPT_CD) AS CODE, B.ETC FROM TB_CC_CODE A, TB_CC_USER B WHERE A.SORT_CD='기관' AND A.CODE = B.DEPT_CD AND UF_GETCODENAME('기관',B.DEPT_CD) = #{code}
+  </select>
+  
+  <select id="getUserInfo" parameterType="String" resultType="com.seoulsi.dto.MemberDto">
+  	SELECT USER_ID, USER_NAME, HAND_PHONE, TEL_NO, DEPT_CD, ETC, EMAIL_ADDR FROM TB_CC_USER WHERE USER_ID=#{user}
+  </select>
+  
+  <update id="updateUser" parameterType="com.seoulsi.dto.MemberDto">
+  	UPDATE TB_CC_USER SET DEPT_CD=#{deptCd}, EMAIL_ADDR=#{emailAddr}, HAND_PHONE=#{handPhone}, TEL_NO=#{telNo}, ETC=#{etc} WHERE USER_ID=#{userId}
+  </update>
+  
+  <update id="clearUser" parameterType="com.seoulsi.dto.MemberDto">
+  	UPDATE TB_CC_USER SET USER_PW=#{userPw}, CHANGE_DATE=SYSDATE WHERE USER_ID=#{userId}
+  </update>
+  
+  <insert id="insertUser" parameterType="com.seoulsi.dto.MemberDto">
+  	INSERT INTO TB_CC_USER 
+  	(
+  	USER_ID, USER_PW, USER_NAME, TEL_NO, HAND_PHONE, DEPT_CD, EMAIL_ADDR, LOGIN_STATUS, ETC, REG_DATE, CHANGE_DATE
+  	)
+  	 VALUES 
+  	 (
+  	 #{userId}, #{userPw}, #{userName}, #{telNo}, #{handPhone}, #{deptCd}, #{emailAddr}, '00', #{etc}, SYSDATE, SYSDATE
+  	 )
+  </insert>
+  
+  <delete id="deleteUser" parameterType="com.seoulsi.dto.MemberDto">
+  	DELETE FROM TB_CC_USER WHERE USER_ID=#{userId}
+  </delete>
+  <delete id="deleteUserGrant" parameterType="com.seoulsi.dto.MemberDto">
+  	DELETE FROM TB_CC_USER_MENU WHERE USER_ID=#{userId}
+  </delete>
+  
+  <update id="updateUserGrant" parameterType="com.seoulsi.dto.MenuDto">
+  	UPDATE TB_CC_USER_MENU SET GRANT_YN=#{grantYn}, WRITE_GRANT_YN=#{writeGrantYn} WHERE USER_ID=#{userId} AND MENU_ID=#{menuId}
+  </update>
+</mapper>

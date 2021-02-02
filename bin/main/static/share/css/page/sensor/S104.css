@@ -1,0 +1,76 @@
+#page {
+	padding-bottom: 60px;
+}
+
+.detail-box {
+	height: 250px;
+	overflow-y: auto;
+}
+
+.list-detail * {
+	text-align: center;
+	padding: 3px;
+}
+
+.detail .graph {
+	background: transparent;
+}
+
+.datepicker {
+	width: 220px;
+}
+
+#to, #from {
+	height: 30px;
+}
+
+.data-list {
+	width: 1580px;
+	height: 500px;
+	font-size: 12px;
+}
+
+.data-list>.header {
+	height: 57px;
+}
+
+.body {
+	height: calc(500px - 57px);
+	/* overflow: auto; */
+}
+
+.body>div {
+	height: 45px;
+}
+
+.data-list .header {
+	text-align: center;
+	color: #0c82e9;
+	border-top: 1px solid #0c82e9;
+	border-bottom: 1px solid #0c82e9;
+	background: #f3f9fe;
+}
+
+.data-list ul {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+.data-list ul li {
+	list-style: none;
+	display: block;
+	float: left;
+	width: calc(100%/ 16);
+	position: relative;
+	height: 100%;
+}
+
+.data-list ul li div {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	text-align: center;
+}

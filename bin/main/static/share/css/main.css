@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+.main{ position: fixed; width: 100%; top: 50%; transform: translate(0, -50%); }
+
+.login_wrap{ padding: 2% 5% 0 5%; text-align: center; }
+.login_wrap img{ width: auto; max-width: 100%; }
+
+.login_wrap h1{ padding: 30px 0 5px 0; font-size: 50px; font-weight: 800; }
+.login_wrap p{ font-size: 23px; font-weight: 700; letter-spacing: -0.5px; color: #5e5e5e; }
+
+.login{ padding: 10% 10% 10% 10%; }
+
+.login_wrap .title{ line-height: 45px; }
+.login_wrap input{ border: 0; }
+.login_wrap input[type="submit"]{ height: 75px; font-size: 25px; color: #0c82e9; border: 1px solid #0c82e9; background: #f3f9fe; }
+.login_wrap .form-group{ border-bottom: 1px solid #ddd; font-size: 20px; }
+
+.login .btn_wrap{ padding:8% 0 0 0; }
