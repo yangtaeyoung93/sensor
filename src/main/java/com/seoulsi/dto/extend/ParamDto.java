@@ -6,6 +6,8 @@ import lombok.Data;
 public class ParamDto {
 	private String toDate;
 	private String fromDate;
+	private String tm8;
+	private String mm;
 	private String total;
 	private String pageStart;
 	private String pageEnd;

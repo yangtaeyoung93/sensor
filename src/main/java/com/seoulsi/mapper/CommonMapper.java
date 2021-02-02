@@ -50,4 +50,8 @@ public interface CommonMapper {
 	public List<SensorDto> getDailyCntForEquiSensorWind(ParamDto paramDto) throws Exception;
 
 	public List<DailySenDto> getDailyCntForData(ParamDto paramDto) throws Exception;
+
+	public List<DailySenDto> getDailyCntForDataForPastToday(ParamDto paramDto) throws Exception;
+
+	public List<DailySenDto> getDailyCntForDataForToday(ParamDto paramDto) throws Exception;
 }
