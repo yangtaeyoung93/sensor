@@ -89,7 +89,8 @@
 						<c:if test="${popup}">
 							<span onclick="popupCreate()" style="cursor: pointer; font-weight: bold;padding: 5px 15px;border: 1px solid #0c82e9;margin-right: 20px;color: #0c82e9;">대시보드 보기</span>
 						</c:if>
-						<%=userName%>님 <a href="/logout?userId=">로그아웃</a>
+						<%=userName%>님 
+						<!-- <a href="/logout?userId=">로그아웃</a> -->
 					</div>
 				</div><!-- container -->
 			</div><!-- gnb -->

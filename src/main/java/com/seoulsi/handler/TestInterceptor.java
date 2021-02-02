@@ -179,7 +179,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		response.getWriter()
 				.print("<link rel='stylesheet' type='text/css' href='../../share/alertifyjs/css/bootstrap.min.css'/>");
 		response.getWriter().print(
-				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다.', function(){ location.href='/popup01'})</script><body>");
+				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//eseoul.go.kr'})</script><body>");
 		response.getWriter().flush();
 	}
 

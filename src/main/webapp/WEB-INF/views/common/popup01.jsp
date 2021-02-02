@@ -205,9 +205,9 @@
 				<div class="tt">
 				이상장비 현황
 				</div>
-				<div style="float: left;font-size: 0.855em;padding-top: 10px;">
+				<!-- <div style="float: left;font-size: 0.855em;padding-top: 10px;">
 				<input id="moveType"  type="checkbox" style="width:15px;height:15px;display:inline;vertical-align:middle;"> 이동형 장비 현황보기
-				</div>
+				</div> -->
 				<div class="datett" style="width:345px;">
 					<!-- <div class="date_select">
 						<select id="day">
