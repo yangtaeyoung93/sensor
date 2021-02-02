@@ -14,6 +14,7 @@
 
 			<c:choose>
 				<c:when test="${i.menuId % 100 == 0}">
+					<c:set var="parent" value="${i.step}"/>
 					<c:if test="${status.index ne '0' }">
 								</ul>
 							</div>
@@ -25,7 +26,9 @@
 					
 				</c:when>
 				<c:otherwise>
-					<li><a href="/${i.path}">${i.caption }</a></li>
+					<c:if test="${i.step eq parent}">
+						<li><a href="/${i.path}">${i.caption }</a></li>
+					</c:if>
 				</c:otherwise>
 			</c:choose>
 		</c:forEach>

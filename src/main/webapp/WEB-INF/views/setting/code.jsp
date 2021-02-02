@@ -3,6 +3,10 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <jsp:include page="../common/header.jsp"></jsp:include>
+<%
+String grant = (String)request.getAttribute("grant"); 
+pageContext.setAttribute("grant", grant);
+%>
 <link rel="stylesheet"
 	href="../../share/treeview/css/jquery.treeview.css" />
 <link rel="stylesheet" href="../../share/treeview/css/screen.css" />
@@ -138,10 +142,12 @@
 						<div class="col-xs-8" id="equiName" style="line-height: 30px;">
 						</div>
 						<div class="col-xs-4" id="toolbar">
-							<input class="search_btn col-xs-2" type="button" plain="true" onclick="javascript:$('#dg').edatagrid('addRow')" value="추가" style="background: white; color: #666; border: 1px solid #c9c9c9;"/>
-							<input class="search_btn col-xs-offset-1 col-xs-2" id="delete" plain="true" onclick="javascript:$('#dg').edatagrid('destroyRow')" type="button" value="삭제" style="margin-left: 40px; background: white; color: #666; border: 1px solid #c9c9c9;"/>
-							<input class="search_btn col-xs-offset-1 col-xs-2" id="save" plain="true" onclick="javascript:$('#dg').edatagrid('saveRow')" type="submit" value="저장" style="margin-left: 40px;"/>
-							<input class="search_btn col-xs-offset-1 col-xs-2" id="save" plain="true" onclick="javascript:$('#dg').edatagrid('cancelRow')" type="submit" value="취소" style="margin-left: 40px;"/>
+							<c:if test="${grant eq 'Y'}">
+								<input class="search_btn col-xs-2" type="button" plain="true" onclick="javascript:$('#dg').edatagrid('addRow')" value="추가" style="background: white; color: #666; border: 1px solid #c9c9c9;"/>
+								<input class="search_btn col-xs-offset-1 col-xs-2" id="delete" plain="true" onclick="javascript:$('#dg').edatagrid('destroyRow')" type="button" value="삭제" style="margin-left: 40px; background: white; color: #666; border: 1px solid #c9c9c9;"/>
+								<input class="search_btn col-xs-offset-1 col-xs-2" id="save" plain="true" onclick="javascript:$('#dg').edatagrid('saveRow')" type="submit" value="저장" style="margin-left: 40px;"/>
+								<input class="search_btn col-xs-offset-1 col-xs-2" id="save" plain="true" onclick="javascript:$('#dg').edatagrid('cancelRow')" type="submit" value="취소" style="margin-left: 40px;"/>
+							</c:if>
 						</div>
 					</div>
 					<div class="row">

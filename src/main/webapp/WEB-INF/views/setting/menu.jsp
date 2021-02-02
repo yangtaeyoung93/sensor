@@ -3,6 +3,10 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <jsp:include page="../common/header.jsp"></jsp:include>
+<%
+String grant = (String)request.getAttribute("grant"); 
+pageContext.setAttribute("grant", grant);
+%>
 <link rel="stylesheet"
 	href="../../share/treeview/css/jquery.treeview.css" />
 <link rel="stylesheet" href="../../share/treeview/css/screen.css" />
@@ -123,9 +127,9 @@
 
 								</div>
 								<div class="col-xs-4">
-									<sec:authorize access="hasRole('ROLE_ADMIN')">
+									<c:if test="${grant eq 'Y'}">
 										<input class="search_btn col-xs-offset-1 col-xs-3" id="save" type="submit" value="저장" style="margin-left: 40px;"/>
-									</sec:authorize>
+									</c:if>
 								</div>
 							</div>
 							<div class="row table-row">
