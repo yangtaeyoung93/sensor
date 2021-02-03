@@ -77,6 +77,10 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		// cookie expire 체크
 		Long loginTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_DATE")));
 		Long expirationTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_EXPIRATION_TIME")));
+		if (active.equals("local")) {
+			expirationTime = expirationTime * 100;
+		}
+
 		Long calcTime = loginTime + expirationTime;
 		String userName = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_NAME"));
 		String userId = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_ID"));
