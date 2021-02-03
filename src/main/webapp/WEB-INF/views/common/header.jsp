@@ -66,17 +66,29 @@
 	<script>
 
 		function popupCreate() {
-				var popupWidth = 780;
-				var popupHeight = 1000;
+			var popupWidth = 780;
+			var popupHeight = 1000;
 
-				var popupX = (window.screen.width / 2) - (popupWidth / 2);
-				// 만들 팝업창 width 크기의 1/2 만큼 보정값으로 빼주었음
+			var popupX = (window.screen.width / 2) - (popupWidth / 2);
+			// 만들 팝업창 width 크기의 1/2 만큼 보정값으로 빼주었음
 
-				var popupY= (window.screen.height / 2) - (popupHeight / 2);
-				// 만들 팝업창 height 크기의 1/2 만큼 보정값으로 빼주었음
+			var popupY= (window.screen.height / 2) - (popupHeight / 2);
+			// 만들 팝업창 height 크기의 1/2 만큼 보정값으로 빼주었음
 
-				window.open('/popup01', '', 'scrollbars=yes,status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY);
-			}
+			window.open('/popup01', '', 'scrollbars=yes,status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY);
+		}
+
+		function deleteCookie(name) {
+			document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		}
+		function logout() {
+			deleteCookie('SDOT_NAME');
+			deleteCookie('SDOT_LOGIN_DATE');
+			deleteCookie('SDOT_LOGIN_EXPIRATION_TIME');
+			deleteCookie('SDOT_ID');
+
+			location.href="//iothub.eseoul.go.kr/admin/login.do"
+		}
 	</script>
 	<div class="wrap">
 		<nav>
@@ -90,7 +102,7 @@
 							<span onclick="popupCreate()" style="cursor: pointer; font-weight: bold;padding: 5px 15px;border: 1px solid #0c82e9;margin-right: 20px;color: #0c82e9;">대시보드 보기</span>
 						</c:if>
 						<%=userName%>님 
-						<!-- <a href="/logout?userId=">로그아웃</a> -->
+						<a onclick="logout()">로그아웃</a>
 					</div>
 				</div><!-- container -->
 			</div><!-- gnb -->

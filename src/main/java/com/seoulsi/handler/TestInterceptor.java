@@ -2,6 +2,7 @@ package com.seoulsi.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -75,8 +76,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 
 		// cookie expire 체크
 		Long loginTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_DATE")));
-		Long expirationTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_EXPIRATION_TIME")))
-				* 100;
+		Long expirationTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_EXPIRATION_TIME")));
 		Long calcTime = loginTime + expirationTime;
 		String userName = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_NAME"));
 		String userId = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_ID"));
@@ -98,7 +98,11 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 						medto.setUserId(id);
 						commonService.insertGrantMenuN(medto);
 					} else {
-						if (!medto.getPath().contains("setting") && !medto.getPath().contains("admin")) {
+						final String[] defaultMenu = { "sensor/index", "sensor/map", "sensor/item", "sensor/state",
+								"sensor/statistic", "statistic/person", "statistic/term", "admin/index", "admin/card",
+								"admin/cardLocation", "admin/cardMap" };
+
+						if (Arrays.stream(defaultMenu).anyMatch(medto.getPath()::equals)) {
 							// 일반 유저 권한 부여
 							medto.setUserId(id);
 							commonService.insertGrantMenu(medto);
@@ -110,7 +114,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 				}
 				// 유저 관리를 위해 유저 등록
 				MemberDto member = new MemberDto();
-				member.setDeptCd("1");
+				member.setDeptCd("2");
 				member.setUserId(id);
 				member.setUserName(aes.encrypt(userName));
 				member.setEmailAddr(aes.encrypt(userId));
@@ -138,7 +142,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 					response.getWriter().print(
 							"<link rel='stylesheet' type='text/css' href='../../share/alertifyjs/css/bootstrap.min.css'/>");
 					response.getWriter().print(
-							"<body><script>alertify.alert('에러','메뉴 권한이 없습니다.', function(){history.back();})</script><body>");
+							"<body><script>alertify.alert('에러','메뉴 권한이 없습니다.', function(){ location.href='/sensor/index'})</script><body>");
 					response.getWriter().flush();
 					return false;
 				}
@@ -179,7 +183,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		response.getWriter()
 				.print("<link rel='stylesheet' type='text/css' href='../../share/alertifyjs/css/bootstrap.min.css'/>");
 		response.getWriter().print(
-				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//eseoul.go.kr'})</script><body>");
+				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//iothub.eseoul.go.kr/admin/login.do'})</script><body>");
 		response.getWriter().flush();
 	}
 
