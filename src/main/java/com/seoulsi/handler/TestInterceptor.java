@@ -1,6 +1,7 @@
 package com.seoulsi.handler;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,11 +21,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.seoulsi.dto.LoginDto;
 import com.seoulsi.dto.MemberDto;
 import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.PropertiesDto;
 import com.seoulsi.service.AdminService;
 import com.seoulsi.service.CommonService;
+import com.seoulsi.service.LoginService;
 import com.seoulsi.service.SettingService;
 import com.seoulsi.util.AES256Util;
 import com.seoulsi.util.CookieLoginUtil;
@@ -43,6 +46,9 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private SettingService settingService;
+
+	@Autowired
+	private LoginService loginService;
 
 	@Autowired
 	private PropertiesDto pdto;
@@ -69,7 +75,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 			if (active.equals("local")) {
 				devAccount(response);
 			} else {
-				expiredAccount(response);
+				expiredAccount(request, response);
 			}
 			return false;
 		}
@@ -77,9 +83,11 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		// cookie expire 체크
 		Long loginTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_DATE")));
 		Long expirationTime = Long.parseLong(SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_LOGIN_EXPIRATION_TIME")));
+		System.out.println(expirationTime);
 		if (active.equals("local")) {
-			expirationTime = expirationTime * 100;
+			expirationTime = expirationTime * 10000;
 		}
+		System.out.println(expirationTime);
 
 		Long calcTime = loginTime + expirationTime;
 		String userName = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_NAME"));
@@ -89,6 +97,19 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		if (CookieLoginUtil.expireTime(calcTime)) {
 			AES256Util aes = new AES256Util(pdto.getPassPhraseDB());
 			String id = aes.encrypt(userId);
+
+			// 로그인 히스토리 추가 (로그인 쿠키가 없으면)
+			if (cookieMap.get("init") == null) {
+				response.addCookie(new Cookie("init", "true"));
+				LoginDto ldto = new LoginDto();
+				ldto.setUserId(id);
+				ldto.setUserAction("LoginSuccess");
+				ldto.setUserIp(request.getRemoteAddr());
+				ldto.setUserReason("로그인");
+				ldto.setUserStatus(1);
+				loginService.insertLoginHistory(ldto);
+			}
+
 			// System.out.println("interceptor : " + id);
 			MenuDto mdto = new MenuDto();
 			mdto.setUserId(id);
@@ -165,17 +186,20 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 			request.setAttribute("menu", parseMenu);
 			request.setAttribute("grant", grant.get().getWriteGrantYn());
 			request.setAttribute("read", grant.get().getGrantYn());
+
 		} else {
 			// 만료됨
-			// System.out.println("만료됨");
-			expiredAccount(response);
+			System.out.println("만료됨");
+			expiredAccount(request, response);
 			return false;
 		}
 
 		return true;
 	}
 
-	public void expiredAccount(HttpServletResponse response) throws IOException {
+	public void expiredAccount(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		StringBuffer referer = request.getRequestURL();
+
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
@@ -187,7 +211,8 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		response.getWriter()
 				.print("<link rel='stylesheet' type='text/css' href='../../share/alertifyjs/css/bootstrap.min.css'/>");
 		response.getWriter().print(
-				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//iothub.eseoul.go.kr/admin/login.do'})</script><body>");
+				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//iothub.eseoul.go.kr/admin/login.do?referer="
+						+ URLEncoder.encode(referer.toString(), "UTF-8") + "'})</script><body>");
 		response.getWriter().flush();
 	}
 

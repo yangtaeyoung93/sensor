@@ -86,6 +86,7 @@
 			deleteCookie('SDOT_LOGIN_DATE');
 			deleteCookie('SDOT_LOGIN_EXPIRATION_TIME');
 			deleteCookie('SDOT_ID');
+			deleteCookie('init');
 
 			location.href="//iothub.eseoul.go.kr/admin/login.do"
 		}
