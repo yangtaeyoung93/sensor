@@ -47,7 +47,7 @@
 <!-- 도시데이터센서 현황 보고서 -->
 		<div class="con06">
 			<div class="con_title1">
-				<div class="tt">
+				<div class="tt" style="width: 210px;">
 				도시데이터센서 현황 보고서
 				</div>
 				<div class="datett" style="width:345px;">

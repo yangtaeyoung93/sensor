@@ -128,12 +128,14 @@ public class CommonService implements CommonMapper {
 		String today = dateFormat.format(now);
 		System.out.println("today : " + today);
 
-		// 분 구하기 : 30분마다 통계 -> 30분 이하면 15를 곱함
+		// 분 구하기(통계 3분생성, 33분생성 반영)
 		System.out.println(now.getMinutes());
-		if (now.getMinutes() <= 30) {
-			paramDto.setMm("15");
+		if (now.getMinutes() < 4) {
+			paramDto.setMm("-14");
+		} else if (now.getMinutes() >= 4 && now.getMinutes() < 34) {
+			paramDto.setMm("1");
 		} else {
-			paramDto.setMm("30");
+			paramDto.setMm("16");
 		}
 		System.out.println("mm값 : " + paramDto.getMm());
 
