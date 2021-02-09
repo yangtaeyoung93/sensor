@@ -258,7 +258,7 @@
 
   <!--과거~오늘-->
   <select id="getDailyCntForDataForPastToday" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
-    select equi_type, avg(equi_cnt), sum(data_cnt), sum(normal_data_cnt) normal_data_cnt, sum(normal_data_cnt)-sum(data_cnt) BAD_DATA_CNT from
+    select equi_type, avg(equi_cnt) equi_cnt, sum(data_cnt) data_cnt, sum(normal_data_cnt) normal_data_cnt, sum(normal_data_cnt)-sum(data_cnt) BAD_DATA_CNT from
             (select equi_type, equi_cnt, data_cnt, equi_cnt*((select to_char(sysdate,'hh24') from dual)*30+#{mm}) normal_data_cnt 
             from tb_st_daily_sen where tm8=(select to_char(sysdate,'yyyymmdd') from dual)
         UNION ALL
@@ -277,4 +277,12 @@
     from tb_st_daily_sen where tm8=(select to_char(sysdate,'yyyymmdd') from dual))
     group by equi_type
   </select>
+
+   
+
+   <select id="getDailyCntForMoveEqui" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
+  select equi_type, avg(equi_cnt) equi_cnt, avg(equi_cnt) - avg(normal_equi_cnt) bad_equi_cnt
+  from tb_st_daily_sen_m where tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+  </select>
+
 </mapper>

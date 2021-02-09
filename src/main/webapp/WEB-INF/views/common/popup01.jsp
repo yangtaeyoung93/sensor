@@ -205,9 +205,9 @@
 				<div class="tt" style="width:120px;">
 				이상장비 현황
 				</div>
-				<!-- <div style="float: left;font-size: 0.855em;padding-top: 10px;">
+				<div style="float: left;font-size: 0.855em;padding-top: 10px;">
 				<input id="moveType"  type="checkbox" style="width:15px;height:15px;display:inline;vertical-align:middle;"> 이동형 장비 현황보기
-				</div> -->
+				</div>
 				<div class="datett" style="width:345px;">
 					<!-- <div class="date_select">
 						<select id="day">
@@ -408,9 +408,18 @@
             var fromDate = $('#fromDate').val();
             if(toDate.length == 0 || fromDate.length == 0) {
                 alert('날짜를 선택해주세요.')
-            } else {
+            } else {		
+				if($('#moveType').prop('checked')){
+					//이동형이 체크된경우
+				searchMoveEquiDate(toDate.replace(/-/g,""), fromDate.replace(/-/g,""));
+				}else{
+					//이동형 체크 안 된 경우
+				
 				searchDate(toDate.replace(/-/g,""), fromDate.replace(/-/g,""));
 				searchEqui(toDate, fromDate, $('#element').val());
+
+				}
+				
             }
 
 
@@ -418,13 +427,15 @@
 
 		//이동형 장비 현황보기 클릭이벤트
 		$('#moveType').click(function(){
+
+			var toDate = $('#toDate').val().replace(/-/g,"");
+			var fromDate = $('#fromDate').val().replace(/-/g,"");
+			
 			if($('#moveType').prop('checked')){
-				alert("체크함");
-				//searchMoveEquiDate(toDate, fromDate);
+				searchMoveEquiDate(toDate, fromDate);
 
 			}else{
-				alert("체크해제");
-				//searchDate(toDate, fromDate);
+				searchDate(toDate, fromDate);
 			}
 		})
 
