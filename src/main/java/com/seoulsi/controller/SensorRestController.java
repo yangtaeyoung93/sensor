@@ -416,7 +416,6 @@ public class SensorRestController {
 
 	@PostMapping("/sensor/getDailyCntForMoveEqui")
 	public Map<String, Object> getDailyCntForMoveEqui(ParamDto paramDto) throws Exception {
-
 		Map<String, Object> data = new HashMap<>();
 		data.put("data", commonService.getDailyCntForMoveEqui(paramDto));
 		logger.info("{}", data);
