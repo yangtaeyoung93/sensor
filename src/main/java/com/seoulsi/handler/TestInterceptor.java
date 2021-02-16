@@ -209,7 +209,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		response.getWriter()
 				.print("<link rel='stylesheet' type='text/css' href='../../share/alertifyjs/css/bootstrap.min.css'/>");
 		response.getWriter().print(
-				"<body><script>alertify.alert('에러','계정 정보가 만료되거나 없습니다. 재인증해주세요.', function(){ location.href='//iothub.eseoul.go.kr/admin/login.do?referer="
+				"<body><script>alertify.alert('에러','서울시 IoT 도시데이터플랫폼 로그인을 통해 S-DoT 운영시스템에 접속할 수 있습니다.', function(){ location.href='//iothub.eseoul.go.kr/admin/login.do?referer="
 						+ URLEncoder.encode(referer.toString(), "UTF-8") + "'})</script><body>");
 		response.getWriter().flush();
 	}
