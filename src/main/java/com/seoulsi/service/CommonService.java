@@ -130,9 +130,9 @@ public class CommonService implements CommonMapper {
 
 		// 분 구하기(통계 3분생성, 33분생성 반영)
 		System.out.println(now.getMinutes());
-		if (now.getMinutes() < 4) {
+		if (now.getMinutes() < 3) {
 			paramDto.setMm("-14");
-		} else if (now.getMinutes() >= 4 && now.getMinutes() < 34) {
+		} else if (now.getMinutes() >= 3 && now.getMinutes() < 33) {
 			paramDto.setMm("1");
 		} else {
 			paramDto.setMm("16");

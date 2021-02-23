@@ -45,4 +45,11 @@ public class LoginController {
 
 		return "redirect:/login";
 	}
+
+	@GetMapping("/login")
+	public String sensorMap() throws Exception {
+
+		return "redirect:/";
+	}
+
 }
