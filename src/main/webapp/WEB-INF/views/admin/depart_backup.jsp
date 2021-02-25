@@ -9,9 +9,6 @@
 <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 <script src="/share/js/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css"/>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript" ></script>
-
 <style>
 .sr-only {
   position: absolute;
@@ -454,7 +451,7 @@ pageContext.setAttribute("grant", grant);
 	
 	<div class="container">
 		<div class="sub_title">
-			<h1 class="main_co">사용자 접속현황</h1>
+			<h1 class="main_co">관리부서 관리</h1>
 		</div>
 		<div class="row array">
 					
@@ -474,172 +471,329 @@ pageContext.setAttribute("grant", grant);
 									<input data-flag="false" autocomplete=off type="text" name="fromDate" id="from" placeholder="날짜선택" class="form-control"><span style="display: none;" class="input-group-addon"></span>
 								</div>
 							</li>
-														
+							<li class="col-xs-1 title">기관</li>
 							<li class="col-xs-1">
-								<input id="userSearch" class="search_btn" type="submit" value="검색">
+								<select id="opt1" name="instCd">
+									<option value="all">전체</option>
+									<c:forEach items="${orga }" var="orga">
+										<option value="${orga.code}">${orga.relCd1 }</option>
+									</c:forEach>
+								</select>
+								
+							</li>
+							<li class="col-xs-1">
+								<input class="depart_search_btn search_btn" type="submit" value="검색">
 							</li>
 						</ul>
-						<!-- <div class="row array">	
+						<div class="row array">
+							<div class="col-xs-8" id="equiName" style="line-height: 30px;">
+							</div>
 							<div class="col-xs-4" style="float:right;text-align:right;">
 								<c:if test="${grant eq 'Y'}">
-									<input class="col-xs-offset-1 col-xs-2" id="csvDownload" type="button" value="CSV" style="background: white; color: #666; border: 1px solid #c9c9c9; float: none;"/>
+									<input class="search_btn col-xs-offset-1 col-xs-2" id="export" type="button" value="Export" style="background: white; color: #666; border: 1px solid #c9c9c9; float: none;"/>
+									<input class="search_btn col-xs-2" type="button" data-toggle="modal" data-target=".upload" value="다중 추가" style="margin-left: 10px; background: white; color: #666; border: 1px solid #c9c9c9; float:right;float: none;"/>
+									<input class="search_btn col-xs-offset-1 col-xs-2" type="button" data-toggle="modal" data-target=".detail" value="추가" style="margin-left: 10px; background: white; color: #666; border: 1px solid #c9c9c9; float:right;float: none;"/>
+									<input class="search_btn col-xs-offset-1 col-xs-2" id="remove" type="button" value="삭제" style="margin-left: 10px; background: white; color: #666; border: 1px solid #c9c9c9;float:right;float: none;"/>
+									<input class="search_btn col-xs-offset-1 col-xs-2" id="save" type="submit" value="저장" style="margin-left: 10px;float:right;float: none;"/>
 								</c:if>
 							</div>
-						</div> -->
+						</div>
 					</div>
 				</form>
 			</div>
 		</div><!-- array -->
-		<div class="row col-xs-10 ">
-      <div class="col-xs-5" style="float:right;text-align:right;padding-bottom: 10px;">
-        <c:if test="${grant eq 'Y'}">
-          <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" style="background: white; color: #666; border: 1px solid #c9c9c9; float: none;"/>
-        </c:if>
-      </div>
-			<table id="historyTable" class="table table-hover user-table" >
-				<thead>
-				 <tr>
-					<th style="width:33%"> 사용자 ID </th>
-					<th style="width:33%"> 이름</th>
-					<th style="width:33%"> 접속일시 </th>
-				 </tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td colspan="3">날짜를 선택하여 검색</td>
-
-					</tr>
-				</tbody>
+		<div class="row table-row">
+			<table class="table table-hover user-table" style="margin-bottom: 60px;">
+				<tr style="position: sticky; top:0; left:0; z-index: 9;">
+	        	    <th></th>
+	        	    <th>날짜</th>
+	        	    <th>관리자(정)</th>
+	        	    <th>전화번호</th>
+	        	    <th>관리자(부)</th>
+	        	    <th>전화번호</th>
+	        	    <th>변경내역</th>
+	        	    <th>변경사유</th>
+	        	    <th>비고</th>
+	        	</tr>
+				<!-- #data input -->
+				<tr data-modify="false">
+					<td colspan="9" style="text-align: center;">검색 조건을 선택 후 검색해주세요.</td>
+				</tr>
 				
+				<!-- data input# -->
 			</table>
-			</div>
-	
+
+		</div><!-- board -->
 	</div>
 </div>
 <script>
-	
+	function spanDoubleClick(e) {
+		var _this = $(e)[0];
+		if($(_this).parent().data('mod') == 'span') {
+			$(_this).parent().data('mod','input')
+			$(_this).hide();
+			$(_this).parent().find('input').val($(_this).text());
+			$(_this).parent().find('input').show();
+			$(_this).parent().parent().data('modify', 'true')
+		} 
+	}
+	function inputDoubleClick(e) {
+		var _this = $(e)[0];
+		if($(_this).parent().data('mod') == 'input') {
+			$(_this).parent().data('mod', 'span');
+			$(_this).hide();
+			$(_this).parent().find('span').text($(_this).val());
+			$(_this).parent().find('span').show();
+		}
+	}
 	$(document).ready(function() {
-		
 		var globalData;
-		$('#userSearch').click(function(e) {
+		$('.depart_search_btn').click(function(e) {
 			e.preventDefault();
+			
 			var data = $('#searchForm').serializeObject();
 			var flag = true;
 			globalData = data;
 			$.each(data, function(a,b) {
+				// if(a == "instCd" || a == "deptCd" || a == "superDeptCd") {
+				// 	if(b != "전체") {
+				// 		alertify.alert("에러", "비어있는 값이 있습니다.")
+				// 		flag = false;
+				// 	}
+				// } else 
 				if(b.length == 0) {
 					alertify.alert("에러", "비어있는 값이 있습니다.")
 					flag = false;
 				} 
+				
 			})
 			if(flag) {
 				var to = $('#to').val();
-				var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2);
+				var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2)
 				var from = $('#from').val();
-				var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)+'2359';
-
+				var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)
 				data['toDate'] = toDate;
 				data['fromDate'] = fromDate;
-				 
 				$.ajax({
-				 	url: '/api/admin/user/history',
-				 	type: 'GET',
-				 	data: data,
-				 	success: function(r) {
-				 		if (r.length == 0) {
-				 			alert("조건에 만족하는 데이터가 없습니다.");
-				 		}
-             var text;
-             $.each(r.data, function(a,b) {
-					    console.log(b);
-				  	if(b.etc == null) {
-					  	b.etc = ''
-					  }
-					  
-            text += 
-            '<tr>'+
-						'    <td>'+b.userId+'</td>'+
-						'    <td>'+b.userName+'</td>'+
-						'    <td>'+b.regDate+'</td></tr>';
-            $('#historyTable tbody').html(text);
-			  	})
+					url: '/api/admin/mngDept/search',
+					type: 'GET',
+					data: data,
+					success: function(r) {
+						if (r.length == 0) {
+							alert("조건에 만족하는 데이터가 없습니다.");
+						}
 
-
-
-            //  var text = '	<thead> <tr>'
-				    //           + '	<th> ID </th>'
-					  //           + ' <th> 이름</th>'
-					  //           + ' <th> 접속일시 </th></tr>	</thead>	<tbody>'        
-            //             +'<tr>'
-            //             +'<td>'+r.a+'</td>'
-            //             +'<td>'+r.b+'</td>'
-            //             +'<td>'+r.c+'</td>'             
-            //             +'</tr>'
-            //             +'<tr><td>'+r.d+'</td>'
-            //             +'<td>'+r.e+'</td>'
-            //             +'<td>'+r.f+'</td></tr></tbody>';
-            // $('#historyTable').html(text);
-
-
-
-
-
-					},error:function(request,error){
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+						console.log(r);
+						var text = '<tr style="position: sticky; top:0; left:0; z-index: 9;">'+
+						'    <th></th>'+
+						'    <th>날짜</th>'+
+						'    <th>관리자(정)</th>'+
+						'    <th>전화번호</th>'+
+						'    <th>관리자(부)</th>'+
+						'    <th>전화번호</th>'+
+						'    <th>변경내역</th>'+
+						'    <th>변경사유</th>'+
+						'    <th>비고</th>'+
+						'</tr>';
+						$.each(r, function(a, b) {
+							var year = b.workDt.substr(0,4);
+							var month = b.workDt.substr(4,2);
+							var day = b.workDt.substr(6,2);
+							var hour = b.workTm.substr(0,2);
+							var minutes = b.workTm.substr(2,2);
+							text += '<tr data-modify="false">'+
+							'	 <td><label class="col-xs-offset-1 choice-label"><input class="setYn" type="checkbox"><i></i></label></td>'+
+							'    <td data-mod="span"><span>'+year+'년 '+month+'월'+day+'일 '+hour+'시 '+minutes+'분</span><input ondblclick="inputDoubleClick(this)" type="text" name="workDt" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.mngNmJung+'</span><input ondblclick="inputDoubleClick(this)" name="mngNmJung" type="text" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.mngNmJungTel+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="mngNmJungTel" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.mngNmBu+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="mngNmBu" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.mngNmBuTel+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="mngNmBuTel" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.chgContent+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="chgContent" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.chgReason+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="chgReason" style="display:none;"/></td>'+
+							'    <td data-mod="span"><span ondblclick="spanDoubleClick(this)">'+b.bigo+'</span><input ondblclick="inputDoubleClick(this)" type="text" name="bigo" style="display:none;"/><input type="hidden" name="instCd" value="'+b.instCd+'"><input type="hidden" name="superDeptCd" value="'+b.superDeptCd+'"><input type="hidden" name="deptCd" value="'+b.deptCd+'"></td>'+
+							'</tr>';
+						})
+						$('.user-table').html(text);
 					}
-				 })
+				})
 			}
 			
 		})
 		
+		
+		$('#save').click(function(e){
+			e.preventDefault();
+			$('.user-table tr td').each(function(a,b){
+				if($(this).data('mod') == "input") {
+					inputDoubleClick($(this).find('input'))
+				}
+			})
+			var deptData = $('#searchForm').serializeObject();
+			var to = $('#to').val();
+			var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2)
+			var from = $('#from').val();
+			var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)
+			deptData['toDate'] = toDate;
+			deptData['fromDate'] = fromDate;
+			console.log(deptData)
+			var data = [];
+			
+			
+			$.each($('.user-table tr'), function(a,b){ 
+				if($(b).data('modify') == 'true') {
+					var setData = {};
+					console.log($(b).find('td'))
+					$.each($(b).find('td'), function(c,d) {
+						var d = $(this).find('input').val();
+						if(d.length == 0) {
+							d = $(this).find('span').text();
+						}
+						if($($(this).find('input'))[0].name == "workDt") {
+							var wdt = d;
+							var workDt = wdt.substr(0,4)+wdt.substr(6,2)+wdt.substr(9,2)
+							var workTm = wdt.substr(13,2)+wdt.substr(17,2)
+							setData['workDt'] = workDt;
+							setData['workTm'] = workTm;
+							
+						} else {
+							if($($(this).find('input'))[0].name != "") {
+								setData[$($(this).find('input'))[0].name] = d  
+							}
+						}
+						setData['deptCd'] = $(this).find('input[name=deptCd]').val();
+						setData['instCd'] = $(this).find('input[name=instCd]').val();
+						setData['superDeptCd'] = $(this).find('input[name=superDeptCd]').val();
+						
+					})
+					
+					setData['toDate'] = deptData['toDate']
+					setData['fromDate'] = deptData['fromDate']
+					data.push(setData)
+				}
+			})
+			$.ajax({
+				url: '/api/admin/mngDept/update',
+				type: 'POST',
+				data: JSON.stringify(data),
+				headers: {
+			        'Content-Type':'application/json'
+			    },
+				success: function(r) {
+					console.log(r)
+					if(r.result == "success") {
+						alertify.alert("성공", "정보가 수정되었습니다.");
+					} else {
+						alertify.alert("실패", "정보 수정을 실패하였습니다.");
+					}
+				}
+			})
+			console.log(data)
+		})
+		
+		$('#remove').click(function() {
+			alertify.confirm("경고", "선택한 정보를 삭제하시곘습니까?", function(){
+				var data = [];
+				var deptData = $('#searchForm').serializeObject();
+				$('.setYn').each(function(){
+				    if($(this).prop('checked')) {
+				    	var setData = {};
+						$.each($(this).parent().parent().parent().find('td'), function(c,d) {
+							var d = $(this).find('input').val();
+							if(d.length == 0) {
+								d = $(this).find('span').text();
+							}
+							if($($(this).find('input'))[0].name == "workDt") {
+								var wdt = d;
+								var workDt = wdt.substr(0,4)+wdt.substr(6,2)+wdt.substr(9,2)
+								var workTm = wdt.substr(13,2)+wdt.substr(17,2)
+								setData['workDt'] = workDt;
+								setData['workTm'] = workTm;
+								
+							} else {
+								if($($(this).find('input'))[0].name != "") {
+									setData[$($(this).find('input'))[0].name] = d  
+								}
+							}
+							
+							setData['deptCd'] = $(this).find('input[name=deptCd]').val();
+							setData['instCd'] = $(this).find('input[name=instCd]').val();
+							setData['superDeptCd'] = $(this).find('input[name=superDeptCd]').val();
+						})
+						data.push(setData)
+				    }
+				})
+				console.log(data, globalData);
+				$.ajax({
+					url: '/api/admin/mngDept/delete',
+					type: 'POST',
+					data: JSON.stringify(data),
+					headers: {
+				        'Content-Type':'application/json'
+				    },
+					success: function(r) {
+						console.log(r)
+						if(r.result == "success") {
+							alertify.alert("성공", "해당 정보가 삭제되었습니다.");
+							$('.setYn').each(function(){
+							    if($(this).prop('checked')) {
+							    	$(this).parent().parent().parent().remove();	
+							    }
+						    })
+						} else {
+							alertify.alert("실패", "정보 삭제를 실패하였습니다.");
+						}
+					}
+				})
+			}, function() {
+				alertify.error('취소되었습니다.')
+			})
+		})
 
-    function getCSV(filename){
-      //table을 csv로 만들기
-      var csv = [];
-      var rows = $('#historyTable tr');
-      
-      for ( var i = 0  ; i < rows.length ; i++){
-        var row = [];
-        var cols = rows[i].querySelectorAll("td, th");
-        
-        for ( var j = 0 ; j< cols.length; j++){
-          row.push(cols[j].innerText);
-        }
-        csv.push(row.join(","))
-      }
-      downloadCSV(csv.join("\n"),filename)
-    }
-
-    //csv 다운로드
-    function downloadCSV(csv,filename){
-      var csvFile;
-      var downloadLink;
-      
-      // 한글 처리를 해주기 위해 BOM 추가하기
-      const BOM = "\uFEFF";
-      csv = BOM + csv;
-
-      csvFile = new Blob([csv],{type : "text/csv"});
-      downloadLink = document.createElement("a");
-      downloadLink.download = filename;
-      downloadLink.href = window.URL.createObjectURL(csvFile);
-      downloadLink.style.display = "none";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-
-    }
-
-		$('#csvDownload').click(function() {
-      var to = $('#to').val();
+		$('#export').click(function() {
+			var to = $('#to').val();
 			var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2);
 			var from = $('#from').val();
 			var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2);
-      var filename = toDate+"_"+fromDate+".csv";
-      getCSV(filename);
-    })
-	
+			var instCd = $('select[name=instCd]').val();
 
-		//$('#historyTable').DataTable();
+			var data = $('#searchForm').serializeObject();
+			var flag = true;
+			$.each(data, function(a,b) {
+				// if(a == "instCd" || a == "deptCd" || a == "superDeptCd") {
+				// 	if(b != "전체") {
+				// 		alertify.alert("에러", "비어있는 값이 있습니다.")
+				// 		flag = false;
+				// 	}
+				// } else 
+				if(b.length == 0) {
+					alertify.alert("에러", "비어있는 값이 있습니다.")
+					flag = false;
+				} 
+				
+			})
+			if(flag) {
+				var options = 'top=0, left=0, width=0, height=0, status=no, menubar=no, toolbar=no, resizable=no';
+				window.open('/api/admin/mngDept/excel?toDate='+toDate+'&fromDate='+fromDate+'&instCd='+instCd, '다운로드', options);
+			}
+			// $.ajax({
+			// 	url: '/api/admin/mngDept/excel',
+			// 	method: 'post',
+			// 	data: {
+			// 			toDate:toDate,
+			// 			fromDate:fromDate,
+			// 			instCd:instCd,
+			// 		},
+			// 	success: function(data, status, xhr) {
+			// 		var filename = xhr.getResponseHeader("X-Filename");
+			// 		var _blob = new Blob([data], {type : 'Application/Msexcel'});
+			// 		var link = document.createElement('a');
+			// 		link.href = window.URL.createObjectURL(_blob);
+			// 		// link.download = 'text.xlsx';
+			// 		link.download = filename;
+			// 		link.click();
+			// 	}
+			// })
+		})
 	})
 </script>
 <jsp:include page="./departModal.jsp"></jsp:include>

@@ -22,6 +22,8 @@ import com.seoulsi.dto.EquiDto;
 import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.MngDeptDto;
 import com.seoulsi.dto.WareDto;
+import com.seoulsi.dto.extend.ParamDto;
+import com.seoulsi.dto.HistoryDto;
 import com.seoulsi.mapper.AdminMapper;
 
 @Service
@@ -297,5 +299,11 @@ public class AdminService implements AdminMapper {
 	public List<EquiDto> getGuEquiList(String guTp) throws Exception {
 		// TODO Auto-generated method stub
 		return adminMapper.getGuEquiList(guTp);
+	}
+
+	@Override
+	public List<HistoryDto> getUserHistory(ParamDto paramDto) throws Exception {
+
+		return adminMapper.getUserHistory(paramDto);
 	}
 }

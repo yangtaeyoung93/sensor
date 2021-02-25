@@ -230,4 +230,17 @@
 	</choose>
 	ORDER BY EI.EQUI_INFO_KEY, LOC_DETAIL_TP
   </select>
+
+  <select id="getUserHistory" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.HistoryDto">
+ 	select a.user_id,b.user_name, a.reg_date 
+	from 
+	(select user_id, max(reg_date) reg_date from tb_cc_user_history  group by user_id)a,
+	tb_cc_user b
+	where a.user_id = b.user_id
+	and
+	a.reg_date
+	between to_timestamp(#{toDate},'YYMMDD') and to_timestamp(#{fromDate},'YYMMDDHH24MI')
+  </select> 
+
+  
 </mapper>

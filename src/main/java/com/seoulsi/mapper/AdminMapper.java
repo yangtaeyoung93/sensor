@@ -13,6 +13,8 @@ import com.seoulsi.dto.EquiDto;
 import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.MngDeptDto;
 import com.seoulsi.dto.WareDto;
+import com.seoulsi.dto.extend.ParamDto;
+import com.seoulsi.dto.HistoryDto;
 
 @Mapper
 public interface AdminMapper {
@@ -66,4 +68,6 @@ public interface AdminMapper {
 	public MenuDto getWriteGrant(MenuDto mdto) throws Exception;
 
 	public List<EquiDto> getGuEquiList(String guTp) throws Exception;
+
+	public List<HistoryDto> getUserHistory(ParamDto paramDto) throws Exception;
 }

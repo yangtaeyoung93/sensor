@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -67,10 +68,12 @@ import com.seoulsi.dto.EquiDto;
 import com.seoulsi.dto.MemberDto;
 import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.MngDeptDto;
+import com.seoulsi.dto.extend.ParamDto;
 import com.seoulsi.dto.PropertiesDto;
 import com.seoulsi.dto.ResultDto;
 import com.seoulsi.dto.SettingDto;
 import com.seoulsi.dto.WareDto;
+import com.seoulsi.dto.HistoryDto;
 import com.seoulsi.service.AdminService;
 import com.seoulsi.service.CommonService;
 import com.seoulsi.service.LoginService;
@@ -1777,4 +1780,29 @@ public class AdminRestController {
 		rdto.setResult("fail");
 		return new ResponseEntity<ResultDto>(rdto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@GetMapping("/user/history")
+	public Map<String, Object> getUserHistory(ParamDto paramDto) throws Exception {
+		Map<String, Object> info = new HashMap<>();
+		List<HistoryDto> lm = new ArrayList<>();
+		AES256Util aes = new AES256Util(pdto.getPassPhraseDB());
+
+		for (HistoryDto historyDto : adminService.getUserHistory(paramDto)) {
+			HistoryDto hdto = new HistoryDto();
+
+			hdto.setUserId(aes.decrypt(historyDto.getUserId()));
+			hdto.setUserName(aes.decrypt(historyDto.getUserName()));
+			hdto.setRegDate(historyDto.getRegDate());
+
+			lm.add(hdto);
+
+		}
+
+		info.put("data", lm);
+
+		System.out.println("data 값 : " + info);
+		return info;
+
+	}
+
 }
