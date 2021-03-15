@@ -14,7 +14,7 @@ import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.MngDeptDto;
 import com.seoulsi.dto.WareDto;
 import com.seoulsi.dto.extend.ParamDto;
-import com.seoulsi.dto.HistoryDto;
+import com.seoulsi.dto.MemberDto;
 
 @Mapper
 public interface AdminMapper {
@@ -69,5 +69,5 @@ public interface AdminMapper {
 
 	public List<EquiDto> getGuEquiList(String guTp) throws Exception;
 
-	public List<HistoryDto> getUserHistory(ParamDto paramDto) throws Exception;
+	public List<MemberDto> getUserHistory(ParamDto paramDto) throws Exception;
 }

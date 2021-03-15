@@ -496,22 +496,34 @@ pageContext.setAttribute("grant", grant);
           <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" style="background: white; color: #666; border: 1px solid #c9c9c9; float: none;"/>
         </c:if>
       </div>
-			<table id="historyTable" class="table table-hover user-table" >
+     
+      <!-- <table class="table table-hover user-table" table id="historyTable" style="margin-bottom: 60px;">
+      <thead>
+        <tr>
+         <th style="width:33%"> 사용자 ID </th>
+         <th style="width:33%"> 이름</th>
+         <th style="width:33%"> 접속일시 </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr><td colspan="3"> 데이터가 없습니다.</td></tr>
+      
+       </tbody>
+      </table> -->
+     
+     
+      <table id="historyTable"  >
 				<thead>
 				 <tr>
-					<th style="width:33%"> 사용자 ID </th>
-					<th style="width:33%"> 이름</th>
-					<th style="width:33%"> 접속일시 </th>
+					<th> 사용자 ID </th>
+					<th> 이름</th>
+					<th> 접속일시 </th>
 				 </tr>
 				</thead>
-				<tbody>
-					<tr>
-						<td colspan="3">날짜를 선택하여 검색</td>
-
-					</tr>
-				</tbody>
+	
 				
 			</table>
+      
 			</div>
 	
 	</div>
@@ -539,55 +551,58 @@ pageContext.setAttribute("grant", grant);
 				var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)+'2359';
 
 				data['toDate'] = toDate;
-				data['fromDate'] = fromDate;
-				 
-				$.ajax({
-				 	url: '/api/admin/user/history',
-				 	type: 'GET',
-				 	data: data,
-				 	success: function(r) {
-				 		if (r.length == 0) {
-				 			alert("조건에 만족하는 데이터가 없습니다.");
-				 		}
-             var text;
-             $.each(r.data, function(a,b) {
-					    console.log(b);
-				  	if(b.etc == null) {
-					  	b.etc = ''
-					  }
+				data['fromDate'] = fromDate; 
+
+        //datatable 사용을 위한 ajax 
+        $('#historyTable').DataTable().destroy();
+        $('#historyTable').DataTable({
+          language : lang_kor,
+          ajax:{
+            url: '/api/admin/user/history',
+			      type: 'GET',
+				    data: data
+          },		 
+			    columns:[
+               {data : 'userId'},
+               {data : 'userName'},
+               {data : 'regDate'}
+             ]
+					
+    });
+
+
+
+
+
+				// $.ajax({
+				//  	url: '/api/admin/user/history',
+				//  	type: 'GET',
+				//  	data: data,
+				//  	success: function(r) {
+				//  		if (r.length == 0) {
+				//  			alert("조건에 만족하는 데이터가 없습니다.");
+				//  		}
+        //      var text;
+        //      $.each(r.data, function(a,b) {
+				// 	    console.log(b);
+				//   	if(b.etc == null) {
+				// 	  	b.etc = ''
+				// 	  }
 					  
-            text += 
-            '<tr>'+
-						'    <td>'+b.userId+'</td>'+
-						'    <td>'+b.userName+'</td>'+
-						'    <td>'+b.regDate+'</td></tr>';
-            $('#historyTable tbody').html(text);
-			  	})
+        //     text += 
+        //     '<tr>'+
+				// 		'    <td>'+b.userId+'</td>'+
+				// 		'    <td>'+b.userName+'</td>'+
+				// 		'    <td>'+b.regDate+'</td></tr>';
+        //     $('#historyTable tbody').html(text);
+			  // 	})
 
 
 
-            //  var text = '	<thead> <tr>'
-				    //           + '	<th> ID </th>'
-					  //           + ' <th> 이름</th>'
-					  //           + ' <th> 접속일시 </th></tr>	</thead>	<tbody>'        
-            //             +'<tr>'
-            //             +'<td>'+r.a+'</td>'
-            //             +'<td>'+r.b+'</td>'
-            //             +'<td>'+r.c+'</td>'             
-            //             +'</tr>'
-            //             +'<tr><td>'+r.d+'</td>'
-            //             +'<td>'+r.e+'</td>'
-            //             +'<td>'+r.f+'</td></tr></tbody>';
-            // $('#historyTable').html(text);
-
-
-
-
-
-					},error:function(request,error){
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					}
-				 })
+				// 	},error:function(request,error){
+				// 		alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				// 	}
+				//  })
 			}
 			
 		})
@@ -637,9 +652,40 @@ pageContext.setAttribute("grant", grant);
       var filename = toDate+"_"+fromDate+".csv";
       getCSV(filename);
     })
-	
+    
+    var lang_kor = {
+        "decimal" : "",
+        "emptyTable" : "데이터가 없습니다.",
+        "info" : "_START_ - _END_ (총 _TOTAL_ 명)",
+        "infoEmpty" : "0명",
+        "infoFiltered" : "(전체 _MAX_ 명 중 검색결과)",
+        "infoPostFix" : "",
+        "thousands" : ",",
+        "lengthMenu" : "_MENU_ 개씩 보기",
+        "loadingRecords" : "로딩중...",
+        "processing" : "처리중...",
+        "search" : "검색 : ",
+        "zeroRecords" : "검색된 데이터가 없습니다.",
+        "paginate" : {
+            "first" : "첫 페이지",
+            "last" : "마지막 페이지",
+            "next" : "다음",
+            "previous" : "이전"
+        },
+        "aria" : {
+            "sortAscending" : " :  오름차순 정렬",
+            "sortDescending" : " :  내림차순 정렬"
+        }
+    };
 
-		//$('#historyTable').DataTable();
+
+    $('#historyTable').DataTable({
+      language : lang_kor
+    });
+
+    
+  
+    
 	})
 </script>
 <jsp:include page="./departModal.jsp"></jsp:include>

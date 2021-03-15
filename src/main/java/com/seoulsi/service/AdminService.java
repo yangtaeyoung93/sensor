@@ -23,8 +23,8 @@ import com.seoulsi.dto.MenuDto;
 import com.seoulsi.dto.MngDeptDto;
 import com.seoulsi.dto.WareDto;
 import com.seoulsi.dto.extend.ParamDto;
-import com.seoulsi.dto.HistoryDto;
 import com.seoulsi.mapper.AdminMapper;
+import com.seoulsi.dto.MemberDto;
 
 @Service
 public class AdminService implements AdminMapper {
@@ -302,7 +302,7 @@ public class AdminService implements AdminMapper {
 	}
 
 	@Override
-	public List<HistoryDto> getUserHistory(ParamDto paramDto) throws Exception {
+	public List<MemberDto> getUserHistory(ParamDto paramDto) throws Exception {
 
 		return adminMapper.getUserHistory(paramDto);
 	}

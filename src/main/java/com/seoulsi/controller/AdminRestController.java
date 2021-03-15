@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -73,7 +74,6 @@ import com.seoulsi.dto.PropertiesDto;
 import com.seoulsi.dto.ResultDto;
 import com.seoulsi.dto.SettingDto;
 import com.seoulsi.dto.WareDto;
-import com.seoulsi.dto.HistoryDto;
 import com.seoulsi.service.AdminService;
 import com.seoulsi.service.CommonService;
 import com.seoulsi.service.LoginService;
@@ -320,6 +320,8 @@ public class AdminRestController {
 
 		info.put("data", lm);
 
+		System.out.println("data 값 : " + info);
+
 		return info;
 	}
 
@@ -483,110 +485,110 @@ public class AdminRestController {
 						} else {
 							// 타입별로 내용 읽기
 							switch (cell.getCellType()) {
-								case XSSFCell.CELL_TYPE_FORMULA:
-									value = cell.getCellFormula();
-									break;
-								case XSSFCell.CELL_TYPE_NUMERIC:
-									if (columnindex == 3 || columnindex == 4) {
-										value = cell.getNumericCellValue() + "";
-									} else {
-										value = (int) cell.getNumericCellValue() + "";
-									}
-									break;
-								case XSSFCell.CELL_TYPE_STRING:
-									value = cell.getStringCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_BLANK:
-									value = cell.getBooleanCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_ERROR:
-									value = cell.getErrorCellValue() + "";
-									break;
+							case XSSFCell.CELL_TYPE_FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case XSSFCell.CELL_TYPE_NUMERIC:
+								if (columnindex == 3 || columnindex == 4) {
+									value = cell.getNumericCellValue() + "";
+								} else {
+									value = (int) cell.getNumericCellValue() + "";
+								}
+								break;
+							case XSSFCell.CELL_TYPE_STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
 							}
 						}
 						if (rowindex != 0) {
 							switch (columnindex) {
-								case 0:
-									cdto.setEquiInfoKey(value);
-									break;
-								case 1:
-									cdto.setManuCom(value);
-									break;
-								case 2:
-									cdto.setSizeWidth(value);
-									break;
-								case 3:
-									cdto.setSizeHeight(value);
-									break;
-								case 4:
-									cdto.setSizeThick(value);
-									break;
-								case 5:
-									cdto.setSensorPm10(value);
-									break;
-								case 6:
-									cdto.setSensorPm25(value);
-									break;
-								case 7:
-									cdto.setSensorWind(value);
-									break;
-								case 8:
-									cdto.setSensorWindSp(value);
-									break;
-								case 9:
-									cdto.setSensorTemp(value);
-									break;
-								case 10:
-									cdto.setSensorHumi(value);
-									break;
-								case 11:
-									cdto.setSensorCo(value);
-									break;
-								case 12:
-									cdto.setSensorNo2(value);
-									break;
-								case 13:
-									cdto.setSensorSo2(value);
-									break;
-								case 14:
-									cdto.setSensorNh3(value);
-									break;
-								case 15:
-									cdto.setSensorH2S(value);
-									break;
-								case 16:
-									cdto.setSensorO3(value);
-									break;
-								case 17:
-									cdto.setSensorIllu(value);
-									break;
-								case 18:
-									cdto.setSensorEffeTemp(value);
-									break;
-								case 19:
-									cdto.setSensorVibr(value);
-									break;
-								case 20:
-									cdto.setSensorNoise(value);
-									break;
-								case 21:
-									cdto.setSensorUv(value);
-									break;
-								case 22:
-									cdto.setSensorVisitor(value);
-									break;
-								case 23:
-									cdto.setSensorEtc(value);
-									break;
-								case 24:
-									cdto.setCommTp(value);
-									break;
-								case 25:
-									cdto.setElecTp(value);
-									break;
-								case 26:
-									cdto.setSwVersion(value);
-									break;
+							case 0:
+								cdto.setEquiInfoKey(value);
+								break;
+							case 1:
+								cdto.setManuCom(value);
+								break;
+							case 2:
+								cdto.setSizeWidth(value);
+								break;
+							case 3:
+								cdto.setSizeHeight(value);
+								break;
+							case 4:
+								cdto.setSizeThick(value);
+								break;
+							case 5:
+								cdto.setSensorPm10(value);
+								break;
+							case 6:
+								cdto.setSensorPm25(value);
+								break;
+							case 7:
+								cdto.setSensorWind(value);
+								break;
+							case 8:
+								cdto.setSensorWindSp(value);
+								break;
+							case 9:
+								cdto.setSensorTemp(value);
+								break;
+							case 10:
+								cdto.setSensorHumi(value);
+								break;
+							case 11:
+								cdto.setSensorCo(value);
+								break;
+							case 12:
+								cdto.setSensorNo2(value);
+								break;
+							case 13:
+								cdto.setSensorSo2(value);
+								break;
+							case 14:
+								cdto.setSensorNh3(value);
+								break;
+							case 15:
+								cdto.setSensorH2S(value);
+								break;
+							case 16:
+								cdto.setSensorO3(value);
+								break;
+							case 17:
+								cdto.setSensorIllu(value);
+								break;
+							case 18:
+								cdto.setSensorEffeTemp(value);
+								break;
+							case 19:
+								cdto.setSensorVibr(value);
+								break;
+							case 20:
+								cdto.setSensorNoise(value);
+								break;
+							case 21:
+								cdto.setSensorUv(value);
+								break;
+							case 22:
+								cdto.setSensorVisitor(value);
+								break;
+							case 23:
+								cdto.setSensorEtc(value);
+								break;
+							case 24:
+								cdto.setCommTp(value);
+								break;
+							case 25:
+								cdto.setElecTp(value);
+								break;
+							case 26:
+								cdto.setSwVersion(value);
+								break;
 							}
 
 							System.out.println(rowindex + "번 행 : " + columnindex + "값은: " + value + " / ");
@@ -901,25 +903,25 @@ public class AdminRestController {
 						} else {
 							// 타입별로 내용 읽기
 							switch (cell.getCellType()) {
-								case XSSFCell.CELL_TYPE_FORMULA:
-									value = cell.getCellFormula();
-									break;
-								case XSSFCell.CELL_TYPE_NUMERIC:
-									if (columnindex == 3 || columnindex == 4) {
-										value = cell.getNumericCellValue() + "";
-									} else {
-										value = (int) cell.getNumericCellValue() + "";
-									}
-									break;
-								case XSSFCell.CELL_TYPE_STRING:
-									value = cell.getStringCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_BLANK:
-									value = cell.getBooleanCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_ERROR:
-									value = cell.getErrorCellValue() + "";
-									break;
+							case XSSFCell.CELL_TYPE_FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case XSSFCell.CELL_TYPE_NUMERIC:
+								if (columnindex == 3 || columnindex == 4) {
+									value = cell.getNumericCellValue() + "";
+								} else {
+									value = (int) cell.getNumericCellValue() + "";
+								}
+								break;
+							case XSSFCell.CELL_TYPE_STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
 							}
 						}
 						if (rowindex != 0) {
@@ -927,168 +929,168 @@ public class AdminRestController {
 								value = "";
 							}
 							switch (columnindex) {
-								case 0:
-									equiDto.setEquiInfoKey(value);
-									locDto.setEquiInfoKey(value);
-									locDto1.setEquiInfoKey(value);
-									locDto2.setEquiInfoKey(value);
-									locDto3.setEquiInfoKey(value);
-									locDto4.setEquiInfoKey(value);
-									break;
-								case 1:
-									equiDto.setEquiStru(value);
-									break;
-								case 2:
-									equiDto.setSuperDeptCd(value);
-									break;
-								case 3:
-									equiDto.setDeptCd(value);
-									break;
-								case 4:
-									equiDto.setMngNmJung(value);
-									break;
-								case 5:
-									equiDto.setMngNmJungTel(value);
-									break;
-								case 6:
-									equiDto.setMngNmBu(value);
-									break;
-								case 7:
-									equiDto.setTotOpin(value);
-									break;
+							case 0:
+								equiDto.setEquiInfoKey(value);
+								locDto.setEquiInfoKey(value);
+								locDto1.setEquiInfoKey(value);
+								locDto2.setEquiInfoKey(value);
+								locDto3.setEquiInfoKey(value);
+								locDto4.setEquiInfoKey(value);
+								break;
+							case 1:
+								equiDto.setEquiStru(value);
+								break;
+							case 2:
+								equiDto.setSuperDeptCd(value);
+								break;
+							case 3:
+								equiDto.setDeptCd(value);
+								break;
+							case 4:
+								equiDto.setMngNmJung(value);
+								break;
+							case 5:
+								equiDto.setMngNmJungTel(value);
+								break;
+							case 6:
+								equiDto.setMngNmBu(value);
+								break;
+							case 7:
+								equiDto.setTotOpin(value);
+								break;
 
-								case 8:
-									locDto.setEastRel1(value);
-									break;
-								case 9:
-									locDto.setWestRel1(value);
-									break;
-								case 10:
-									locDto.setSouthRel1(value);
-									break;
-								case 11:
-									locDto.setNorthRel1(value);
-									break;
-								case 12:
-									locDto.setEastRel2(value);
-									break;
-								case 13:
-									locDto.setWestRel2(value);
-									break;
-								case 14:
-									locDto.setSouthRel2(value);
-									break;
-								case 15:
-									locDto.setNorthRel2(value);
-									break;
+							case 8:
+								locDto.setEastRel1(value);
+								break;
+							case 9:
+								locDto.setWestRel1(value);
+								break;
+							case 10:
+								locDto.setSouthRel1(value);
+								break;
+							case 11:
+								locDto.setNorthRel1(value);
+								break;
+							case 12:
+								locDto.setEastRel2(value);
+								break;
+							case 13:
+								locDto.setWestRel2(value);
+								break;
+							case 14:
+								locDto.setSouthRel2(value);
+								break;
+							case 15:
+								locDto.setNorthRel2(value);
+								break;
 
-								case 16:
-									locDto1.setEastRel1(value);
-									break;
-								case 17:
-									locDto1.setWestRel1(value);
-									break;
-								case 18:
-									locDto1.setSouthRel1(value);
-									break;
-								case 19:
-									locDto1.setNorthRel1(value);
-									break;
-								case 20:
-									locDto1.setEastRel2(value);
-									break;
-								case 21:
-									locDto1.setWestRel2(value);
-									break;
-								case 22:
-									locDto1.setSouthRel2(value);
-									break;
-								case 23:
-									locDto1.setNorthRel2(value);
-									break;
+							case 16:
+								locDto1.setEastRel1(value);
+								break;
+							case 17:
+								locDto1.setWestRel1(value);
+								break;
+							case 18:
+								locDto1.setSouthRel1(value);
+								break;
+							case 19:
+								locDto1.setNorthRel1(value);
+								break;
+							case 20:
+								locDto1.setEastRel2(value);
+								break;
+							case 21:
+								locDto1.setWestRel2(value);
+								break;
+							case 22:
+								locDto1.setSouthRel2(value);
+								break;
+							case 23:
+								locDto1.setNorthRel2(value);
+								break;
 
-								case 24:
-									locDto2.setEastRel1(value);
-									break;
-								case 25:
-									locDto2.setWestRel1(value);
-									break;
-								case 26:
-									locDto2.setSouthRel1(value);
-									break;
-								case 27:
-									locDto2.setNorthRel1(value);
-									break;
-								case 28:
-									locDto2.setEastRel2(value);
-									break;
-								case 29:
-									locDto2.setWestRel2(value);
-									break;
-								case 30:
-									locDto2.setSouthRel2(value);
-									break;
-								case 31:
-									locDto2.setNorthRel2(value);
-									break;
+							case 24:
+								locDto2.setEastRel1(value);
+								break;
+							case 25:
+								locDto2.setWestRel1(value);
+								break;
+							case 26:
+								locDto2.setSouthRel1(value);
+								break;
+							case 27:
+								locDto2.setNorthRel1(value);
+								break;
+							case 28:
+								locDto2.setEastRel2(value);
+								break;
+							case 29:
+								locDto2.setWestRel2(value);
+								break;
+							case 30:
+								locDto2.setSouthRel2(value);
+								break;
+							case 31:
+								locDto2.setNorthRel2(value);
+								break;
 
-								case 32:
-									locDto3.setEastRel1(value);
-									break;
-								case 33:
-									locDto3.setWestRel1(value);
-									break;
-								case 34:
-									locDto3.setSouthRel1(value);
-									break;
-								case 35:
-									locDto3.setNorthRel1(value);
-									break;
-								case 36:
-									locDto3.setEastRel2(value);
-									break;
-								case 37:
-									locDto3.setWestRel2(value);
-									break;
-								case 38:
-									locDto3.setSouthRel2(value);
-									break;
-								case 39:
-									locDto3.setNorthRel2(value);
-									break;
+							case 32:
+								locDto3.setEastRel1(value);
+								break;
+							case 33:
+								locDto3.setWestRel1(value);
+								break;
+							case 34:
+								locDto3.setSouthRel1(value);
+								break;
+							case 35:
+								locDto3.setNorthRel1(value);
+								break;
+							case 36:
+								locDto3.setEastRel2(value);
+								break;
+							case 37:
+								locDto3.setWestRel2(value);
+								break;
+							case 38:
+								locDto3.setSouthRel2(value);
+								break;
+							case 39:
+								locDto3.setNorthRel2(value);
+								break;
 
-								case 40:
-									locDto4.setEastRel1(value);
-									break;
-								case 41:
-									locDto4.setWestRel1(value);
-									break;
-								case 42:
-									locDto4.setSouthRel1(value);
-									break;
-								case 43:
-									locDto4.setNorthRel1(value);
-									break;
-								case 44:
-									locDto4.setEastRel2(value);
-									break;
-								case 45:
-									locDto4.setWestRel2(value);
-									break;
-								case 46:
-									locDto4.setSouthRel2(value);
-									break;
-								case 47:
-									locDto4.setNorthRel2(value);
-									break;
+							case 40:
+								locDto4.setEastRel1(value);
+								break;
+							case 41:
+								locDto4.setWestRel1(value);
+								break;
+							case 42:
+								locDto4.setSouthRel1(value);
+								break;
+							case 43:
+								locDto4.setNorthRel1(value);
+								break;
+							case 44:
+								locDto4.setEastRel2(value);
+								break;
+							case 45:
+								locDto4.setWestRel2(value);
+								break;
+							case 46:
+								locDto4.setSouthRel2(value);
+								break;
+							case 47:
+								locDto4.setNorthRel2(value);
+								break;
 
-								case 48:
-									locDto.setBigo(value);
-									locDto1.setBigo(value);
-									locDto2.setBigo(value);
-									locDto3.setBigo(value);
-									locDto4.setBigo(value);
-									break;
+							case 48:
+								locDto.setBigo(value);
+								locDto1.setBigo(value);
+								locDto2.setBigo(value);
+								locDto3.setBigo(value);
+								locDto4.setBigo(value);
+								break;
 
 							}
 
@@ -1426,25 +1428,25 @@ public class AdminRestController {
 						} else {
 							// 타입별로 내용 읽기
 							switch (cell.getCellType()) {
-								case XSSFCell.CELL_TYPE_FORMULA:
-									value = cell.getCellFormula();
-									break;
-								case XSSFCell.CELL_TYPE_NUMERIC:
-									if (columnindex == 3 || columnindex == 4) {
-										value = cell.getNumericCellValue() + "";
-									} else {
-										value = (int) cell.getNumericCellValue() + "";
-									}
-									break;
-								case XSSFCell.CELL_TYPE_STRING:
-									value = cell.getStringCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_BLANK:
-									value = cell.getBooleanCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_ERROR:
-									value = cell.getErrorCellValue() + "";
-									break;
+							case XSSFCell.CELL_TYPE_FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case XSSFCell.CELL_TYPE_NUMERIC:
+								if (columnindex == 3 || columnindex == 4) {
+									value = cell.getNumericCellValue() + "";
+								} else {
+									value = (int) cell.getNumericCellValue() + "";
+								}
+								break;
+							case XSSFCell.CELL_TYPE_STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
 							}
 						}
 						if (rowindex != 0) {
@@ -1452,95 +1454,95 @@ public class AdminRestController {
 								value = "";
 							}
 							switch (columnindex) {
-								case 0:
-									edto.setEquiType(value);
-									break;
-								case 1:
-									edto.setStaName(value);
-									break;
-								case 2:
-									edto.setEquiInfoKey(value);
-									break;
-								case 3:
-									edto.setGpsAbb(value);
-									break;
-								case 4:
-									edto.setGpsLat(value);
-									break;
-								case 5:
-									edto.setSenseTp(value);
-									break;
-								case 6:
-									edto.setUseTp1(value);
-									break;
-								case 7:
-									edto.setUseTp2(value);
-									break;
-								case 8:
-									edto.setUseTp3(value);
-									break;
-								case 9:
-									edto.setInstYear(value);
-									break;
-								case 10:
-									edto.setInstMonth(value);
-									break;
-								case 11:
-									edto.setMngNum(value);
-									break;
-								case 12:
-									edto.setGuTp(value);
-									break;
-								case 13:
-									edto.setInstLoc(value);
-									break;
-								case 14:
-									edto.setInstLoc2(value);
-									break;
-								case 15:
-									if (value.equals("1") || value.equals("Y")) {
-										edto.setSetYn("Y");
-									} else {
-										edto.setSetYn("N");
-									}
+							case 0:
+								edto.setEquiType(value);
+								break;
+							case 1:
+								edto.setStaName(value);
+								break;
+							case 2:
+								edto.setEquiInfoKey(value);
+								break;
+							case 3:
+								edto.setGpsAbb(value);
+								break;
+							case 4:
+								edto.setGpsLat(value);
+								break;
+							case 5:
+								edto.setSenseTp(value);
+								break;
+							case 6:
+								edto.setUseTp1(value);
+								break;
+							case 7:
+								edto.setUseTp2(value);
+								break;
+							case 8:
+								edto.setUseTp3(value);
+								break;
+							case 9:
+								edto.setInstYear(value);
+								break;
+							case 10:
+								edto.setInstMonth(value);
+								break;
+							case 11:
+								edto.setMngNum(value);
+								break;
+							case 12:
+								edto.setGuTp(value);
+								break;
+							case 13:
+								edto.setInstLoc(value);
+								break;
+							case 14:
+								edto.setInstLoc2(value);
+								break;
+							case 15:
+								if (value.equals("1") || value.equals("Y")) {
+									edto.setSetYn("Y");
+								} else {
+									edto.setSetYn("N");
+								}
 
-									break;
-								case 16:
-									String use = "N";
-									if (value.equals("1") || value.equals("Y")) {
-										use = "Y";
-									}
-									edto.setUseYn(use);
-									break;
-								case 17:
-									String baram = "N";
-									if (value.equals("1") || value.equals("Y")) {
-										baram = "Y";
-									}
-									edto.setBaramYn(baram);
-									break;
-								case 18:
-									edto.setBaramMngNum(value);
-									break;
-								case 19:
-									edto.setBaramNm(value);
-									break;
-								case 20:
-									if (value.equals("1") || value.equals("Y")) {
-										edto.setAirYn("Y");
-									} else {
-										edto.setAirYn("N");
-									}
-									break;
-								case 21:
-									edto.setAirMngNum(value);
-									break;
-								case 22:
-									edto.setVistorSenId(value);
-									break;
-								case 23:
-									edto.setVistorSenViewNm(value);
-									break;
+								break;
+							case 16:
+								String use = "N";
+								if (value.equals("1") || value.equals("Y")) {
+									use = "Y";
+								}
+								edto.setUseYn(use);
+								break;
+							case 17:
+								String baram = "N";
+								if (value.equals("1") || value.equals("Y")) {
+									baram = "Y";
+								}
+								edto.setBaramYn(baram);
+								break;
+							case 18:
+								edto.setBaramMngNum(value);
+								break;
+							case 19:
+								edto.setBaramNm(value);
+								break;
+							case 20:
+								if (value.equals("1") || value.equals("Y")) {
+									edto.setAirYn("Y");
+								} else {
+									edto.setAirYn("N");
+								}
+								break;
+							case 21:
+								edto.setAirMngNum(value);
+								break;
+							case 22:
+								edto.setVistorSenId(value);
+								break;
+							case 23:
+								edto.setVistorSenViewNm(value);
+								break;
 							}
 
 							System.out.println(rowindex + "번 행 : " + columnindex + "값은: " + value + " / ");
@@ -1592,28 +1594,28 @@ public class AdminRestController {
 						} else {
 							// 타입별로 내용 읽기
 							switch (cell.getCellType()) {
-								case XSSFCell.CELL_TYPE_FORMULA:
-									value = cell.getCellFormula();
-									break;
-								case XSSFCell.CELL_TYPE_NUMERIC:
-									if (columnindex == 3) {
-										NumberFormat nf = NumberFormat.getInstance();
-										nf.setGroupingUsed(false);
+							case XSSFCell.CELL_TYPE_FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case XSSFCell.CELL_TYPE_NUMERIC:
+								if (columnindex == 3) {
+									NumberFormat nf = NumberFormat.getInstance();
+									nf.setGroupingUsed(false);
 
-										value = nf.format(cell.getNumericCellValue()) + "";
-									} else {
-										value = (int) cell.getNumericCellValue() + "";
-									}
-									break;
-								case XSSFCell.CELL_TYPE_STRING:
-									value = cell.getStringCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_BLANK:
-									value = cell.getBooleanCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_ERROR:
-									value = cell.getErrorCellValue() + "";
-									break;
+									value = nf.format(cell.getNumericCellValue()) + "";
+								} else {
+									value = (int) cell.getNumericCellValue() + "";
+								}
+								break;
+							case XSSFCell.CELL_TYPE_STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
 							}
 						}
 						if (rowindex != 0) {
@@ -1621,42 +1623,42 @@ public class AdminRestController {
 								value = "";
 							}
 							switch (columnindex) {
-								case 0:
-									mdto.setInstCd(value);
-									break;
-								case 1:
-									mdto.setSuperDeptCd(value);
-									break;
-								case 2:
-									mdto.setDeptCd(value);
-									break;
-								case 3:
-									mdto.setWorkDt(value);
-									break;
-								case 4:
-									mdto.setWorkTm(value);
-									break;
-								case 5:
-									mdto.setMngNmJung(value);
-									break;
-								case 6:
-									mdto.setMngNmJungTel(value);
-									break;
-								case 7:
-									mdto.setMngNmBu(value);
-									break;
-								case 8:
-									mdto.setMngNmBuTel(value);
-									break;
-								case 9:
-									mdto.setChgContent(value);
-									break;
-								case 10:
-									mdto.setChgReason(value);
-									break;
-								case 11:
-									mdto.setBigo(value);
-									break;
+							case 0:
+								mdto.setInstCd(value);
+								break;
+							case 1:
+								mdto.setSuperDeptCd(value);
+								break;
+							case 2:
+								mdto.setDeptCd(value);
+								break;
+							case 3:
+								mdto.setWorkDt(value);
+								break;
+							case 4:
+								mdto.setWorkTm(value);
+								break;
+							case 5:
+								mdto.setMngNmJung(value);
+								break;
+							case 6:
+								mdto.setMngNmJungTel(value);
+								break;
+							case 7:
+								mdto.setMngNmBu(value);
+								break;
+							case 8:
+								mdto.setMngNmBuTel(value);
+								break;
+							case 9:
+								mdto.setChgContent(value);
+								break;
+							case 10:
+								mdto.setChgReason(value);
+								break;
+							case 11:
+								mdto.setBigo(value);
+								break;
 							}
 
 							System.out.println(rowindex + "번 행 : " + columnindex + "값은: " + cell + " / ");
@@ -1708,50 +1710,50 @@ public class AdminRestController {
 						} else {
 							// 타입별로 내용 읽기
 							switch (cell.getCellType()) {
-								case XSSFCell.CELL_TYPE_FORMULA:
-									value = cell.getCellFormula();
-									break;
-								case XSSFCell.CELL_TYPE_NUMERIC:
-									if (columnindex == 4 || columnindex == 5) {
-										value = cell.getNumericCellValue() + "";
-									} else {
-										value = (int) cell.getNumericCellValue() + "";
-									}
-									break;
-								case XSSFCell.CELL_TYPE_STRING:
-									value = cell.getStringCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_BLANK:
-									value = cell.getBooleanCellValue() + "";
-									break;
-								case XSSFCell.CELL_TYPE_ERROR:
-									value = cell.getErrorCellValue() + "";
-									break;
+							case XSSFCell.CELL_TYPE_FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case XSSFCell.CELL_TYPE_NUMERIC:
+								if (columnindex == 4 || columnindex == 5) {
+									value = cell.getNumericCellValue() + "";
+								} else {
+									value = (int) cell.getNumericCellValue() + "";
+								}
+								break;
+							case XSSFCell.CELL_TYPE_STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case XSSFCell.CELL_TYPE_ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
 							}
 						}
 						if (rowindex != 0) {
 							switch (columnindex) {
-								case 0:
-									wdto.setEquiInfoKey(value);
-									break;
-								case 1:
-									wdto.setSwHwTp(value);
-									break;
-								case 2:
-									wdto.setChgTp(value);
-									break;
-								case 3:
-									wdto.setWorkDt(value);
-									break;
-								case 4:
-									wdto.setWorkTm(value);
-									break;
-								case 5:
-									wdto.setChgReason(value);
-									break;
-								case 6:
-									wdto.setBigo(value);
-									break;
+							case 0:
+								wdto.setEquiInfoKey(value);
+								break;
+							case 1:
+								wdto.setSwHwTp(value);
+								break;
+							case 2:
+								wdto.setChgTp(value);
+								break;
+							case 3:
+								wdto.setWorkDt(value);
+								break;
+							case 4:
+								wdto.setWorkTm(value);
+								break;
+							case 5:
+								wdto.setChgReason(value);
+								break;
+							case 6:
+								wdto.setBigo(value);
+								break;
 
 							}
 
@@ -1782,19 +1784,19 @@ public class AdminRestController {
 	}
 
 	@GetMapping("/user/history")
-	public Map<String, Object> getUserHistory(ParamDto paramDto) throws Exception {
+	public Map<String, Object> getUsersHistory(ParamDto paramDto) throws Exception {
 		Map<String, Object> info = new HashMap<>();
-		List<HistoryDto> lm = new ArrayList<>();
+		List<MemberDto> lm = new ArrayList<>();
 		AES256Util aes = new AES256Util(pdto.getPassPhraseDB());
 
-		for (HistoryDto historyDto : adminService.getUserHistory(paramDto)) {
-			HistoryDto hdto = new HistoryDto();
+		for (MemberDto memberdto : adminService.getUserHistory(paramDto)) {
+			MemberDto mdto = new MemberDto();
 
-			hdto.setUserId(aes.decrypt(historyDto.getUserId()));
-			hdto.setUserName(aes.decrypt(historyDto.getUserName()));
-			hdto.setRegDate(historyDto.getRegDate());
+			mdto.setUserId(aes.decrypt(memberdto.getUserId()));
+			mdto.setUserName(aes.decrypt(memberdto.getUserName()));
+			mdto.setRegDate(memberdto.getRegDate());
 
-			lm.add(hdto);
+			lm.add(mdto);
 
 		}
 
