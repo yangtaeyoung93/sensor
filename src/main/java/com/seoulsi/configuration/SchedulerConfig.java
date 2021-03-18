@@ -1,10 +1,16 @@
 package com.seoulsi.configuration;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -34,6 +40,26 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.html.simpleparser.*;
+import com.itextpdf.tool.xml.XMLWorker;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.css.CssFile;
+import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
+import com.itextpdf.tool.xml.html.Tags;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 @Component
 public class SchedulerConfig {
@@ -215,7 +241,7 @@ public class SchedulerConfig {
         return result;
     }
 
-    @Scheduled(cron = "0 30 0 * * *")
+    @Scheduled(cron = "0 19 09 * * *")
     public void task1() throws Exception {
         // 전날 데이터를 위한 날짜
         Calendar cal = Calendar.getInstance();
@@ -238,18 +264,18 @@ public class SchedulerConfig {
         List<SensorDto> sdto = commonService.getDailyCntForEquiSensor(paramDto);
 
         String header = "<!DOCTYPE html>" + "<html lang='ko-KR'>" + "<head>" + "<title>이상장비 발생 알림</title>"
-                + "	<meta charset='UTF-8'>" + "	<meta name='description' content='Free Web tutorials'>"
-                + "	<meta name='keywords' content='HTML,CSS,XML,JavaScript'>"
-                + "	<meta name='author' content='KimEunjin'>"
-                + "	<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-                + "	<meta http-equiv='X-UA-Compatible' content='IE=Edge'>"
+                + "	<meta charset='UTF-8'/>" + "	<meta name='description' content='Free Web tutorials'/>"
+                + "	<meta name='keywords' content='HTML,CSS,XML,JavaScript'/>"
+                + "	<meta name='author' content='KimEunjin'/>"
+                + "	<meta name='viewport' content='width=device-width, initial-scale=1.0'/>"
+                + "	<meta http-equiv='X-UA-Compatible' content='IE=Edge'/>"
                 + "	<!-- <link href='css/mail_style.css' rel='stylesheet' type='text/css'> -->" + "<!--[if lt IE 9]>"
                 + "<script src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js'></script>" + "<![endif]-->"
                 + "<script src='https://use.fontawesome.com/releases/v5.2.0/js/all.js'></script>" + "</head>"
                 + "<body style='margin:auto; padding: 0;'>"
                 + "<div class='wrap' style='margin: auto;width: 100%;height: 908px;background: #f4f4f4;'>"
                 + "	<div class='logo' style='width: 780px;height: 40px;padding: 10px; margin: auto;'>"
-                + "		<a href='#' style='color: #000000;text-decoration: none;'><img src='img/logo.png' alt='스마트도시서울'></a>"
+                + "		<a href='#' style='color: #000000;text-decoration: none;'><img src='img/logo.png' alt='스마트도시서울'/></a>"
                 + "	</div>"
                 + "	<div class='wrap_bg' style='width: 780px;height: 750px;background: #fff;margin: auto;padding-top: 20px;border: 1px solid #d7d7d7;'>"
                 + "		<div class='mailtt' style='width: 700px;height: 40px;background: #0c82e9;border-radius: 5px; margin: auto;'>"
@@ -325,16 +351,83 @@ public class SchedulerConfig {
 
         makeLogFile("", "start");
 
-        for (String mail : mailList) {
-            try {
-                sendMailAndFile(mail, from, body);
-                makeLogFile(mail, "");
-            } catch (Exception e) {
-                makeLogFile(mail, "fail");
-            }
-        }
+        // for (String mail : mailList) {
+        // try {
+        // sendMailAndFile(mail, from, body);
+        // makeLogFile(mail, "");
+        // } catch (Exception e) {
+        // makeLogFile(mail, "fail");
+        // }
+        // }
 
+        makepdf(body);
         makeLogFile("", "end");
 
     }
+
+    public void makepdf(StringBuilder body) {
+
+        Document document = null;
+        PdfWriter writer = null;
+
+        String scss = "D:\\popup.css";
+        try {
+            OutputStream file = new FileOutputStream(new File("D:\\Test.pdf"));
+            // Document 생성
+            document = new Document(PageSize.A4, 50, 50, 50, 50);
+            System.out.println("Document 생성");
+            // PdfWriter 생성
+            writer = PdfWriter.getInstance(document, file);
+
+            writer.setInitialLeading(12.5f);
+            System.out.println("PdfWriter생성");
+
+            // document 오픈
+            document.open();
+            XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
+            System.out.println("document 오픈");
+
+            // CSS
+            CSSResolver cssResolver = new StyleAttrCSSResolver();
+            CssFile cssFile = XMLWorkerHelper.getCSS(new FileInputStream(scss));
+            cssResolver.addCss(cssFile);
+            System.out.println("css설정 완");
+
+            // HTML , 폰트 설정
+            XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(XMLWorkerFontProvider.DONTLOOKFORFONTS);
+            fontProvider.register("D:\\malgun.ttf", "MalgunGothic");
+            CssAppliers CssAppliers = new CssAppliersImpl(fontProvider);
+            System.out.println("폰트설정 완");
+
+            HtmlPipelineContext htmlContext = new HtmlPipelineContext(CssAppliers);
+            htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+            System.out.println("html context 완");
+
+            // PipeLines
+            PdfWriterPipeline pdf = new PdfWriterPipeline(document, writer);
+            HtmlPipeline html = new HtmlPipeline(htmlContext, pdf);
+            CssResolverPipeline css = new CssResolverPipeline(cssResolver, html);
+            System.out.println("pipelines 완");
+
+            XMLWorker worker = new XMLWorker(css, true);
+            XMLParser xmlParser = new XMLParser(worker, Charset.forName("UTF-8"));
+            System.out.println("xmlworker 완");
+
+            String htmlStr = body.toString();
+            System.out.println("string 변환");
+
+            StringReader strReader = new StringReader(htmlStr);
+            System.out.println("read");
+            xmlParser.parse(strReader);
+            System.out.println("parse");
+
+            document.close();
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

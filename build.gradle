@@ -46,6 +46,10 @@ dependencies {
   compile files('libs/ojdbc7.jar')
   compile files('libs/xmlbeans-2.6.0.jar')
 
+  // itext, xmlworker for pdf
+  implementation fileTree(dir:'libs',include:'itext*')
+  implementation fileTree(dir:'libs',include:'xmlworker*')
+
   providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
   
 	// https://mvnrepository.com/artifact/org.springframework/spring-jdbc
