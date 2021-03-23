@@ -77,177 +77,14 @@
 												<option>기기 선택</option>
 												
 											</select>
-											<script>
-											$(document).ready(function() {
-												$("#equi").on('mouseenter','option',function(e) {
-												    var $target = $(e.target);
-												    console.log(e);
-												});
-												$("#equi").mouseenter(function() {
-													$('#amChart').css('z-index', '-1').css('position', 'relative');
-												})
-												
-											})
-												$.ajax({
-													url: '/api/statistic/getSensorList',
-													success: function(r) {
-														var text = '<option>기기 선택</option>';
-														if(r.length != 0) {
-															$.each(r.data, function(a,b) {
-																text += '<option value="'+b.vistorSenId+'" data-key="'+b.equiInfoKey+'" data-inst="'+b.instLoc+'">'+b.vistorSenViewNm+'('+b.equiInfoKeyHan+')</option>';
-															})
-														}
-														
-														$('#equi').html(text);
-													}
-												})
-											</script>
+											
 										</li>
-										<li class="col-xs-1">
+										<li class="col-xs-1">											
 											<input class="person_search_btn search_btn" type="submit" value="검색">
-											<script>
-												function parse(str) {
-												    var y = str.substr(0, 4);
-												    var m = str.substr(5, 2);
-												    var d = str.substr(8, 2);
-												    console.log(y,m,d)
-												    return new Date(y,m-1,d);
-												}
-												$(document).ready(function() {
-													$('.test').hover(function() {
-														$('#amChart').css('z-index', '0').css('position', 'unset');
-													})
-													$('#equi').change(function(){
-														
-														var data = $(this).val()
-													    $('#equi option').each(function(){
-													        if($(this).val() == data) {
-													            console.log($(this).data('inst'))
-													            if($(this).text() != "기기 선택"){
-														            $('#sensorInfo').html('기기번호: '+$(this).data('key')+'  주소: '+$(this).data('inst') )
-													            } else {
-													            	$('#sensorInfo').html('');
-													            }
-													        }
-													    })
-													})
-													$('#to').change(function() {
-														if($('#from').val() != ""){
-															var to = parse($('#to').val());
-															var from = parse($('#from').val());
-															var result = (from - to)/(24 * 3600 * 1000);
-															
-															if(result < 0) {
-																$('#from').val('');
-															}
-															
-															if(result > 5) {
-																$('#from').val('');
-															}
-														}
-													})
-													
-													$('#from').change(function() {
-														if($('#to').val() != ""){
-															var to = parse($('#to').val());
-															var from = parse($('#from').val());
-															var result = (from - to)/(24 * 3600 * 1000);
-															
-															if(result < 0) {
-																$('#to').val('');
-															}
-															
-															if(result > 5) {
-																alert("날짜 범위는 최대 5일입니다.");
-																$('#from').val('');
-															}
-														}
-													})
-												})
-												$(document).ready(function() {
-													sensor.amChartStatPerson('amChart', 'default')
-													$('.person_search_btn').click(function(e) {
-														e.preventDefault();
-														var to = $('#to').val();
-														var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2)
-														var from = $('#from').val();
-														var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)
-														var gu = $('#gu').val();
-														var equi = $('#equi').val();
-														
-														if(toDate.length == 0) {
-														  alertify.alert("오류","날짜가 비어있습니다.");
-														  return false;
-														}
-														$.ajax({
-															url: '/api/statistic/getEquiPerson',
-															type: 'GET',
-															datType: 'json',
-															data: {
-																toDate:toDate, fromDate:fromDate, vistorSenId:equi
-															},				
-															beforeSend: function() {
-																$('.loader').show();
-																$('.dim').show();
-															},
-															success: function(r) {
-																console.log(r.data)
-																sensor.amChartStatPerson('amChart', r.hourData, r.data)
-																var tableTime = '';
-																var tablePerson = '';
-																var gene = '';
-																var timeSet = [];
-																
-																if (r.data.length == 0) {
-																	alertify.alert("데이터 없음","조건에 만족하는 데이터가 없습니다.");
-																}
-																var timeDi = '';
-																var timeCount = 0;
-																var timeData = [];
-																$.each(r.data, function(a,b) {
-																	if(timeDi != b.vistorTm8 || a == r.data.length-1) {
-																		//날짜 바뀌면 배열 값넣고 초기화
-																		if(a != 0) {
-																			timeData[timeCount] = timeSet;
-																			timeSet = []
-																			console.log(timeDi, timeData[timeCount])
-																			timeCount++;
-																		}
-																	}
-																	timeDi = b.vistorTm8
-																	timeSet[b.vistorTm8+b.vistorTm4] = b.vistorCnt
-																})
-																for(var i=0; i < timeData.length; i++) {
-																	var dateDefault = '';
-																	for(var key in timeData[i]) {
-// 																		201912311330
-																		if(timeData[i][key] < 0) {
-																			timeData[i][key] = '0'
-																		}
-																		dateDefault = key.substring(0,8);
-																		tablePerson+="<tr><td>"+key.substring(8,10)+" : "+key.substring(10,12)+"</td><td>"+timeData[i][key]+"명</td></tr>";
-																		
-																	}
-																	gene += '<div class="t-box"><p style="margin:10px 0; font-weight: bold;">'+dateDefault+'</p><table class="list" style="font-size: 14px;">'+
-																				'<thead><tr class="tableTime">'+
-																					'<th>방문시각</th><th>방문자수</th>'+
-																				'</tr></thead>'+
-																					tablePerson+
-																			'</table></div>';
-																	tablePerson = '';
-																}
-																$('.pb_b5').html('<h5 class="pb_t2 pb_b2">시간별 체류인원</h5>');
-																$('.pb_b5').append(gene);
-															},
-															complete: function() {
-																$('.loader').hide();
-																$('.dim').hide();
-															}
-														})
-													})
-												})
-											</script>
+											
+										
 										</li>
+										<li class="col-xs-1"><input class="search_btn" onclick="mapCreate()" type="button" value="센서 위치조회"></li>
 										<li class="col-xs-4">
 											<p id="sensorInfo" style="line-height:30px; margin: 0;padding: 0;font-size: 14px;"></p>
 										</li>
@@ -266,19 +103,234 @@
 					</div>
 					<div class="col-xs-6">
 						<div id="board" class="pb_b5">
-							<h5 class="pb_t2 pb_b2">시간별 체류인원</h5>
-							<table class="list">
+							<!-- <h5 class="pb_t2 pb_b2">시간별 체류인원</h5> -->
+							<!-- <table class="list">
 								<tr class="tableTime">
 									
 								</tr>
 								<tr class="tablePerson">
 									
 								</tr>
-							</table>
+							</table> -->
+							
 						</div><!-- board -->
 					</div>
 				</div>
 			</div><!-- container -->
 
 		</div><!-- sensor -->
+
+
+<script>
+$(document).ready(function() {
+	$("#equi").on('mouseenter','option',function(e) {
+		var $target = $(e.target);
+		console.log(e);
+	});
+	$("#equi").mouseenter(function() {
+		$('#amChart').css('z-index', '-1').css('position', 'relative');
+	})
+				
+})
+
+$.ajax({
+	url: '/api/statistic/getSensorList',
+	success: function(r) {
+		var text = '<option>기기 선택</option>';
+		if(r.length != 0) {
+			$.each(r.data, function(a,b) {
+				text += '<option value="'+b.vistorSenId+'" data-key="'+b.equiInfoKey+'" data-inst="'+b.instLoc+'">'+b.vistorSenViewNm+'('+b.equiInfoKeyHan+')</option>';
+			})
+		}
+						
+		$('#equi').html(text);
+	}
+})
+
+
+				
+function parse(str) {
+	var y = str.substr(0, 4);
+	var m = str.substr(5, 2);
+	var d = str.substr(8, 2);
+	console.log(y,m,d)
+	 return new Date(y,m-1,d);
+}
+var EquiAddress;
+$(document).ready(function() {
+	$('.test').hover(function() {
+		$('#amChart').css('z-index', '0').css('position', 'unset');
+	})
+	
+	$('#equi').change(function(){
+		var data = $(this).val()
+		$('#equi option').each(function(){
+				if($(this).val() == data) {
+					console.log($(this).data('inst'))
+					if($(this).text() != "기기 선택"){
+						$('#sensorInfo').html('기기번호: '+$(this).data('key')+'  주소: '+$(this).data('inst') )
+						EquiAddress=$(this).data('inst');
+					} else {
+						$('#sensorInfo').html('');
+					}
+				}
+		 })
+	})
+
+	$('#to').change(function() {
+		if($('#from').val() != ""){
+			var to = parse($('#to').val());
+			var from = parse($('#from').val());
+			var result = (from - to)/(24 * 3600 * 1000);
+															
+			if(result < 0) {
+				$('#from').val('');
+			}
+															
+			if(result > 5) {
+				$('#from').val('');
+			}
+		}
+	})
+													
+	$('#from').change(function() {
+		if($('#to').val() != ""){
+			var to = parse($('#to').val());
+			var from = parse($('#from').val());
+			var result = (from - to)/(24 * 3600 * 1000);
+															
+			if(result < 0) {
+				$('#to').val('');
+			}
+															
+			if(result > 5) {
+				alert("날짜 범위는 최대 5일입니다.");
+				$('#from').val('');
+			}
+		}
+	})
+})
+
+$(document).ready(function() {
+	sensor.amChartStatPerson('amChart', 'default')
+	$('.person_search_btn').click(function(e) {
+		e.preventDefault();
+		var to = $('#to').val();
+		var toDate = to.substr(0,4)+to.substr(5, 2)+to.substr(8, 2)
+		var from = $('#from').val();
+		var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2)
+		var gu = $('#gu').val();
+		var equi = $('#equi').val();
+														
+		if(toDate.length == 0) {
+			alertify.alert("오류","날짜가 비어있습니다.");
+			return false;
+		}
+
+		$.ajax({
+			url: '/api/statistic/getEquiPerson',
+			type: 'GET',
+			datType: 'json',
+			data: {
+				toDate:toDate, fromDate:fromDate, vistorSenId:equi
+			},				
+				
+			beforeSend: function() {
+				$('.loader').show();
+				$('.dim').show();
+			},
+
+			success: function(r) {
+				console.log(r.data)
+				sensor.amChartStatPerson('amChart', r.hourData, r.data)
+				var tableTime = '';
+				var tablePerson = '';
+				var gene = '';
+				var timeSet = [];
+																
+				if (r.data.length == 0) {
+					alertify.alert("데이터 없음","조건에 만족하는 데이터가 없습니다.");
+				}
+
+				var timeDi = '';
+				var timeCount = 0;
+				var timeData = [];
+				var cntSum = 0;
+
+				$.each(r.data, function(a,b) {
+					if(timeDi != b.vistorTm8 || a == r.data.length-1) {
+					//날짜 바뀌면 배열 값넣고 초기화
+						if(a != 0) {
+							timeData[timeCount] = timeSet;
+							timeSet = []
+							console.log(timeDi, timeData[timeCount])
+							timeCount++;
+						}
+					}
+					timeDi = b.vistorTm8
+					timeSet[b.vistorTm8+b.vistorTm4] = b.vistorCnt
+				})
+
+				for(var i=0; i < timeData.length; i++) {
+					var dateDefault = '';
+					for(var key in timeData[i]) {
+						//201912311330
+						if(timeData[i][key] < 0) {
+							timeData[i][key] = '0'
+						}
+						dateDefault = key.substring(0,8);
+						tablePerson+="<tr><td>"+key.substring(8,10)+" : "+key.substring(10,12)+"</td><td>"+timeData[i][key]+"명</td></tr>";
+						cntSum +=timeData[i][key];
+					}
+					gene += '<div class="t-box">'
+						+'<h4 class="pb_t2 pb_b2" style="float:left;padding-bottom: 10px;padding-top: 10px;">시간별 체류인원</h4>'
+						+'<h6 class="pb_t2 pb_b2" style="float:right;padding-right: 5px;padding-bottom: 10px;padding-top: 10px;">'+dateDefault+'</h6><table class="list" style="font-size: 14px;">'
+						+'<thead><tr class="tableTime">'
+						+'<th>방문시각</th><th>방문자수</th>'
+						+'</tr></thead>'
+						+tablePerson+'<thead><tr class="TableTime"><th>합계</th><th>'+cntSum+'명</th></tr></thead></table></div>';
+					tablePerson = '';
+				}
+				// $('.pb_b5').html('<h5 class="pb_t2 pb_b2">시간별 체류인원</h5>');
+				$('.pb_b5').html(gene);
+			},
+			complete: function() {
+				$('.loader').hide();
+				$('.dim').hide();
+			}
+		})
+	})
+})
+
+
+function mapCreate() {
+
+	if(EquiAddress==null){
+		alert("기기를 선택하세요");
+	}else{
+	window.open('https://map.kakao.com/?q='+EquiAddress,height='900',width='1200');
+	}
+
+
+
+
+
+	// var popupWidth = 1200;
+	// var popupHeight = 900;
+
+	// var popupX = (window.screen.width / 2) - (popupWidth / 2);
+	// // 만들 팝업창 width 크기의 1/2 만큼 보정값으로 빼주었음
+
+	// var popupY= (window.screen.height / 2) - (popupHeight / 2);
+	// // 만들 팝업창 height 크기의 1/2 만큼 보정값으로 빼주었음
+
+	// window.open('/statistic/visitorSensorMap', '', 'scrollbars=yes,status=no, height=' + popupHeight  + ', width=' + popupWidth  + ', left='+ popupX + ', top='+ popupY);
+}
+
+		
+
+
+
+</script>
+
 <jsp:include page="../common/footer.jsp"></jsp:include>
