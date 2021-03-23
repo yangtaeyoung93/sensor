@@ -78,7 +78,62 @@
     FROM TB_ST_DAILY_SEN WHERE tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
   </select>
 
+<!--센서가 있는 경우만 이상 탐지 하도록 수정-->
     <select id="getDailyCntForEquiSensor" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
+    select equi_info_key, to_number(gu_tp) GU_TP, mng_num EQUI_INFO_KEY_HAN from tb_mm_equ_info where equi_info_key in
+(SELECT EQUI_INFO_KEY from tb_mm_equ_info_card where
+<choose>
+    <when test ='type.equals("pm25")'>sensor_pm25='Y'</when>
+    <when test ='type.equals("pm10")'>sensor_pm10='Y'</when>
+    <when test ='type.equals("temp")'>sensor_temp='Y'</when>
+    <when test ='type.equals("humi")'>sensor_humi='Y'</when>
+    <when test ='type.equals("windDire")'>sensor_wind='Y'</when>
+    <when test ='type.equals("windSpeed")'>sensor_wind_sp='Y'</when>
+    <when test ='type.equals("inteIllu")'>sensor_illu='Y'</when>
+    <when test ='type.equals("ultraRays")'>sensor_uv='Y'</when>
+    <when test ='type.equals("noise")'> sensor_noise='Y'</when>
+    <when test ='type.equals("vibr")'>sensor_vibr='Y'</when>
+    <when test ='type.equals("effeTemp")'>sensor_effe_temp='Y'</when>
+    <when test ='type.equals("co")'>sensor_co='Y'</when>
+    <when test ='type.equals("no2")'>sensor_no2='Y'</when>
+    <when test ='type.equals("so2")'>sensor_so2='Y'</when>
+    <when test ='type.equals("nh3")'>sensor_nh3='Y'</when>
+    <when test ='type.equals("h2S")'>sensor_h2s='Y'</when>
+    <when test ='type.equals("o3")'>sensor_o3='Y'</when>
+</choose>
+minus
+select distinct equi_info_key from tb_sl_dot_sen where tm8 between #{toDate} AND #{fromDate}
+and
+<choose>
+<when test='type.equals("pm25")'> PM25 IS NOT NULL </when>
+<when test='type.equals("pm10")'> PM10 IS NOT NULL </when>
+<when test='type.equals("temp")'> TEMP IS NOT NULL </when>
+<when test='type.equals("humi")'> HUMI IS NOT NULL </when>
+<when test='type.equals("windDire")'> WIND_DIRE IS NOT NULL </when>
+<when test='type.equals("windSpeed")'> WIND_SPEED IS NOT NULL </when>
+<when test='type.equals("inteIllu")'>  INTE_ILLU IS NOT NULL </when>
+<when test='type.equals("ultraRays")'> ULTRA_RAYS IS NOT NULL </when>
+<when test='type.equals("noise")'> NOISE IS NOT NULL </when>
+<when test='type.equals("vibr")'> VIBR_X IS NOT NULL </when>
+<when test='type.equals("effeTemp")'> EFFE_TEMP IS NOT NULL </when>
+<when test='type.equals("co")'> CO IS NOT NULL  </when>
+<when test='type.equals("no2")'> NO2 IS NOT NULL </when>
+<when test='type.equals("so2")'> SO2 IS NOT NULL </when>
+<when test='type.equals("nh3")'> NH3 IS NOT NULL  </when>
+<when test='type.equals("h2S")'> H2S IS NOT NULL </when>
+<when test='type.equals("o3")'> O3 IS NOT NULL </when>
+</choose>
+)
+order by gu_tp
+
+</select>
+
+
+
+
+
+
+    <!-- <select id="getDailyCntForEquiSensor" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
         SELECT EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY IN (SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO)
 
     MINUS 
@@ -161,7 +216,7 @@
       </when>
         </choose>
         ORDER BY GU_TP, EQUI_INFO_KEY_HAN
-    </select>
+    </select> -->
 
     <select id="getDailyCntForEquiSensorWind" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.SensorDto">
         SELECT EQUI_INFO_KEY, to_number(GU_TP) GU_TP, MNG_NUM EQUI_INFO_KEY_HAN FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY IN (SELECT DISTINCT(EQUI_INFO_KEY) FROM TB_MM_EQU_INFO)
