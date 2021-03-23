@@ -1,14 +1,5 @@
 package com.seoulsi.configuration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
@@ -22,9 +13,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.net.*;
+import javax.imageio.*;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.text.html.*;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.font.FontProvider;
 import com.seoulsi.dto.CommonDto;
 import com.seoulsi.dto.DailySenDto;
 import com.seoulsi.dto.SensorDto;
@@ -39,27 +51,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Component;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.html.simpleparser.*;
-import com.itextpdf.tool.xml.XMLWorker;
-import com.itextpdf.tool.xml.XMLWorkerFontProvider;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
-import com.itextpdf.tool.xml.parser.XMLParser;
-import com.itextpdf.tool.xml.css.CssFile;
-import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
-import com.itextpdf.tool.xml.html.CssAppliers;
-import com.itextpdf.tool.xml.html.CssAppliersImpl;
-import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
-import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
-import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+// import com.itext.layout.*;
+import com.itextpdf.kernel.pdf.PdfWriter;
 
 @Component
 public class SchedulerConfig {
@@ -241,7 +237,7 @@ public class SchedulerConfig {
         return result;
     }
 
-    @Scheduled(cron = "0 19 09 * * *")
+    @Scheduled(cron = "0 30 10 * * *")
     public void task1() throws Exception {
         // 전날 데이터를 위한 날짜
         Calendar cal = Calendar.getInstance();
@@ -273,11 +269,10 @@ public class SchedulerConfig {
                 + "<script src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js'></script>" + "<![endif]-->"
                 + "<script src='https://use.fontawesome.com/releases/v5.2.0/js/all.js'></script>" + "</head>"
                 + "<body style='margin:auto; padding: 0;'>"
-                + "<div class='wrap' style='margin: auto;width: 100%;height: 908px;background: #f4f4f4;'>"
                 + "	<div class='logo' style='width: 780px;height: 40px;padding: 10px; margin: auto;'>"
                 + "		<a href='#' style='color: #000000;text-decoration: none;'><img src='img/logo.png' alt='스마트도시서울'/></a>"
                 + "	</div>"
-                + "	<div class='wrap_bg' style='width: 780px;height: 750px;background: #fff;margin: auto;padding-top: 20px;border: 1px solid #d7d7d7;'>"
+                + "	<div class='wrap_bg' style='width: 780px;height: 750px;background: #fff;margin: auto;padding-top: 20px;'>"
                 + "		<div class='mailtt' style='width: 700px;height: 40px;background: #0c82e9;border-radius: 5px; margin: auto;'>"
                 + "			<div class='tt' style='float: left;width: 465px;height: 40px;color: #fff;font-size: 1em;padding-top: 9px;padding-left: 15px;'>"
                 + "			서울시 도시데이터센서 이상장비 발생 알림" + "			</div>"
@@ -335,7 +330,7 @@ public class SchedulerConfig {
                 + "				시리얼" + "				</div>" + "			</div>" + getEquiHtml(sdto) + "		</div>"
                 + "	</div>"
                 + "	<div class='footer' style='width: 780px;height: 60px;padding: 20px;text-align: center;font-size: 0.75em; margin: auto;'>"
-                + "	본 메일은 발신전용 입니다. 자세한 사항은 홈페이지를 확인해 주시기 바랍니다.	" + "	</div>" + "</div>" + "</body>" + "</html>";
+                + "	본 메일은 발신전용 입니다. 자세한 사항은 홈페이지를 확인해 주시기 바랍니다.	" + "	</div>" + "</body>" + "</html>";
         body.append(footer);
 
         String from = "sdotmailtest@gmail.com";
@@ -349,7 +344,7 @@ public class SchedulerConfig {
             mailList.add(scan.nextLine());
         }
 
-        makeLogFile("", "start");
+        // makeLogFile("", "start");
 
         // for (String mail : mailList) {
         // try {
@@ -360,73 +355,84 @@ public class SchedulerConfig {
         // }
         // }
 
-        makepdf(body);
-        makeLogFile("", "end");
+        String BODY = body.toString();
+        String DST;
+
+        InetAddress local = null;
+        local = InetAddress.getLocalHost();
+        String ip = local.getHostAddress();
+        System.out.println("IP : " + ip);
+
+        if (ip.equals("211.219.114.160")) {
+            DST = "D:\\" + today + "_sample.pdf";
+        } else {
+            DST = "/home/isensor/sensrelayclient/source/" + today + "_reportPdf.pdf";
+        }
+
+        // html to pdf
+
+        makepdf(BODY, DST, today, ip);
+
+        // makeLogFile("", "end");
 
     }
 
-    public void makepdf(StringBuilder body) {
-
-        Document document = null;
-        PdfWriter writer = null;
-
-        String scss = "D:\\popup.css";
-        try {
-            OutputStream file = new FileOutputStream(new File("D:\\Test.pdf"));
-            // Document 생성
-            document = new Document(PageSize.A4, 50, 50, 50, 50);
-            System.out.println("Document 생성");
-            // PdfWriter 생성
-            writer = PdfWriter.getInstance(document, file);
-
-            writer.setInitialLeading(12.5f);
-            System.out.println("PdfWriter생성");
-
-            // document 오픈
-            document.open();
-            XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
-            System.out.println("document 오픈");
-
-            // CSS
-            CSSResolver cssResolver = new StyleAttrCSSResolver();
-            CssFile cssFile = XMLWorkerHelper.getCSS(new FileInputStream(scss));
-            cssResolver.addCss(cssFile);
-            System.out.println("css설정 완");
-
-            // HTML , 폰트 설정
-            XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(XMLWorkerFontProvider.DONTLOOKFORFONTS);
-            fontProvider.register("D:\\malgun.ttf", "MalgunGothic");
-            CssAppliers CssAppliers = new CssAppliersImpl(fontProvider);
-            System.out.println("폰트설정 완");
-
-            HtmlPipelineContext htmlContext = new HtmlPipelineContext(CssAppliers);
-            htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
-            System.out.println("html context 완");
-
-            // PipeLines
-            PdfWriterPipeline pdf = new PdfWriterPipeline(document, writer);
-            HtmlPipeline html = new HtmlPipeline(htmlContext, pdf);
-            CssResolverPipeline css = new CssResolverPipeline(cssResolver, html);
-            System.out.println("pipelines 완");
-
-            XMLWorker worker = new XMLWorker(css, true);
-            XMLParser xmlParser = new XMLParser(worker, Charset.forName("UTF-8"));
-            System.out.println("xmlworker 완");
-
-            String htmlStr = body.toString();
-            System.out.println("string 변환");
-
-            StringReader strReader = new StringReader(htmlStr);
-            System.out.println("read");
-            xmlParser.parse(strReader);
-            System.out.println("parse");
-
-            document.close();
-            writer.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void makepdf(String BODY, String DST, String today, String ip) throws IOException {
+        System.out.println("makepdf");
+        String FONT;
+        if (ip.equals("211.219.114.160")) {
+            FONT = "D:\\malgun.ttf";
+        } else {
+            FONT = "/home/isensor/sensrelayclient/source/malgun.ttf";
         }
+
+        ConverterProperties properties = new ConverterProperties();
+
+        FontProvider fontProvider = new DefaultFontProvider(false, false, false);
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT);
+        fontProvider.addFont(fontProgram);
+        properties.setFontProvider(fontProvider);
+        // properties.setBaseUri("D:\\");
+
+        List<IElement> elements = HtmlConverter.convertToElements(BODY, properties);
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(DST));
+        // pdf.setTagged();
+        Document document = new Document(pdf);
+        document.setMargins(50, 0, 50, 0);
+        for (IElement element : elements) {
+            document.add((IBlockElement) element);
+        }
+        document.close();
+        makeMsg(today, ip);
+        // HtmlConverter.convertToPdf(new File(src), new File(dest), properties);
+    }
+
+    public void makeMsg(String date, String ip) throws IOException {
+        System.out.println("makeMsg");
+        String txt;
+        String fileName;
+        if (ip.equals("211.219.114.160")) {
+            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n"
+                    + "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n"
+                    + "SUBJECT:mail test\n" + "ATTACH:D://" + date + "_sample.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n"
+                    + "SECU_KEY:\n\n" + "test mail with attch file";
+            fileName = "D:\\" + date + "_makeMsg.msg";
+
+        } else {
+            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n"
+                    + "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n"
+                    + "SUBJECT:mail test\n" + "ATTACH:/home/isensor/sensrelayclient/source/" + date + "_reportPdf.pdf\n"
+                    + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n" + "test mail with attch file";
+
+            fileName = "/home/isensor/sensrelayclient/spool/" + date + "_reportMail.msg";
+        }
+
+        File file = new File(fileName);
+        FileWriter fw = new FileWriter(file);
+        fw.write(txt);
+        fw.flush();
+        fw.close();
 
     }
 

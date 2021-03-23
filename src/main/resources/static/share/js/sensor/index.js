@@ -736,7 +736,7 @@ var sensor = {
         });
       });
     }
-    am4Generate(am, { vistorCnt: "쳬류인원" });
+    am4Generate(am, { vistorCnt: "체류인원" });
     // console.log(am);
     function am4Generate(data, field) {
       am4core.addLicense("CH205407412");

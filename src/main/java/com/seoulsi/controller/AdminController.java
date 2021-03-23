@@ -1,8 +1,12 @@
 package com.seoulsi.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +29,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.font.FontProvider;
+import com.seoulsi.configuration.SchedulerConfig;
 import com.seoulsi.dto.CardDto;
 import com.seoulsi.dto.CommonDto;
+import com.seoulsi.dto.DailySenDto;
 import com.seoulsi.dto.EquiDto;
 import com.seoulsi.dto.MemberDto;
+import com.seoulsi.dto.SensorDto;
 import com.seoulsi.dto.SettingDto;
+import com.seoulsi.dto.extend.ParamDto;
 import com.seoulsi.service.AdminService;
 import com.seoulsi.service.CommonService;
 import com.seoulsi.service.SettingService;
@@ -547,4 +566,67 @@ public class AdminController {
 		model.addAttribute("gus", gus);
 		return "admin/correction";
 	}
+
+	@GetMapping("/mailtest")
+	public String mailtest() throws Exception {
+		Date today = new Date();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmm");
+
+		String src = "/home/isensor/sensrelayclient/source/equiList_edit.html";
+		String dst = "/home/isensor/sensrelayclient/source/reportPdf.pdf";
+		// String src = "D://equiList_edit.html";
+		// String dst = "D://reportPdf.pdf";
+		makepdf(src, dst);
+		return "redirect:/";
+	}
+
+	public void makepdf(String src, String dst) throws Exception {
+		// System.out.println("makepdf");
+		String FONT = "/home/isensor/sensrelayclient/source/malgun.ttf";
+		// String FONT = "D://malgun.ttf";
+		ConverterProperties properties = new ConverterProperties();
+
+		FontProvider fontProvider = new DefaultFontProvider(false, false, false);
+		FontProgram fontProgram = FontProgramFactory.createFont(FONT);
+		fontProvider.addFont(fontProgram);
+		properties.setFontProvider(fontProvider);
+		// properties.setBaseUri("D:\\");
+
+		List<IElement> elements = HtmlConverter.convertToElements(new FileInputStream(src), properties);
+
+		PdfDocument pdf = new PdfDocument(new PdfWriter(dst));
+		// pdf.setTagged();
+		Document document = new Document(pdf);
+		document.setMargins(50, 0, 50, 0);
+		for (IElement element : elements) {
+			document.add((IBlockElement) element);
+		}
+		document.close();
+		makeMsg();
+		// HtmlConverter.convertToPdf(new File(src), new File(dest), properties);
+	}
+
+	public void makeMsg() throws Exception {
+		// System.out.println("makeMsg");
+		// String txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" +
+		// "MAIL_FROM:iotadmin@seoul.go.kr\n"
+		// + "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n"
+		// + "SUBJECT:mail test\n"
+		// + "ATTACH:/root/kweather/sensrelayclient/source/reportPdf.pdf\n" +
+		// "ISSECURITY:0\n" + "SECU_HINT:\n"
+		// + "SECU_KEY:\n" + "test mail with attch file";
+		// String fileName = "D://htmltest.msg";
+		String txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n"
+				+ "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n" + "SUBJECT:mail test\n"
+				+ "ATTACH:/home/isensor/sensrelayclient/source/reportPdf.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n"
+				+ "SECU_KEY:\n\n" + "test mail with attch file";
+		String fileName = "/home/isensor/sensrelayclient/spool/htmlmail.msg";
+		File file = new File(fileName);
+		FileWriter fw = new FileWriter(file);
+		fw.write(txt);
+		fw.flush();
+		fw.close();
+
+	}
+
 }

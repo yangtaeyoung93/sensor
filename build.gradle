@@ -46,9 +46,20 @@ dependencies {
   compile files('libs/ojdbc7.jar')
   compile files('libs/xmlbeans-2.6.0.jar')
 
-  // itext, xmlworker for pdf
-  implementation fileTree(dir:'libs',include:'itext*')
-  implementation fileTree(dir:'libs',include:'xmlworker*')
+  // itext for pdf
+  implementation files('libs/html2pdf-3.0.3.jar')
+  implementation files('libs/kernel-7.1.14.jar')
+  implementation files('libs/barcodes-7.1.14.jar')
+  implementation files('libs/font-asian-7.1.14.jar')
+  implementation files('libs/forms-7.1.14.jar')
+  implementation files('libs/hyph-7.1.14.jar')
+  implementation files('libs/io-7.1.14.jar')
+  implementation files('libs/layout-7.1.14.jar')
+  implementation files('libs/pdfa-7.1.14.jar')
+  implementation files('libs/pdftest-7.1.14.jar')
+  implementation files('libs/sign-7.1.14.jar')
+  implementation files('libs/styled-xml-parser-7.1.14.jar')
+  implementation files('libs/svg-7.1.14.jar')
 
   providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
   
