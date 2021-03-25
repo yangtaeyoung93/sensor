@@ -380,6 +380,40 @@
 .input-group.date .input-group-addon {
   cursor: pointer;
 }
+.historyTable thead tr th{
+    font-family: "Noto Sans KR", sans-serif !important;
+	   text-align: center;
+	   color: #0c82e9;
+	   border-top: 1px solid #0c82e9;
+	   border-bottom: 1px solid #0c82e9;
+	   background: #f3f9fe;
+	   padding: 10px;
+     font-size: 1.11em;
+	}
+
+  .historyTable tbody td{
+    font-family: "Noto Sans KR", sans-serif !important;
+    color: #000000;
+		height: 22px;
+    text-align: center;
+		border-bottom: 1px solid #d7d7d7;
+	}
+  
+  .dataTables_empty{
+    border-bottom: 1px solid #d7d7d7;
+  }
+
+  input[type=search]{
+    margin-bottom: 10px;
+    float : right;
+    width:122px;
+  }
+  select[name=historyTable_length]{
+    width:57px;
+  }
+
+
+
 </style>
 <script type='text/javascript'>
 $(function(){
@@ -493,7 +527,7 @@ pageContext.setAttribute("grant", grant);
 		<div class="row col-xs-10 ">
       <div class="col-xs-5" style="float:right;text-align:right;padding-bottom: 10px;">
         <c:if test="${grant eq 'Y'}">
-          <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" style="background: white; color: #666; border: 1px solid #c9c9c9; float: none;"/>
+          <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" style="background: #f3f9fe; color: #0c82e9; border: 1px solid #0c82e9; float: none;"/>
         </c:if>
       </div>
      
@@ -512,7 +546,7 @@ pageContext.setAttribute("grant", grant);
       </table> -->
      
      
-      <table id="historyTable"  >
+      <table id="historyTable"  class="historyTable" >
 				<thead>
 				 <tr>
 					<th> 사용자 ID </th>
@@ -608,29 +642,51 @@ pageContext.setAttribute("grant", grant);
 		})
 		
 
-    function getCSV(filename){
-      //table을 csv로 만들기
+    function getCSV(filename,date){
       var csv = [];
-      var rows = $('#historyTable tr');
+      var row = [];
+      $.ajax({
+				 	url: '/api/admin/user/history',
+				 	type: 'GET',
+          async:false,
+				 	data: date,
+				 	success: function(r) {
+				 		
+            if (r.length == 0) {
+				 			alert("데이터를 불러오지 못했습니다.");
+				 		}
+            
+          
+            //csv로 만들기
+            row.push("번호");
+            row.push("사용자ID");
+            row.push("이름");
+            row.push("접속일시");  
+            csv.push(row.join(","));
+
+            $.each(r.data, function(a,b) {
+              var row2 = [];
+              row2.push(a+1);
+              row2.push(b.userId);
+              row2.push(b.userName);
+              row2.push(b.regDate);
+              csv.push(row2.join(","));
+            })
+  
+          }
+    })
       
-      for ( var i = 0  ; i < rows.length ; i++){
-        var row = [];
-        var cols = rows[i].querySelectorAll("td, th");
-        
-        for ( var j = 0 ; j< cols.length; j++){
-          row.push(cols[j].innerText);
-        }
-        csv.push(row.join(","))
-      }
       downloadCSV(csv.join("\n"),filename)
+
     }
 
     //csv 다운로드
     function downloadCSV(csv,filename){
       var csvFile;
       var downloadLink;
+      console.log(csv);
       
-      // 한글 처리를 해주기 위해 BOM 추가하기
+      //한글 처리를 해주기 위해 BOM 추가하기
       const BOM = "\uFEFF";
       csv = BOM + csv;
 
@@ -650,7 +706,8 @@ pageContext.setAttribute("grant", grant);
 			var from = $('#from').val();
 			var fromDate = from.substr(0,4)+from.substr(5, 2)+from.substr(8, 2);
       var filename = toDate+"_"+fromDate+".csv";
-      getCSV(filename);
+      date = globalData;
+      getCSV(filename,date);
     })
     
     var lang_kor = {

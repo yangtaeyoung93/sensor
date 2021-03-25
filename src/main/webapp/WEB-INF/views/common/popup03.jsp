@@ -279,7 +279,7 @@
 				})
 			}
 			
-			const equiTypeName = {"pm25" : "초미세먼지", "humi" : "습도", "o3" : "오존", "wind_speed" : "풍속", "nh3" : "암모니아", "temp" : "온도", "inte_illu" : "조도", "so2" : "이산화황", "effe_temp" : "흑구", "pm10" : "미세먼지", "vibr" : "진동", "wind_dire" : "풍향", "h2s" : "황화수소", "noise" : "소음", "ultra_rays" : "자외선", "co" : "일산화탄소", "no2" : "이산화질소"};
+			const equiTypeName = {"pm25" : "초미세먼지", "humi" : "습도", "o3" : "오존(O₃)", "wind_speed" : "풍속", "nh3" : "암모니아(NH₃)", "temp" : "온도", "inte_illu" : "조도", "so2" : "이산화황(SO₂)", "effe_temp" : "흑구", "pm10" : "미세먼지", "vibr" : "진동", "wind_dire" : "풍향", "h2s" : "황화수소(H₂S)", "noise" : "소음", "ultra_rays" : "자외선", "co" : "일산화탄소(CO)", "no2" : "이산화질소(NO₂)"};
 			var equiCnt, dataCnt;
 			$('#listData').html('');
 			dayTextParse(toDate, fromDate);

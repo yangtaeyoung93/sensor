@@ -123,7 +123,7 @@ and
 <when test='type.equals("h2S")'> H2S IS NOT NULL </when>
 <when test='type.equals("o3")'> O3 IS NOT NULL </when>
 </choose>
-)
+) and use_yn='Y'
 order by gu_tp
 
 </select>

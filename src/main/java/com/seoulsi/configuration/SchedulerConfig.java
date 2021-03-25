@@ -237,7 +237,7 @@ public class SchedulerConfig {
         return result;
     }
 
-    @Scheduled(cron = "0 30 10 * * *")
+    @Scheduled(cron = "0 00 08 * * *")
     public void task1() throws Exception {
         // 전날 데이터를 위한 날짜
         Calendar cal = Calendar.getInstance();
@@ -361,24 +361,24 @@ public class SchedulerConfig {
         InetAddress local = null;
         local = InetAddress.getLocalHost();
         String ip = local.getHostAddress();
-        System.out.println("IP : " + ip);
 
+        // test용 ip
         if (ip.equals("211.219.114.160")) {
             DST = "D:\\" + today + "_sample.pdf";
         } else {
             DST = "/home/isensor/sensrelayclient/source/" + today + "_reportPdf.pdf";
         }
-
+        int mailCnt = 0;
         // html to pdf
-
-        makepdf(BODY, DST, today, ip);
-
+        for (String mail : mailList) {
+            makepdf(BODY, DST, today, ip, mail, mailCnt);
+            mailCnt++;
+        }
         // makeLogFile("", "end");
 
     }
 
-    public void makepdf(String BODY, String DST, String today, String ip) throws IOException {
-        System.out.println("makepdf");
+    public void makepdf(String BODY, String DST, String today, String ip, String mailList, int Cnt) throws IOException {
         String FONT;
         if (ip.equals("211.219.114.160")) {
             FONT = "D:\\malgun.ttf";
@@ -404,28 +404,27 @@ public class SchedulerConfig {
             document.add((IBlockElement) element);
         }
         document.close();
-        makeMsg(today, ip);
+        makeMsg(today, ip, mailList, Cnt);
         // HtmlConverter.convertToPdf(new File(src), new File(dest), properties);
     }
 
-    public void makeMsg(String date, String ip) throws IOException {
-        System.out.println("makeMsg");
+    public void makeMsg(String date, String ip, String mailList, int Cnt) throws IOException {
         String txt;
         String fileName;
         if (ip.equals("211.219.114.160")) {
-            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n"
-                    + "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n"
-                    + "SUBJECT:mail test\n" + "ATTACH:D://" + date + "_sample.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n"
-                    + "SECU_KEY:\n\n" + "test mail with attch file";
-            fileName = "D:\\" + date + "_makeMsg.msg";
+            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mailList
+                    + "\nTO_HEADER:" + mailList + "\nSUBJECT:[S-DOT] " + date + " S-DOT Report Mail\n" + "ATTACH:D://"
+                    + date + "_sample.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n"
+                    + "S-DOT Report Mail";
+            fileName = "D:\\" + date + "_makeMsg" + Cnt + ".msg";
 
         } else {
-            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n"
-                    + "RCPT_TO:sh717510@protonmail.com\n" + "TO_HEADER:sh717510@protonmail.com\n"
-                    + "SUBJECT:mail test\n" + "ATTACH:/home/isensor/sensrelayclient/source/" + date + "_reportPdf.pdf\n"
-                    + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n" + "test mail with attch file";
+            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mailList
+                    + "\nTO_HEADER:" + mailList + "\nSUBJECT:[S-DOT] " + date + " S-DOT Report Mail\n"
+                    + "ATTACH:/home/isensor/sensrelayclient/source/" + date + "_reportPdf.pdf\n" + "ISSECURITY:0\n"
+                    + "SECU_HINT:\n" + "SECU_KEY:\n\n" + "S-DOT Report Mail";
 
-            fileName = "/home/isensor/sensrelayclient/spool/" + date + "_reportMail.msg";
+            fileName = "/home/isensor/sensrelayclient/spool/" + date + "_reportMail" + Cnt + ".msg";
         }
 
         File file = new File(fileName);
