@@ -195,7 +195,7 @@
 				총 이상장비
 				</div>
 				<div class="number">
-				80대
+				0대
 				</div>
 			</div>
 		</div>
@@ -529,7 +529,7 @@
                     toDate: toDate,
                     fromDate: fromDate
                 }, success: function(r) {
-                    const equiTypeName = {"pm25" : "초미세먼지", "humi" : "습도", "o3" : "오존(O3)", "wind_speed" : "풍속", "nh3" : "암모니아(NH3)", "temp" : "온도", "inte_illu" : "조도", "so2" : "이산화황(SO2)", "effe_temp" : "흑구", "pm10" : "미세먼지", "vibr" : "진동", "wind_dire" : "풍향", "h2s" : "황화수소(H2S)", "noise" : "소음", "ultra_rays" : "자외선", "co" : "일산화탄소(CO)", "no2" : "이산화질소(NO2)"};
+                    const equiTypeName = {"pm25" : "초미세먼지", "humi" : "습도", "o3" : "오존(O₃)", "wind_speed" : "풍속", "nh3" : "암모니아(NH₃)", "temp" : "온도", "inte_illu" : "조도", "so2" : "이산화황(SO₂)", "effe_temp" : "흑구", "pm10" : "미세먼지", "vibr" : "진동", "wind_dire" : "풍향", "h2s" : "황화수소(H₂S)", "noise" : "소음", "ultra_rays" : "자외선", "co" : "일산화탄소(CO)", "no2" : "이산화질소(NO₂)"};
                     // console.log(r.data);
                     var totalBadCnt = 0;
                     $('#listCnt').html('');

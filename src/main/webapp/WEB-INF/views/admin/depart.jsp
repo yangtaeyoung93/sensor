@@ -527,7 +527,7 @@ pageContext.setAttribute("grant", grant);
 		<div class="row col-xs-10 ">
       <div class="col-xs-5" style="float:right;text-align:right;padding-bottom: 10px;">
         <c:if test="${grant eq 'Y'}">
-          <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" style="background: #f3f9fe; color: #0c82e9; border: 1px solid #0c82e9; float: none;"/>
+          <input class="col-xs-offset-1 col-xs-3" id="csvDownload" type="button" value="CSV 다운로드" disabled style="background: #ffffff; color: #b5b5b5; border: 1px solid #b5b5b5; float: none; "/>
         </c:if>
       </div>
      
@@ -565,7 +565,7 @@ pageContext.setAttribute("grant", grant);
 <script>
 	
 	$(document).ready(function() {
-		
+    
 		var globalData;
 		$('#userSearch').click(function(e) {
 			e.preventDefault();
@@ -602,9 +602,10 @@ pageContext.setAttribute("grant", grant);
                {data : 'regDate'}
              ]
 					
-    });
+        });
 
-
+        $('#csvDownload').css({"color":"#0c82e9","border":"1px solid #0c82e9","background":"#f3f9fe"});
+        $('#csvDownload').attr('disabled',false);
 
 
 
@@ -684,7 +685,6 @@ pageContext.setAttribute("grant", grant);
     function downloadCSV(csv,filename){
       var csvFile;
       var downloadLink;
-      console.log(csv);
       
       //한글 처리를 해주기 위해 BOM 추가하기
       const BOM = "\uFEFF";
