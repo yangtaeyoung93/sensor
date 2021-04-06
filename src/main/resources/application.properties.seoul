@@ -74,3 +74,12 @@ spring.mail.log.path=/home/isensor/log/mail
 #logback
 spring.profiles.active=seoul
 logging.config=classpath:logback-${spring.profiles.active}.xml
+
+#프로세스, 수신율 check log path
+spring.process.log.path=/home/isensor/checkLog/
+
+##메일용 폰트, pdf path
+spring.mail.source.path = /home/isensor/sensrelayclient/source/
+
+##메일 디렉토리
+spring.mail.spool.path = /home/isensor/sensrelayclient/spool/

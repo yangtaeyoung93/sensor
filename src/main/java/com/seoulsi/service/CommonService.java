@@ -194,4 +194,10 @@ public class CommonService implements CommonMapper {
 		return commonMapper.getDailyCntForMoveEqui(paramDto);
 	}
 
+	@Override
+	public double getNormalCntRealTime(ParamDto paramDto) throws Exception {
+		// TODO Auto-generated method stub
+		return commonMapper.getNormalCntRealTime(paramDto);
+	}
+
 }

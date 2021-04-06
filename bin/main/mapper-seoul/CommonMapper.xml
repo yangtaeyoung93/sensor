@@ -340,7 +340,19 @@ order by gu_tp
   from tb_st_daily_sen_m where tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
   </select>
 
+<!--오늘의 수신율 구하기-->
+  <select id="getNormalCntRealTime" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="double">
 
+select trunc(
+                (select count(*) from tb_sl_dot_sen where tm8=#{fromDate})/
+                    (select (
+                            (select count(*) from tb_mm_equ_info where use_yn='Y')*(select to_char(sysdate,'HH24') from dual)*30
+                            +(select count(*) from tb_mm_equ_info where use_yn='Y')*(trunc((select to_char(sysdate,'MI')from dual)/2)+1)
+                            )as normal_data_cnt from dual
+                    )*100
+                ,2) 
+as total from dual
+</select>
   
 
 </mapper>

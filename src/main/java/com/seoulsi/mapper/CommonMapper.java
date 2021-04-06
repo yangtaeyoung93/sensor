@@ -57,4 +57,6 @@ public interface CommonMapper {
 
 	public List<DailySenDto> getDailyCntForMoveEqui(ParamDto paramDto) throws Exception;
 
+	public double getNormalCntRealTime(ParamDto paramDto) throws Exception;
+
 }

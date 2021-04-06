@@ -73,6 +73,15 @@ public class SchedulerConfig {
     @Value("${spring.mail.log.enable}")
     private String logEnable;
 
+    @Value("${spring.process.log.path}")
+    private String processLogPath;
+
+    @Value("${spring.mail.source.path}")
+    private String mailSourcePath;
+
+    @Value("${spring.mail.spool.path}")
+    private String mailSpoolPath;
+
     // @Scheduled(fixedDelay = 3000)
     public void testTask() throws Exception {
         ClassPathResource resource = new ClassPathResource("mailList.txt");
@@ -336,13 +345,13 @@ public class SchedulerConfig {
         String from = "sdotmailtest@gmail.com";
         List<String> mailList = new ArrayList<>();
 
-        ClassPathResource resource = new ClassPathResource("mailList.txt");
-        File file = resource.getFile();
-        Scanner scan = new Scanner(file);
+        // ClassPathResource resource = new ClassPathResource("mailList.txt");
+        // File file = resource.getFile();
+        // Scanner scan = new Scanner(file);
 
-        while (scan.hasNextLine()) {
-            mailList.add(scan.nextLine());
-        }
+        // while (scan.hasNextLine()) {
+        // mailList.add(scan.nextLine());
+        // }
 
         // makeLogFile("", "start");
 
@@ -356,35 +365,18 @@ public class SchedulerConfig {
         // }
 
         String BODY = body.toString();
-        String DST;
 
-        InetAddress local = null;
-        local = InetAddress.getLocalHost();
-        String ip = local.getHostAddress();
-
-        // test용 ip
-        if (ip.equals("211.219.114.160")) {
-            DST = "D:\\" + today + "_sample.pdf";
-        } else {
-            DST = "/home/isensor/sensrelayclient/source/" + today + "_reportPdf.pdf";
-        }
-        int mailCnt = 0;
         // html to pdf
-        for (String mail : mailList) {
-            makepdf(BODY, DST, today, ip, mail, mailCnt);
-            mailCnt++;
-        }
+        makepdf(BODY, today);
+
         // makeLogFile("", "end");
 
     }
 
-    public void makepdf(String BODY, String DST, String today, String ip, String mailList, int Cnt) throws IOException {
-        String FONT;
-        if (ip.equals("211.219.114.160")) {
-            FONT = "D:\\malgun.ttf";
-        } else {
-            FONT = "/home/isensor/sensrelayclient/source/malgun.ttf";
-        }
+    public void makepdf(String BODY, String today) throws IOException {
+
+        String FONT = mailSourcePath + "malgun.ttf";
+        String DST = mailSourcePath + today + "_report.pdf";
 
         ConverterProperties properties = new ConverterProperties();
 
@@ -404,34 +396,242 @@ public class SchedulerConfig {
             document.add((IBlockElement) element);
         }
         document.close();
-        makeMsg(today, ip, mailList, Cnt);
+        String type = "report";
+        String msgBody = "S-DOT Report Mail";
+        makeMsg(type, msgBody);
         // HtmlConverter.convertToPdf(new File(src), new File(dest), properties);
     }
 
-    public void makeMsg(String date, String ip, String mailList, int Cnt) throws IOException {
-        String txt;
-        String fileName;
-        if (ip.equals("211.219.114.160")) {
-            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mailList
-                    + "\nTO_HEADER:" + mailList + "\nSUBJECT:[S-DOT] " + date + " S-DOT Report Mail\n" + "ATTACH:D://"
-                    + date + "_sample.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n"
-                    + "S-DOT Report Mail";
-            fileName = "D:\\" + date + "_makeMsg" + Cnt + ".msg";
+    // mail 파일 생성
+    public void makeMsg(String type, String msgBody) throws IOException {
+        List<String> mailList = new ArrayList<>();
+        ClassPathResource resource = new ClassPathResource("mailList.txt");
+        File file = resource.getFile();
+        Scanner scan = new Scanner(file);
 
-        } else {
-            txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mailList
-                    + "\nTO_HEADER:" + mailList + "\nSUBJECT:[S-DOT] " + date + " S-DOT Report Mail\n"
-                    + "ATTACH:/home/isensor/sensrelayclient/source/" + date + "_reportPdf.pdf\n" + "ISSECURITY:0\n"
-                    + "SECU_HINT:\n" + "SECU_KEY:\n\n" + "S-DOT Report Mail";
-
-            fileName = "/home/isensor/sensrelayclient/spool/" + date + "_reportMail" + Cnt + ".msg";
+        while (scan.hasNextLine()) {
+            mailList.add(scan.nextLine());
         }
 
-        File file = new File(fileName);
-        FileWriter fw = new FileWriter(file);
-        fw.write(txt);
+        String txt;
+        String fileName;
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMddHHmm");
+        String date = format.format(cal.getTime());
+        String date2 = format2.format(cal.getTime());
+
+        // 정기 리포트인경우
+        if (type.equals("report")) {
+            int Cnt = 0;
+            for (String mail : mailList) {
+                txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mail
+                        + "\nTO_HEADER:" + mail + "\nSUBJECT:[S-DOT] " + date + " S-DOT Report Mail\n" + "ATTACH:"
+                        + mailSourcePath + date + "_report.pdf\n" + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n"
+                        + msgBody;
+                fileName = mailSpoolPath + date + "_REPORT_Mail" + Cnt + ".msg";
+                ++Cnt;
+                File mailFile = new File(fileName);
+                FileWriter fw = new FileWriter(mailFile);
+                fw.write(txt);
+                fw.flush();
+                fw.close();
+            }
+            // 에러 알림인 경우
+        } else {
+            int errCnt = 0;
+            for (String mail : mailList) {
+                txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mail
+                        + "\nTO_HEADER:" + mail + "\nSUBJECT:[S-DOT] " + date + " S-DOT ERROR ALRAM MAIL\n"
+                        + "ATTACH:\n" + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n"
+                        + "<<S-DOT ERROR OCCURED>> \n" + msgBody;
+                fileName = mailSpoolPath + date2 + "_ERROR_ALRAM_MAIL" + errCnt + ".msg";
+                ++errCnt;
+                File mailFile = new File(fileName);
+                FileWriter fw = new FileWriter(mailFile);
+                fw.write(txt);
+                fw.flush();
+                fw.close();
+            }
+        }
+
+    }
+
+    // WAS프로세스 체크, 매 5분마다
+    @Scheduled(cron = "0 0/5 * * * *")
+    public void checkProcess() throws Exception {
+
+        int result = 0;
+        boolean flag = false;
+
+        String log = "";
+
+        try {
+            // dotapi 체크
+            if ((result = api()) == 6) {
+                log += "dotapi process check : OK \n";
+                flag = true;
+            } else {
+                log += "dotapi process check : ERROR(COUNT: " + result + ")\n";
+            }
+
+            // dotmtr 체크
+            if ((result = mtr()) == 4) {
+                log += "dotmtr process check : OK \n";
+                flag = true;
+            } else {
+                log += "dotmtr process check : ERROR(COUNT: " + result + ")\n";
+            }
+
+            // batch체크
+            if ((result = batch()) == 2) {
+                log += "batch process check : OK \n";
+                flag = true;
+            } else {
+                log += "batch process error : ERROR(COUNT: " + result + ")\n";
+            }
+
+            // kafka 체크
+            if ((result = kafka()) == 1) {
+                log += "kafka process check : OK \n";
+                flag = true;
+            } else {
+                log += "kafka process check : ERROR(COUNT: " + result + ")\n";
+            }
+
+            String type = "alram";
+            if (flag) {
+                makeMsg(type, log);
+            }
+
+            makeProcessCheckLog(log);
+
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    // 수신률 체크,주중 9~17시
+    @Scheduled(cron = "0 0 9-17 * * MON-FRI")
+    public void checkReceive() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("yyyyMMdd");
+        String fromDate = format.format(cal.getTime());
+        ParamDto paramDto = new ParamDto();
+        paramDto.setFromDate(fromDate);
+
+        double receive_rate = commonService.getNormalCntRealTime(paramDto);
+        String type = "alram";
+
+        String log = "";
+        if (receive_rate < 80) {
+            log = "RECEIVE RATE CHECK : UNDER 80% (CURRENT : " + receive_rate + "%)";
+            makeMsg(type, log);
+        } else {
+            log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
+        }
+
+        makeProcessCheckLog(log);
+
+    }
+
+    // check 로그 생성
+    public void makeProcessCheckLog(String log) throws Exception {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        SimpleDateFormat logformat = new SimpleDateFormat("yyyyMMdd");
+        String Date = format.format(cal.getTime());
+        String logformatDate = logformat.format(cal.getTime());
+
+        String content = Date + "\n" + log + "\n================================================\n";
+
+        String fileName = processLogPath + logformatDate;
+        File logFile = new File(fileName);
+        FileWriter fw = new FileWriter(logFile, true);
+        fw.write(content);
         fw.flush();
         fw.close();
+    }
+
+    public static int api() throws Exception {
+        String s;
+        Process p;
+        int apiCnt = 0;
+
+        String[] cmd = { "/bin/sh", "-c", "ps -ef | grep python|grep -v grep|grep dotapi" };
+        p = Runtime.getRuntime().exec(cmd);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while ((s = br.readLine()) != null) {
+            System.out.println(s);
+            apiCnt++;
+        }
+
+        p.waitFor();
+
+        p.destroy();
+
+        return apiCnt;
+
+    }
+
+    public static int mtr() throws Exception {
+        String s;
+        Process p;
+        int mtrCnt = 0;
+
+        String[] cmd = { "/bin/sh", "-c", "ps -ef | grep python|grep -v grep|grep dotmtr" };
+        p = Runtime.getRuntime().exec(cmd);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while ((s = br.readLine()) != null) {
+            System.out.println(s);
+            mtrCnt++;
+        }
+        p.waitFor();
+        p.destroy();
+
+        return mtrCnt;
+    }
+
+    public static int batch() throws Exception {
+        String s;
+        Process p;
+        int batchCnt = 0;
+
+        String[] cmd = { "/bin/sh", "-c", "ps -ef | grep python|grep -v grep|grep seoul_batch" };
+        p = Runtime.getRuntime().exec(cmd);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while ((s = br.readLine()) != null) {
+            System.out.println(s);
+            batchCnt++;
+        }
+
+        p.waitFor();
+        p.destroy();
+
+        return batchCnt;
+
+    }
+
+    public static int kafka() throws Exception {
+        String s;
+        Process p;
+        int kafkaCnt = 0;
+
+        String[] cmd = { "/bin/sh", "-c", "ps -ef | grep python|grep -v grep|grep seoul_http_was_kafka.py" };
+        p = Runtime.getRuntime().exec(cmd);
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        while ((s = br.readLine()) != null) {
+            System.out.println(s);
+            kafkaCnt++;
+        }
+
+        p.waitFor();
+        p.destroy();
+
+        return kafkaCnt;
 
     }
 
