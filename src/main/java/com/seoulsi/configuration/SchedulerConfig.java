@@ -458,7 +458,7 @@ public class SchedulerConfig {
 
     }
 
-    // WAS프로세스 체크, 매 5분마다
+    // WAS프로세스 체크, 매 5분마다 test
     @Scheduled(cron = "0 0/5 * * * *")
     public void checkProcess() throws Exception {
 
