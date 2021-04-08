@@ -458,63 +458,63 @@ public class SchedulerConfig {
 
     }
 
-    // WAS프로세스 체크, 매 5분마다 test
-    @Scheduled(cron = "0 0/5 * * * *")
-    public void checkProcess() throws Exception {
+    // // WAS프로세스 체크, 매 5분마다
+    // @Scheduled(cron = "0 0/5 * * * *")
+    // public void checkProcess() throws Exception {
 
-        int result = 0;
-        boolean flag = false;
+    // int result = 0;
+    // boolean flag = false;
 
-        String log = "";
+    // String log = "";
 
-        try {
-            // dotapi 체크
-            if ((result = api()) == 6) {
-                log += "dotapi process check : OK \n";
-                flag = true;
-            } else {
-                log += "dotapi process check : ERROR(COUNT: " + result + ")\n";
-            }
+    // try {
+    // // dotapi 체크
+    // if ((result = api()) == 6) {
+    // log += "dotapi process check : OK \n";
+    // flag = true;
+    // } else {
+    // log += "dotapi process check : ERROR(COUNT: " + result + ")\n";
+    // }
 
-            // dotmtr 체크
-            if ((result = mtr()) == 4) {
-                log += "dotmtr process check : OK \n";
-                flag = true;
-            } else {
-                log += "dotmtr process check : ERROR(COUNT: " + result + ")\n";
-            }
+    // // dotmtr 체크
+    // if ((result = mtr()) == 4) {
+    // log += "dotmtr process check : OK \n";
+    // flag = true;
+    // } else {
+    // log += "dotmtr process check : ERROR(COUNT: " + result + ")\n";
+    // }
 
-            // batch체크
-            if ((result = batch()) == 2) {
-                log += "batch process check : OK \n";
-                flag = true;
-            } else {
-                log += "batch process error : ERROR(COUNT: " + result + ")\n";
-            }
+    // // batch체크
+    // if ((result = batch()) == 2) {
+    // log += "batch process check : OK \n";
+    // flag = true;
+    // } else {
+    // log += "batch process error : ERROR(COUNT: " + result + ")\n";
+    // }
 
-            // kafka 체크
-            if ((result = kafka()) == 1) {
-                log += "kafka process check : OK \n";
-                flag = true;
-            } else {
-                log += "kafka process check : ERROR(COUNT: " + result + ")\n";
-            }
+    // // kafka 체크
+    // if ((result = kafka()) == 1) {
+    // log += "kafka process check : OK \n";
+    // flag = true;
+    // } else {
+    // log += "kafka process check : ERROR(COUNT: " + result + ")\n";
+    // }
 
-            String type = "alram";
-            if (flag) {
-                makeMsg(type, log);
-            }
+    // String type = "alram";
+    // if (flag) {
+    // makeMsg(type, log);
+    // }
 
-            makeProcessCheckLog(log);
+    // makeProcessCheckLog(log);
 
-        } catch (Exception e) {
+    // } catch (Exception e) {
 
-        }
+    // }
 
-    }
+    // }
 
-    // 수신률 체크,주중 9~17시
-    @Scheduled(cron = "0 0 9-17 * * MON-FRI")
+    // 수신률 체크, 24시간 매 10분마다
+    @Scheduled(cron = "0 0/10 * * * *")
     public void checkReceive() throws Exception {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat();
@@ -527,8 +527,8 @@ public class SchedulerConfig {
         String type = "alram";
 
         String log = "";
-        if (receive_rate < 80) {
-            log = "RECEIVE RATE CHECK : UNDER 80% (CURRENT : " + receive_rate + "%)";
+        if (receive_rate <= 90) {
+            log = "RECEIVE RATE CHECK : UNDER 90% (CURRENT : " + receive_rate + "%)";
             makeMsg(type, log);
         } else {
             log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
