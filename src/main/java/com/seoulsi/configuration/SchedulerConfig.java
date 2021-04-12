@@ -445,7 +445,7 @@ public class SchedulerConfig {
                 txt = "CLIENT_KEY:600e5c813fb457b41756bab8\n" + "MAIL_FROM:iotadmin@seoul.go.kr\n" + "RCPT_TO:" + mail
                         + "\nTO_HEADER:" + mail + "\nSUBJECT:[S-DOT] " + date + " S-DOT ERROR ALRAM MAIL\n"
                         + "ATTACH:\n" + "ISSECURITY:0\n" + "SECU_HINT:\n" + "SECU_KEY:\n\n"
-                        + "<<S-DOT ERROR OCCURED>> \n" + msgBody;
+                        + date2 + " S-DOT ERROR OCCURED \n" + msgBody;
                 fileName = mailSpoolPath + date2 + "_ERROR_ALRAM_MAIL" + errCnt + ".msg";
                 ++errCnt;
                 File mailFile = new File(fileName);
@@ -517,16 +517,15 @@ public class SchedulerConfig {
     @Scheduled(cron = "0 9/10 * * * *")
     public void checkReceive() throws Exception {
         Calendar cal = Calendar.getInstance();
-        ParamDto paramDto = new ParamDto();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        String fromDate = format.format(cal.getTime());   
-        paramDto.setFromDate(fromDate);
-        //수신률 구하기 
-        double receive_rate = commonService.getNormalCntRealTime(paramDto);
-
         //시간 체크
         SimpleDateFormat hourM = new SimpleDateFormat("HHmm");
         String hourMM = hourM.format(cal.getTime());
+  
+       
+        //수신률 구하기 
+        double receive_rate = commonService.getNormalCntRealTime();
+
+        
         
         String type = "alram";
 
@@ -536,7 +535,7 @@ public class SchedulerConfig {
         if(hourMM.equals("0009")){
             if (receive_rate <= 80) {
                 log = "RECEIVE RATE CHECK : UNDER 80% (CURRENT : " + receive_rate + "%)";
-               // makeMsg(type, log);
+               makeMsg(type, log);
             } else {
                 log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
             }
@@ -545,7 +544,7 @@ public class SchedulerConfig {
         }else{
             if (receive_rate <= 90) {
                 log = "RECEIVE RATE CHECK : UNDER 90% (CURRENT : " + receive_rate + "%)";
-               // makeMsg(type, log);
+               makeMsg(type, log);
             } else {
                 log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
             }

@@ -341,10 +341,10 @@ order by gu_tp
   </select>
 
 <!--오늘의 수신율 구하기-->
-  <select id="getNormalCntRealTime" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="double">
+  <select id="getNormalCntRealTime"  resultType="double">
 
 select trunc(
-                (select count(*) from tb_sl_dot_sen where tm8=#{fromDate})/
+                (select count(*) from tb_sl_dot_sen where tm8=to_char(sysdate,'YYYYMMDD'))/
                     (select (
                             (select count(*) from tb_mm_equ_info where use_yn='Y')*(select to_char(sysdate,'HH24') from dual)*30
                             +(select count(*) from tb_mm_equ_info where use_yn='Y')*(trunc((select to_char(sysdate,'MI')from dual)/2)+1)

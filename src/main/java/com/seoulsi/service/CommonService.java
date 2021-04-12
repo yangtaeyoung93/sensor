@@ -195,9 +195,11 @@ public class CommonService implements CommonMapper {
 	}
 
 	@Override
-	public double getNormalCntRealTime(ParamDto paramDto) throws Exception {
+	public double getNormalCntRealTime() throws Exception {
 		// TODO Auto-generated method stub
-		return commonMapper.getNormalCntRealTime(paramDto);
+		return commonMapper.getNormalCntRealTime();
 	}
+
+
 
 }
