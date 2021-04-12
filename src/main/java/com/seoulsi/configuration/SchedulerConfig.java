@@ -513,26 +513,46 @@ public class SchedulerConfig {
 
     // }
 
-    // 수신률 체크, 24시간 매 10분마다
-    @Scheduled(cron = "0 0/10 * * * *")
+    // 수신률 체크, 24시간 매 10분마다(9분부터)
+    @Scheduled(cron = "0 9/10 * * * *")
     public void checkReceive() throws Exception {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat();
-        format.applyPattern("yyyyMMdd");
-        String fromDate = format.format(cal.getTime());
         ParamDto paramDto = new ParamDto();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String fromDate = format.format(cal.getTime());   
         paramDto.setFromDate(fromDate);
-
+        //수신률 구하기 
         double receive_rate = commonService.getNormalCntRealTime(paramDto);
+
+        //시간 체크
+        SimpleDateFormat hourM = new SimpleDateFormat("HHmm");
+        String hourMM = hourM.format(cal.getTime());
+        
         String type = "alram";
 
         String log = "";
-        if (receive_rate <= 90) {
-            log = "RECEIVE RATE CHECK : UNDER 90% (CURRENT : " + receive_rate + "%)";
-            makeMsg(type, log);
-        } else {
-            log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
+
+        //현재시각 0시 9분인 경우 80퍼 미만으로 체크 
+        if(hourMM.equals("0009")){
+            if (receive_rate <= 80) {
+                log = "RECEIVE RATE CHECK : UNDER 80% (CURRENT : " + receive_rate + "%)";
+               // makeMsg(type, log);
+            } else {
+                log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
+            }
+
+
+        }else{
+            if (receive_rate <= 90) {
+                log = "RECEIVE RATE CHECK : UNDER 90% (CURRENT : " + receive_rate + "%)";
+               // makeMsg(type, log);
+            } else {
+                log = "RECEIVE RATE CHECK : OK (" + receive_rate + "%)";
+            }
+
         }
+
+
 
         makeProcessCheckLog(log);
 
