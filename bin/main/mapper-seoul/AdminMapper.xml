@@ -128,7 +128,7 @@
   	VALUES(#{workDt}, #{workTm}, #{swHwTp}, #{chgTp}, #{chgReason}, #{bigo}, SYSDATE, #{equiInfoKey})
   </insert>
 
- <select id="wareSearch" parameterType="com.seoulsi.dto.WareDto" resultType="com.seoulsi.dto.WareDto">
+  <select id="wareSearch" parameterType="com.seoulsi.dto.WareDto" resultType="com.seoulsi.dto.WareDto">
   	SELECT 
 	    TO_CHAR(TO_DATE(WORK_DT, 'YYYY-MM-DD') , 'YYYY-MM-DD')||' '|| SUBSTR(WORK_TM, 0, 2)||':'||SUBSTR(WORK_TM, 3,2) AS WORK_DT,
 	    WORK_TM, 
@@ -148,7 +148,6 @@
   	<if test='swHwTp neq "all"'>
 	  	AND SW_HW_TP=#{swHwTp}
   	</if>
-		AND EQUI_INFO_KEY=#{equiInfoKey}
   	ORDER BY CHG_TP, WORK_DT 
   </select>
   
