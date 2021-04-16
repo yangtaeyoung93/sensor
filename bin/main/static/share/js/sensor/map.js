@@ -146,7 +146,9 @@ var mapjs = {
             var color2 = '';
 
             if(target == "pm10"){
-            	if(b[target] >= 151) {
+                if(b[target] == null){
+                    img = 'area_06.png';
+                }else if(b[target] >= 151) {
             		crit++;
             		img = 'area_05.png';
             	} else if(b[target] >=81){
@@ -155,7 +157,7 @@ var mapjs = {
             	} else if(b[target] >= 31) {
             		normal++;
             		img = 'area_02.png';
-            	} else if(b[target] > 0) {
+            	} else if(b[target] >= 0) {
             		good++;
             		img = 'area_01.png';
             	} else {
@@ -164,7 +166,9 @@ var mapjs = {
             		noData.push(data[a])
             	}
             } else if(target == "pm25"){
-            	if(b[target] >= 76) {
+                if(b[target] == null){
+                    img = 'area_06.png';
+                }else if(b[target] >= 76) {
             		crit++;
             		img = 'area_05.png';
             	} else if(b[target] >= 36){
@@ -173,7 +177,7 @@ var mapjs = {
             	} else if(b[target] >= 16) {
             		normal++;
             		img = 'area_02.png';
-            	} else if(b[target] > 0) {
+            	} else if(b[target] >= 0) {
             		good++;
             		img = 'area_01.png';
             	} else {
@@ -194,24 +198,28 @@ var mapjs = {
             	}
             } 
             
-            if(b['pm25'] >= 76) {
+            if(b['pm25'] == null){
+                    color2 = '00';
+                }else if(b['pm25'] >= 76) {
             		color2 = '01';
             	} else if(b['pm25'] >= 36){
             		color2 = '02';
             	} else if(b['pm25'] >= 16) {
             		color2 = '04';
-            	} else if(b['pm25'] > 0) {
+            	} else if(b['pm25'] >= 0) {
             		color2 = '05';
             	} else {
             		color2 = '00';
-            	}
-            if(b['pm10'] >= 151) {
+                }
+            if(b['pm10'] == null){
+                    color = '00';
+                }else if(b['pm10'] >= 151) {
             		color = '01';
             	} else if(b['pm10'] >=81){
             		color = '02';
             	} else if(b['pm10'] >= 31) {
             		color = '04';
-            	} else if(b['pm10'] > 0) {
+            	} else if(b['pm10'] >= 0) {
             		color = '05';
             	} else {
             		color = '00';
@@ -220,8 +228,20 @@ var mapjs = {
             if(b['temp'] == -100) {
               img = 'area_06.png';
             }
-            var pm10 = _this.parseNumber(Number(b.pm10));
-            var pm25 = _this.parseNumber(Number(b.pm25));
+            
+            if(b.pm10 == null){
+                var pm10 = "-";
+            }else{
+                var pm10 = _this.parseNumber(Number(b.pm10));
+            }
+
+            if(b.pm25 == null){
+                var pm25 = "-";
+            }else{
+                var pm25 = _this.parseNumber(Number(b.pm25));
+            }
+            
+            
             var title = '	<h3>'+b.equiInfoKeyHan+'('+b.equiInfoKey+')</h3>';
             if(b['baramYn'] == "Y") {
             	title = '	<h3>바람길'+b.baramMngNum+'('+b.equiInfoKeyHan+')</h3>';
