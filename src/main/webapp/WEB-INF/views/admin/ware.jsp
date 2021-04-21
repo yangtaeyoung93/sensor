@@ -510,7 +510,7 @@ function inputDoubleClick(e) {
 						flag = false;
 
 					}
-				} else if(b.length == 0) {
+				} else if(a!="equiInfoKey" && b.length == 0) {
 					alertify.alert("에러", "검색 조건을 확인해주세요.");
 					flag = false;
 
