@@ -148,7 +148,9 @@
   	<if test='swHwTp neq "all"'>
 	  	AND SW_HW_TP=#{swHwTp}
   	</if>
-	  AND EQUI_INFO_KEY=#{equiInfoKey}
+	<if test='equiInfoKey neq ""'>
+		AND EQUI_INFO_KEY=#{equiInfoKey}
+	</if>
   	ORDER BY CHG_TP, WORK_DT 
   </select>
   

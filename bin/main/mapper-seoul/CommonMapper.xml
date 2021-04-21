@@ -76,6 +76,7 @@
       0 
     END PERCENT
     FROM TB_ST_DAILY_SEN WHERE tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+    order by EQUI_CNT desc
   </select>
 
 <!--센서가 있는 경우만 이상 탐지 하도록 수정-->
@@ -309,6 +310,7 @@ order by gu_tp
     SELECT EQUI_TYPE, AVG(EQUI_CNT) EQUI_CNT, SUM(DATA_CNT) DATA_CNT, SUM(720 * EQUI_CNT) NORMAL_DATA_CNT, 
     SUM(720 * EQUI_CNT) - SUM(DATA_CNT)  BAD_DATA_CNT
     FROM "TB_ST_DAILY_SEN" WHERE tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+    order by EQUI_CNT desc
   </select>
 
   <!--과거~오늘-->
@@ -322,6 +324,7 @@ order by gu_tp
             where tm8 between #{toDate} and (select to_char(sysdate-1,'yyyymmdd') from dual)
             group by equi_type)
     group by equi_type
+    order by EQUI_CNT desc
   </select>
   
   <!--오늘~오늘(쿼리결과값 센서 순서때문에 일부러 group by 함)-->
@@ -331,6 +334,7 @@ order by gu_tp
     equi_cnt*((select to_char(sysdate,'hh24') from dual)*30+#{mm})-data_cnt BAD_DATA_CNT
     from tb_st_daily_sen where tm8=(select to_char(sysdate,'yyyymmdd') from dual))
     group by equi_type
+    order by EQUI_CNT desc
   </select>
 
    
@@ -338,6 +342,7 @@ order by gu_tp
    <select id="getDailyCntForMoveEqui" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
   select equi_type, avg(equi_cnt) equi_cnt, SUM(NORMAL_EQUI_CNT) NORMAL_EQUI_CNT, sum(equi_cnt - normal_equi_cnt) bad_equi_cnt
   from tb_st_daily_sen_m where tm8 BETWEEN #{toDate} AND #{fromDate} GROUP BY EQUI_TYPE
+  order by EQUI_CNT desc
   </select>
 
 <!--오늘의 수신율 구하기-->
