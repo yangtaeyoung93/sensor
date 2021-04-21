@@ -262,7 +262,7 @@ function inputDoubleClick(e) {
 						flag = false;
 
 					}
-				} else if(b.length == 0) {
+				} else if(a!="equiInfoKey" && b.length == 0) {
 					alertify.alert("에러", "검색 조건을 확인해주세요.");
 					flag = false;
 
@@ -282,6 +282,9 @@ function inputDoubleClick(e) {
 					type: 'GET',
 					data: data,
 					success: function(r) {
+						if(r == ""){
+							alert("데이터가 없습니다.");
+						}
 						var text = 
 						'	<tbody><tr style="position: sticky; top:0; left:0; z-index: 9;">'+
 						'		<th rowspan="2"></th>'+
