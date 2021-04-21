@@ -237,7 +237,7 @@
 									'		'+numberWithCommas(list.badEquiCnt)+''+
 									'	</div>'+
 									'	<div class="tbody_td4">'+
-									'		'+Math.round(list.normalEquiCnt/list.equiCnt*100)+'%'+
+									'		'+Math.floor(list.normalEquiCnt/list.equiCnt*100)+'%'+
 									'	</div>'+
 									'</div>'
 								);
@@ -269,7 +269,7 @@
 								'			'+numberWithCommas(list.badDataCnt)+''+
 								'		</div>'+
 								'		<div class="tbody_td4">'+
-								'			'+Math.round((list.dataCnt/list.normalDataCnt * 100))+'%'+
+								'			'+Math.floor((list.dataCnt/list.normalDataCnt * 100))+'%'+
 								'		</div>'+
 								'	</div>'
 								);
@@ -297,11 +297,11 @@
 
 			mergeObj.map(function(obj) {
 				if(obj.equiType != "all") {
-					var percent = obj.normalDataCnt == 0 ? 0 : Math.round((obj.dataCnt/obj.normalDataCnt * 100));
-					var equiPercent = obj.normalEquiCnt == 0 ? 0 : Math.round(obj.normalEquiCnt/obj.equiCnt*100);
+					var percent = obj.normalDataCnt == 0 ? 0 : Math.floor((obj.dataCnt/obj.normalDataCnt * 100));
+					var equiPercent = obj.normalEquiCnt == 0 ? 0 : Math.floor(obj.normalEquiCnt/obj.equiCnt*100);
 					$('#listData').append(
 						'<div class="tbody_tr4">'+
-						'	<div class="tbody_td8">'+
+						'	<div class="tbody_td8" style="font-size:0.8em">'+
 						'	'+equiTypeName[obj.equiType]+''+
 						'	</div>'+
 						'	<div class="tbody_td9">'+
@@ -329,7 +329,7 @@
 						'			'+numberWithCommas(obj.badDataCnt)+''+
 						'		</div>'+
 						'		<div class="tbody_td10">'+
-						'			'+Math.round(percent)+'%'+
+						'			'+Math.floor(percent)+'%'+
 						'		</div>'+
 						'	</div>'+
 						'</div>'
