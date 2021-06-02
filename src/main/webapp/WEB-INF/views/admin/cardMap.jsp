@@ -183,7 +183,9 @@ pageContext.setAttribute("grant", grant);
 									<div class="map_container">
 										설치 위치 <label for="equiInsLoc" style="curosr:pointer; margin-left: 10px; color: #0c82e9">파일 업로드</label>
 										<input type="file" accept="image/*" name="equiInsLoc" id="equiInsLoc">
-										<div id="equiInsLocMap" style="height: calc(100% - 20px);width: 100%;"></div>
+										<%-- <div id="equiInsLocMap" style="height: calc(100% - 20px);width: 100%;"></div> --%>
+										<img id="equiInsLocImg" src="" style="height: calc(100% - 20px);width: 100%;">
+
 									</div>
 								</div>
 							</div>
@@ -295,7 +297,7 @@ $(document).ready(function() {
 							$('#instBefBackImg').attr('src', '')
 							$('#instAftFrtImg').attr('src', '')
 							$('#instAftBackImg').attr('src', '')
-							// $('#equiInsLocImg').attr('src', '')
+							$('#equiInsLocImg').attr('src', '')
 						},
 						success: function(r) {
 							if(r.data.equiArdWest != null) {
@@ -322,9 +324,9 @@ $(document).ready(function() {
 							if(r.data.instAftBack != null) {
 							    $('#instAftBackImg').attr('src', '/api/admin/cardLoc/img/'+id+"/"+r.data.instAftBack+"."+r.data.instAftBackTp+"?tm="+new Date().getTime())
 							}
-							// if(r.data.equiInsLoc != null) {
-							//     $('#equiInsLocImg').attr('src', '/api/admin/cardLoc/img/'+id+"/"+r.data.equiInsLoc+"."+r.data.equiInsLocTp+"?tm="+new Date().getTime())
-							// }
+							if(r.data.equiInsLoc != null) {
+							    $('#equiInsLocImg').attr('src', '/api/admin/cardLoc/img/'+id+"/"+r.data.equiInsLoc+"."+r.data.equiInsLocTp+"?tm="+new Date().getTime())
+							}
 
 							//찍혀있는 마커 삭제
 							for(i in markers) {
