@@ -339,6 +339,12 @@
 										}
 									},
 									{
+										targets : [15,16,17,18,19,20],
+										render : function(data,type,row){
+											return (data/1000).toFixed(2);
+										}
+									},
+									{
 										targets: '_all',
 										render: function(data, type, row) {
 											return data == null ? "-" : data;
