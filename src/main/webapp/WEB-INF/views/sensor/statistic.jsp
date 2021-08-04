@@ -494,8 +494,8 @@
 
 															$("#example"+num).DataTable().on( 'draw', function () {
 																console.log('draw')
-																var rows = table.data().length;
-																table.button( 0 ).enable( rows > 0 );
+																// var rows = table.data().length;
+																// table.button( 0 ).enable( rows > 0 );
 															} );
 
 															am4Generate(r.allData, {"pm10" : "미세먼지", "pm25": "초미세먼지", "temp" : "온도", "effeTemp": "흑구", "noise" : "소음", "humi": "습도", "ultraRays": "자외선", "vibrX": "진동 X축", "vibrY": "진동 Y축", "vibrZ": "진동 Z축", "co": "일산화탄소",
