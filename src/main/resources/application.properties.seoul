@@ -6,7 +6,6 @@ jasypt.encryptor.property.suffix=)
 
 #spring.datasource.platform=oracle
 spring.datasource.platform=all
-# spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 spring.datasource.driver-class-name= oracle.jdbc.OracleDriver
 #spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 

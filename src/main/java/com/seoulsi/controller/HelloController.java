@@ -3,8 +3,8 @@ package com.seoulsi.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,8 @@ import com.seoulsi.service.testService;
 
 @Controller
 public class HelloController {
-	private static Logger logger = LoggerFactory.getLogger(HelloController.class); 
+
+	private static Logger logger = LoggerFactory.getLogger(HelloController.class);
 
 	@Autowired
 	private CommonService commonService;
@@ -91,7 +92,7 @@ public class HelloController {
 			}
 			tree.setChildren(cdr);
 
-			logger.info(m);
+			logger.info(m.getCode());
 		}
 		Gson gson = new Gson();
 		String json = gson.toJson(tree);
