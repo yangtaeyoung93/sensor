@@ -13,14 +13,14 @@ import com.seoulsi.service.SettingService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes= DemoApplicationTests.class)
 public class DemoApplicationTests {
-	
-	private static Logger logger = LogManager.getLogger(DemoApplicationTests.class);
+
+	private static Logger logger = LoggerFactory.getLogger(DemoApplicationTests.class);
 	
 	@Autowired
 	private SettingService settingService;
 	
 	@Test
 	public void test() throws Exception {
-	    logger.info("{}",settingService.getUserCode());
+	    logger.info("{}",settingService.getUserCode());  
 	}
 }

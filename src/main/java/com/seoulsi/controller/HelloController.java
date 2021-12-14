@@ -23,8 +23,7 @@ import com.seoulsi.service.testService;
 
 @Controller
 public class HelloController {
-
-	private static Logger logger = LogManager.getLogger(HelloController.class);
+	private static Logger logger = LoggerFactory.getLogger(HelloController.class); 
 
 	@Autowired
 	private CommonService commonService;
