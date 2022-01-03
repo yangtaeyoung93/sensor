@@ -62,16 +62,17 @@
     <if test='type != null'>
       AND EQUI_TYPE=#{type}
     </if>
-  </select>
+  </select> 
 
   <select id="getDailyCntForEqui" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.DailySenDto">
      SELECT EQUI_TYPE, AVG(EQUI_CNT) EQUI_CNT, SUM(NORMAL_EQUI_CNT) NORMAL_EQUI_CNT, SUM(EQUI_CNT - NORMAL_EQUI_CNT) BAD_EQUI_CNT,
     CASE WHEN NVL(SUM(EQUI_CNT), 0) > 0 THEN 
-      CASE WHEN ROUND((SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT)) * 100) > 100 THEN 
+      <!-- CASE WHEN ROUND((SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT)) * 100) > 100 THEN 
         100
       ELSE 
         ROUND((SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT)) * 100) 
-      END
+      END -->
+      trunc(SUM(NORMAL_EQUI_CNT)/SUM(EQUI_CNT) * 100)
     ELSE 
       0 
     END PERCENT
