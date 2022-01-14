@@ -55,9 +55,9 @@
 					<div id = "unreceive_count" class="leaflet-bar">미수신 <span></span>대</div>
 				</div>
 				
-				<div class="notice">
+				<!--<div class="notice">
 				  <p>이 자료는 미세먼지 간이측정기(2등급)을 사용하여 측정된 자료입니다.&nbsp;&nbsp;<a>상세내용 확인</a></p>
-				</div>
+				</div> 
 				<div class="notice-box">
 				  <p>* 대기환경보전법 제3조에 따른 측정망을 통해 측정된 대기오염도를 나타내는 것 아닙니다.</p>
 				  <p>** 간이측정기(2등급) 권장 사용처: <br>
@@ -67,7 +67,7 @@
 				  
 				  </p>
 				  
-				</div>
+				</div>-->
 				<div class="pm-divide pm25Table">
 				  <table>
 				    <thead>
