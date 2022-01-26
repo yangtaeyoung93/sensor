@@ -90,6 +90,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		Long calcTime = loginTime + expirationTime;
 		String userName = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_NAME"));
 		String userId = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_ID"));
+		String email = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_EMAIL"));
 
 		// true 시간안됨 false 시간초과 로그인풀기
 		if (CookieLoginUtil.expireTime(calcTime)) {
@@ -140,7 +141,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 				member.setDeptCd("2");
 				member.setUserId(id);
 				member.setUserName(aes.encrypt(userName));
-				member.setEmailAddr(aes.encrypt(userId));
+				member.setEmailAddr(aes.encrypt(email));
 				member.setHandPhone(aes.encrypt(""));
 				member.setUserPw(aes.encrypt(""));
 				member.setTelNo(aes.encrypt(""));
