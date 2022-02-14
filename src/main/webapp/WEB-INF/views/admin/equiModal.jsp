@@ -180,7 +180,7 @@
     	    	$('#m-sel-6').val() == "" ||
     	    	$('#m-sel-7').val() == "" ||
     	    	$('#m-sel-8').val() == "" ||
-    	    	$('#instMonth2').val().length > 1) {
+    	    	$('#instMonth2').val().length < 1) {
     	    	e.preventDefault();
     	    	alertify.alert("비어있는 필드값이 있습니다.");
     	    } else {

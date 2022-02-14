@@ -253,7 +253,7 @@ var mapjs = {
                 '<div class="info" style="top: -320px; left: -173px;">'+
                 '	<div class="close" onclick="map.closePopup();"><i class="xi-close"></i></div>'+
                 title+
-                '	<p style="margin: 6px 0">위도 : '+b.gpsAbb+' / 경도: '+b.gpsLat+'</p>'+
+                '	<p style="margin: 6px 0">주소 : '+b.instLoc +'</p>'+
                 '	<table>'+
                 '		<tr>'+
                 '			<th>미세먼지(㎍/㎥)</th><td class="co_step'+color+'">'+pm10+'</td>'+

@@ -11,8 +11,21 @@
 		values(#{obstMgrKey},#{obstText},#{obstDate},#{obstModel},#{obstRecoDate},#{obstRecoText},#{obstRecoComp},#{obstRecoMan},#{obstFileRoot})
   </insert>
   <select id="cardInfo" parameterType="String" resultType="com.seoulsi.dto.CardDto">
-  	SELECT A.*, B.EQUI_KEY, B.INST_MONTH, B.INST_YEAR FROM TB_MM_EQU_INFO_CARD A, (SELECT UF_GETCODENAME('설치년도',INST_YEAR)||'-'||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도2',USE_TP2)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',GU_TP)||'-'||MNG_NUM AS EQUI_KEY, INST_MONTH, INST_YEAR
-	FROM TB_MM_EQU_INFO WHERE EQUI_INFO_KEY = #{equiInfoKey}) B WHERE A.EQUI_INFO_KEY=#{equiInfoKey}
+  	SELECT
+		  A.*,
+		  B.EQUI_KEY,
+		  B.INST_MONTH,
+		  B.INST_YEAR
+	  FROM
+	  	TB_MM_EQU_INFO_CARD A,
+	  	(
+		  SELECT
+		  	UF_GETCODENAME('서울시구정의',GU_TP)||'-'||MNG_NUM AS EQUI_KEY, INST_MONTH, INST_YEAR
+		  FROM
+	  		TB_MM_EQU_INFO
+		  WHERE EQUI_INFO_KEY = #{equiInfoKey}
+	  	) B
+	  WHERE A.EQUI_INFO_KEY=#{equiInfoKey}
   </select>
   <update id="cardInfoUpdate" parameterType="com.seoulsi.dto.CardDto">
   	UPDATE TB_MM_EQU_INFO_CARD SET MANU_COM=#{manuCom},SIZE_WIDTH=#{sizeWidth},SIZE_HEIGHT=#{sizeHeight},SIZE_THICK=#{sizeThick},SENSOR_PM10=#{sensorPm10},SENSOR_PM25=#{sensorPm25},SENSOR_WIND=#{sensorWind},SENSOR_WIND_SP=#{sensorWindSp},SENSOR_TEMP=#{sensorTemp},SENSOR_HUMI=#{sensorHumi},SENSOR_ILLU=#{sensorIllu},SENSOR_NOISE=#{sensorNoise},SENSOR_UV=#{sensorUv},SENSOR_VISITOR=#{sensorVisitor},SENSOR_ETC=#{sensorEtc}, SENSOR_CO=#{sensorCo},SENSOR_NO2=#{sensorNo2},SENSOR_SO2=#{sensorSo2},SENSOR_NH3=#{sensorNh3},SENSOR_H2S=#{sensorH2S},SENSOR_O3=#{sensorO3}, COMM_TP=#{commTp},ELEC_TP=#{elecTp},SW_VERSION=#{swVersion, jdbcType=VARCHAR},WORK_ID=#{workId, jdbcType=VARCHAR},WORK_TM=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
