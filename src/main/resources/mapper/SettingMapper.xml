@@ -3,11 +3,11 @@
 
 <mapper namespace="com.seoulsi.mapper.SettingMapper">
    <select id ="getGuEquiList" resultType="com.seoulsi.dto.SettingDto">
-  	SELECT '대기측정소' AS GU, 'airYn='||AIR_YN AS GU_TP,  WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO WHERE AIR_YN='Y' GROUP BY AIR_YN
+  	SELECT '대기측정소' AS GU, 'airYn='||AIR_YN AS GU_TP, LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(order by equi_info_key) AS EQUI FROM TB_MM_EQU_INFO WHERE AIR_YN='Y' GROUP BY AIR_YN
 	UNION
-	SELECT '바람길' AS GU, 'baramYn='||BARAM_YN AS GU_TP,  WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO WHERE BARAM_YN='Y' GROUP BY BARAM_YN
+	SELECT '바람길' AS GU, 'baramYn='||BARAM_YN AS GU_TP,  LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(order by equi_info_key) AS EQUI FROM TB_MM_EQU_INFO WHERE BARAM_YN='Y' GROUP BY BARAM_YN
 	UNION 
-	SELECT UF_GETCODENAME('서울시구정의',GU_TP) AS GU ,GU_TP , WM_CONCAT(EQUI_INFO_KEY) AS EQUI FROM TB_MM_EQU_INFO GROUP BY UF_GETCODENAME('서울시구정의',GU_TP), GU_TP ORDER BY GU
+	SELECT UF_GETCODENAME('서울시구정의',GU_TP) AS GU ,TO_CHAR(GU_TP), LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(order by equi_info_key) AS EQUI FROM TB_MM_EQU_INFO GROUP BY UF_GETCODENAME('서울시구정의',GU_TP), GU_TP ORDER BY GU
   </select> 
 
   <select id="getCommList" resultType="com.seoulsi.dto.CommonDto">

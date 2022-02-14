@@ -651,6 +651,14 @@ public class AdminRestController {
 		System.out.println(serialNm);
 		cdto.setEquiInfoKey(serialNm);
 		String pathSet = path + "/" + serialNm;
+		/**
+		 * [2022-02-09] 케이웨더 양태영
+		 * 센서 관리 카드 메뉴 신규 기기 등록 시 이미지 업로드 오류 수정
+		 */
+		File dir = new File(pathSet);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
 
 		String PicFront = "";
 		String PicSide = "";

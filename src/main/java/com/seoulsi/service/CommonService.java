@@ -144,23 +144,23 @@ public class CommonService implements CommonMapper {
 
 			// 검색 시작 날짜가 오늘인경우(오늘~오늘)
 			if (paramDto.getToDate().equals(today)) {
-				System.out.println("오늘~오늘");
+				//System.out.println("오늘~오늘");
 				returnDto = commonMapper.getDailyCntForDataForToday(paramDto);
-				System.out.println("DTO : " + returnDto);
+				//System.out.println("DTO : " + returnDto);
 
 			} else {// 검색 시작날짜가 과거인경우(과거~오늘)
-				System.out.println("과거~오늘");
+				//System.out.println("과거~오늘");
 				returnDto = commonMapper.getDailyCntForDataForPastToday(paramDto);
-				System.out.println("DTO : " + returnDto);
+				//System.out.println("DTO : " + returnDto);
 			}
 
 		} else {// 검색날짜가 과거~과거
-			System.out.println("과거~과거");
+			//System.out.println("과거~과거");
 			returnDto = commonMapper.getDailyCntForData(paramDto);
-			System.out.println("DTO : " + returnDto);
+			//System.out.println("DTO : " + returnDto);
 
 		}
-		System.out.println("returnDto값: " + returnDto);
+		//System.out.println("returnDto값: " + returnDto);
 		return returnDto;
 	}
 

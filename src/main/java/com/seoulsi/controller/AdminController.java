@@ -14,6 +14,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +60,7 @@ import com.seoulsi.util.HashUtil;
  * AdminController
  */
 @Controller
+@Slf4j
 @RequestMapping("/admin")
 public class AdminController {
 	@Autowired
@@ -138,6 +141,7 @@ public class AdminController {
 				"온도", "습도", "일산화탄소", "이산화질소", "이산화황", "암모니아", "화화수소", "오존", "조도", "흑구", "진동", "소음", "자외선", "방문자수", "기타",
 				"통신방법", "전력공급", "SW Version" };
 		int count = 0;
+
 		for (String i : title) {
 			objCell = objRow.createCell(count);
 			objCell.setCellStyle(style);
@@ -255,11 +259,7 @@ public class AdminController {
 		HSSFCell objCell = null; // 셀 생성
 		HSSFCellStyle style = objWorkBook2.createCellStyle();
 		HSSFFont defaultFont = objWorkBook2.createFont();
-		defaultFont.setFontHeightInPoints((short) 10);
-		defaultFont.setFontName("맑은 고딕");
-		defaultFont.setColor(IndexedColors.BLACK.getIndex());
-		defaultFont.setBold(true);
-		defaultFont.setItalic(false);
+		setDefaultFont(defaultFont);
 		style.setFont(defaultFont);
 
 		objSheet = objWorkBook2.createSheet("설치위치 및 주변현황"); // 워크시트 생성
@@ -300,7 +300,6 @@ public class AdminController {
 			}
 			String nextEqui = edto.getEquiInfoKey();
 
-			System.out.println(String.format("PREV %s NEXT %s", prevEqui, nextEqui));
 			if (!prevEqui.equals(nextEqui)) {
 				objRow = objSheet.createRow(ecount);
 				objRow.setHeight((short) 0x150);
@@ -325,61 +324,67 @@ public class AdminController {
 				objCell = setColumn(objSheet, objRow, "시험가동", 11, false);
 			}
 			objCell = setColumn(objSheet, objRow, edto.getTotOpin(), 12, false);
+			/**
+			 * [2022-02-14] 케이웨더 양태영
+			 * 설치위치 및 주변현황 구별 엑셀파일 다운로드 오류 수정
+			 */
+			if (!StringUtils.isEmpty(edto.getLocDetailTp())) {
+				if (!edto.getLocDetailTp().equals(null) && edto.getLocDetailTp().equals("0")) {
+					objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 13, false);
+					objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 14, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 15, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 16, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 17, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 18, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 19, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 20, false);
+				}
 
-			if (edto.getLocDetailTp().equals("0")) {
-				objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 13, false);
-				objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 14, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 15, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 16, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 17, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 18, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 19, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 20, false);
+				if (edto.getLocDetailTp().equals("1")) {
+					objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 21, false);
+					objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 22, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 23, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 24, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 25, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 26, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 27, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 28, false);
+				}
+
+				if (edto.getLocDetailTp().equals("2")) {
+					objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 29, false);
+					objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 30, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 31, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 32, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 33, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 34, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 35, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 36, false);
+				}
+
+				if (edto.getLocDetailTp().equals("3")) {
+					objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 37, false);
+					objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 38, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 39, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 40, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 41, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 42, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 43, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 44, false);
+				}
+
+				if (edto.getLocDetailTp().equals("4")) {
+					objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 45, false);
+					objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 46, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 47, false);
+					objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 48, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 49, false);
+					objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 50, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 51, false);
+					objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 52, false);
+				}
 			}
 
-			if (edto.getLocDetailTp().equals("1")) {
-				objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 21, false);
-				objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 22, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 23, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 24, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 25, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 26, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 27, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 28, false);
-			}
-
-			if (edto.getLocDetailTp().equals("2")) {
-				objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 29, false);
-				objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 30, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 31, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 32, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 33, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 34, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 35, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 36, false);
-			}
-
-			if (edto.getLocDetailTp().equals("3")) {
-				objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 37, false);
-				objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 38, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 39, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 40, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 41, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 42, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 43, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 44, false);
-			}
-
-			if (edto.getLocDetailTp().equals("4")) {
-				objCell = setColumn(objSheet, objRow, edto.getEastRel1(), 45, false);
-				objCell = setColumn(objSheet, objRow, edto.getEastRel2(), 46, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel1(), 47, false);
-				objCell = setColumn(objSheet, objRow, edto.getWestRel2(), 48, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel1(), 49, false);
-				objCell = setColumn(objSheet, objRow, edto.getSouthRel2(), 50, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel1(), 51, false);
-				objCell = setColumn(objSheet, objRow, edto.getNorthRel2(), 52, false);
-			}
 
 			objCell = setColumn(objSheet, objRow, edto.getBigo(), 53, false);
 		}
@@ -397,6 +402,14 @@ public class AdminController {
 		objWorkBook2.close();
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
+	}
+
+	private void setDefaultFont(HSSFFont defaultFont) {
+		defaultFont.setFontHeightInPoints((short) 10);
+		defaultFont.setFontName("맑은 고딕");
+		defaultFont.setColor(IndexedColors.BLACK.getIndex());
+		defaultFont.setBold(true);
+		defaultFont.setItalic(false);
 	}
 
 	@GetMapping("/cardMap")
@@ -478,7 +491,7 @@ public class AdminController {
 
 			objRow = objSheet.createRow(ecount);
 			objRow.setHeight((short) 0x150);
-
+			int lastCellNum = objRow.getLastCellNum();
 			objCell = objRow.createCell(0);
 			objCell.setCellValue(edto.getEquiType());
 			objCell = objRow.createCell(1);
@@ -544,7 +557,6 @@ public class AdminController {
 
 		Date today = new Date();
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmm");
-		;
 
 		response.setContentType("Application/Msexcel");
 		response.setHeader("Content-Disposition",
