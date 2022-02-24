@@ -26,7 +26,7 @@ public class SeedScrtyUtil {
             encryptStr = new String(Base64.encode(enc), "UTF-8");
 
         } catch (Exception e) {
-            System.out.println(e);
+           e.printStackTrace();
         }
 
         return encryptStr;
@@ -52,7 +52,7 @@ public class SeedScrtyUtil {
             decryptStr = new String(dec, "UTF-8");
 
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return decryptStr;

@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UnZipUtil {
 
     public Boolean unZip(String unZipPath, MultipartFile mFile) {
-        System.out.println(unZipPath);
         Boolean isChk = false;
 
         FileInputStream fis = null;
@@ -27,15 +26,12 @@ public class UnZipUtil {
 
                 while ((ze = zis.getNextEntry()) != null) {
                     String fileName = ze.getName();
-                    System.out.println("filename(ze.getName()) => " + fileName);
 
                     File file = new File(unZipPath, fileName);
 
                     if (ze.isDirectory()) {
-                        System.out.println("==> file.mkdirs()");
                         file.mkdirs();
                     } else {
-                        System.out.println("==> createFile(file, zis)");
                         createFile(file, zis);
                     }
                 }
