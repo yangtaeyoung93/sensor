@@ -117,7 +117,6 @@ public class AdminRestController {
 		for (SettingDto sdto : lists) {
 			String equiList = sdto.getEqui();
 			String[] equiArr = equiList.split(",");
-			System.out.println(equiArr);
 			Map<String, Object> equi = new HashMap<>();
 
 			equi.put("text", sdto.getGu());
@@ -239,14 +238,12 @@ public class AdminRestController {
 
 		info.put("data", settingService.getEquiInfo(equiInfoKey));
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(authentication);
 		return info;
 	}
 
 	@PostMapping("/equi/save")
 	public ResultDto equiInfoSave(EquiDto edto) throws Exception {
 
-		System.out.println(edto);
 		ResultDto rdto = new ResultDto();
 		try {
 			settingService.saveEquiInfo(edto);
@@ -320,7 +317,6 @@ public class AdminRestController {
 
 		info.put("data", lm);
 
-		System.out.println("data 값 : " + info);
 
 		return info;
 	}
@@ -648,7 +644,6 @@ public class AdminRestController {
 	public void getFile(@RequestPart String serialNm, @RequestPart MultipartFile picFront,
 			@RequestPart MultipartFile picBack, @RequestPart MultipartFile picSide) throws Exception {
 		CardDto cdto = new CardDto();
-		System.out.println(serialNm);
 		cdto.setEquiInfoKey(serialNm);
 		String pathSet = path + "/" + serialNm;
 		/**
@@ -688,7 +683,6 @@ public class AdminRestController {
 			cdto.setPicBackTp(MybatisUtil.splitFileName(picBack.getContentType()));
 			flag = true;
 		}
-		System.out.println(flag);
 		if (flag) {
 			adminService.cardFileSide(cdto);
 		}
@@ -1180,7 +1174,6 @@ public class AdminRestController {
 	@RequestMapping("/mngDept/excel")
 	public void excelPoi(HttpServletRequest request, HttpServletResponse response, Model model, MngDeptDto mngDto)
 			throws Exception {
-		System.out.println(request.getRequestURI());
 		// logger.warn("{}", mdto);
 		HSSFWorkbook objWorkBook2 = new HSSFWorkbook();
 		HSSFSheet objSheet = null;
@@ -1289,8 +1282,6 @@ public class AdminRestController {
 		try {
 
 			for (WareDto mdto : lists) {
-				System.out.println("값 : " + mdto.getEquiInfoKey() + ", " + mdto.getChgTp() + ", " + mdto.getWorkYmd()
-						+ ", " + mdto.getWorkDt() + ", " + mdto.getWorkTm());
 				adminService.wareDelete(mdto);
 			}
 			rdto.setResult("success");
@@ -1302,7 +1293,6 @@ public class AdminRestController {
 	}
 
 	public HSSFCell setColumn(HSSFSheet sheet, HSSFRow row, String value, int index) {
-		System.out.println(value);
 		HSSFCell objCell = row.createCell(index);
 		objCell.setCellValue(value);
 		sheet.autoSizeColumn(index);
@@ -1390,7 +1380,6 @@ public class AdminRestController {
 		Date today = new Date();
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmm");
 
-		System.out.println(wareDto.getSwHwTp());
 		response.setContentType("Application/Msexcel");
 		response.setHeader("Content-Disposition",
 				"ATTachment; Filename=" + URLEncoder.encode(title + "_" + sf.format(today), "UTF-8") + ".xls");

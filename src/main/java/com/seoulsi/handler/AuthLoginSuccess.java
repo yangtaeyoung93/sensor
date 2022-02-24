@@ -26,7 +26,6 @@ public class AuthLoginSuccess extends SimpleUrlAuthenticationSuccessHandler{
 		
 		request.getSession().setMaxInactiveInterval(SESSION_TIMEOUT_IN_SECONDS);
 		HttpSession session = request.getSession();
-		System.out.println(session.getAttribute("prevPage"));
 		super.onAuthenticationSuccess(request, response, authentication);
 		
 	}

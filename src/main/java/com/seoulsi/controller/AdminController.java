@@ -117,7 +117,6 @@ public class AdminController {
 	@RequestMapping("/card/excel/{filename}")
 	public void excelCard(HttpServletRequest request, HttpServletResponse response, Model model,
 			@PathVariable("filename") String filename) throws Exception {
-		System.out.println(request.getRequestURI());
 		HSSFWorkbook objWorkBook2 = new HSSFWorkbook();
 		HSSFSheet objSheet = null;
 		HSSFRow objRow = null;
@@ -450,7 +449,6 @@ public class AdminController {
 	@RequestMapping("/equi/excel/{filename}")
 	public void excelPoi(HttpServletRequest request, HttpServletResponse response, Model model,
 			@PathVariable("filename") String filename) throws Exception {
-		System.out.println(request.getRequestURI());
 		HSSFWorkbook objWorkBook2 = new HSSFWorkbook();
 		HSSFSheet objSheet = null;
 		HSSFRow objRow = null;
@@ -487,7 +485,6 @@ public class AdminController {
 		int ecount = 1;
 		String guName = "";
 		for (EquiDto edto : elist) {
-			System.out.println(edto.getEquiInfoKey());
 
 			objRow = objSheet.createRow(ecount);
 			objRow.setHeight((short) 0x150);

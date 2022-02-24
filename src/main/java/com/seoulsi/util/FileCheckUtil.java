@@ -25,7 +25,6 @@ public class FileCheckUtil {
         for (File f : targetChild) {
             if (f.isDirectory()) {
                 equiInfoKey = f.getName();
-                System.out.println(String.format("디렉토리 ===> %s", f.getName()));
                 File dirTarget = new File(f.getPath());
                 File[] dirTargetChild = dirTarget.listFiles();
                 EquLocPic elp = new EquLocPic();
@@ -36,8 +35,6 @@ public class FileCheckUtil {
                         String ext = StringUtils.getFilenameExtension(fileName);
                         String originName = fileName.replace("." + ext, "");
 
-                        System.out.println(
-                                String.format("디렉토리 ===> %s 파일 ===> %s 확장자 ===> %s", f.getName(), originName, ext));
 
                         switch (originName) {
                             case "EquiArdEast":

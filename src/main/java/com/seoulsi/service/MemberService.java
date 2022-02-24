@@ -15,7 +15,6 @@ public class MemberService implements MemberMapper {
 	private MemberMapper memberMapper;
 
 	public MemberDto getDetailByUserName(String userId) throws Exception {
-		System.out.println("MEMBER" + userId);
 		return memberMapper.getDetailByUserName(userId);
 	}
 

@@ -33,7 +33,9 @@ public class AuthProvider implements AuthenticationProvider {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private Log log = LogFactory.getLog(this.getClass());
-
+	private final String LOGIN_FAIL = "loginFail";
+	private final String LOGIN_STATUS = "01";
+	private final String ADMIN = "ADMIN";
 	@Autowired
 	private MemberService memberService;
 
@@ -54,44 +56,43 @@ public class AuthProvider implements AuthenticationProvider {
 			WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
 
 			String[] credentials = enc.split(" ");
-
-			if (authentication.getName().isEmpty() || credentials[0].equals("")) {
+			String name = authentication.getName();
+			String ciphertext = credentials[0];
+			String iv = credentials[0];
+			String salt = credentials[0];
+			if (name == null || ciphertext.equals("")) {
 				return null;
 			}
-			logger.warn(credentials[0], credentials[1], credentials[2]);
-			String ciphertext = credentials[0];
-			String iv = credentials[1];
-			String salt = credentials[2];
+			logger.info(ciphertext, iv, salt);
 			int keySize = pdto.getKeySize();
 			int iterationCount = pdto.getIterationCount();
 			String passPhrase = pdto.getPassPhrase();
-			String password = HashUtil.decryptAES(salt, iv, passPhrase, ciphertext, iterationCount, keySize);
 
 			AES256Util aes = new AES256Util(pdto.getPassPhraseDB());
-			String id = aes.encrypt(authentication.getName());
-			password = HashUtil.sha256(password);
-			UserRole ur = new UserRole();
+			String id = aes.encrypt(name);
+			String password = HashUtil.sha256(HashUtil.decryptAES(salt, iv, passPhrase, ciphertext, iterationCount, keySize));
+			//UserRole ur = new UserRole();
 			MemberDto mdto = memberService.getDetailByUserName(id);
-			int count = loginService.selectLoginHistory(new LoginDto(id, "LoginFail"));
+			int count = loginService.selectLoginHistory(new LoginDto(id, LOGIN_FAIL));
 
 			logger.warn("{} / {} / {}", id, password, mdto.getUserPw());
 			if (null == mdto || !mdto.getUserPw().equals(password) || count > 5) {
 				logger.warn("fail");
 				return null;
 			} else {
-				if (!loginService.getChangeDate(id).getRegDate().isEmpty()) {
-					float changeDate = Float.parseFloat(loginService.getChangeDate(id).getRegDate());
-					if (changeDate > 90) {
+				String regDate = loginService.getChangeDate(id).getRegDate();
+				if (regDate != null) {
+					if (Float.parseFloat(regDate) > 90) {
 						return null;
 					}
 				}
 			}
-			mdto.setLoginStatus("01");
+			mdto.setLoginStatus(LOGIN_STATUS);
 			memberService.loginSuccess(mdto);
 
 			String userRole = "";
 
-			if (mdto.getRole() != null && mdto.getRole().equals("ADMIN")) {
+			if (mdto.getRole() != null && mdto.getRole().equals(ADMIN)) {
 				userRole = "ROLE_" + mdto.getRole();
 			} else {
 				userRole = "ROLE_USER";
@@ -106,10 +107,10 @@ public class AuthProvider implements AuthenticationProvider {
 
 			// 로그인 기록
 			LoginDto ldto = new LoginDto(id, "LoginSuccess", details.getRemoteAddress());
-			ldto.setUserStatus(0);
+			//ldto.setUserStatus(0);
 			loginService.insertLoginHistory(ldto);
-			ldto.setUserAction("LoginFail");
-			ldto.setUserStatus(0);
+			ldto.setUserAction(LOGIN_FAIL);
+			//ldto.setUserStatus(0);
 			loginService.updateLoginHistoryStatus(ldto);
 			//
 			mdto.setUserName(aes.decrypt(mdto.getUserName()));
@@ -118,7 +119,6 @@ public class AuthProvider implements AuthenticationProvider {
 
 			return new AuthenticationDto(mdto, mdto.getUserPw(), grantedAuthorityList, mdto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -126,7 +126,6 @@ public class AuthProvider implements AuthenticationProvider {
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		// TODO Auto-generated method stub
 		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
 }
