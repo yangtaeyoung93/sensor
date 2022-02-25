@@ -49,16 +49,16 @@ public class SettingRestController {
 		AES256Util aes = new AES256Util(pdto.getPassPhraseDB());
 		
 		for(MemberDto memberdto:settingService.getUserByCode(code)) {
-			MemberDto mdto = new MemberDto();
-			mdto.setUserId(aes.decrypt(memberdto.getUserId()));
-			mdto.setUserName(aes.decrypt(memberdto.getUserName()));
-			mdto.setEmailAddr(aes.decrypt(memberdto.getEmailAddr()));
-			mdto.setHandPhone(aes.decrypt(memberdto.getHandPhone()));
-			mdto.setTelNo(aes.decrypt(memberdto.getTelNo()));
-			mdto.setCode(memberdto.getCode());
-			mdto.setEtc(memberdto.getEtc());
+			//MemberDto mdto = new MemberDto();
+			memberdto.setUserId(aes.decrypt(memberdto.getUserId()));
+			memberdto.setUserName(aes.decrypt(memberdto.getUserName()));
+			memberdto.setEmailAddr(aes.decrypt(memberdto.getEmailAddr()));
+			memberdto.setHandPhone(aes.decrypt(memberdto.getHandPhone()));
+			memberdto.setTelNo(aes.decrypt(memberdto.getTelNo()));
+			//mdto.setCode(memberdto.getCode());
+			//mdto.setEtc(memberdto.getEtc());
 			
-			lm.add(mdto);
+			lm.add(memberdto);
 		}
 		
 		info.put("data", lm);
@@ -85,12 +85,10 @@ public class SettingRestController {
 					if(k.indexOf("m") != -1) {
 						String[] valueArray = ((String) v).split("_");
 						String[] karr = k.split("m");
-						System.out.println(karr[1]);
 						mdto.setUserId(userId);
 						mdto.setMenuId(karr[1]);
 						mdto.setGrantYn(valueArray[0]); 
 						mdto.setWriteGrantYn(valueArray[1]); 
-						System.out.println(mdto);
 						settingService.updateUserGrant(mdto);
 					}
 					rdto.setMsg("추가되었습니다");
@@ -138,7 +136,6 @@ public class SettingRestController {
 	
 	@PostMapping("/code/save/{codeNm}")
 	public ResultDto codeListSave(CommonDto cdto, @PathVariable String codeNm) throws Exception {
-		System.out.println(codeNm);
 		ResultDto rdto = new ResultDto();
 		try {
 			cdto.setSortCd(codeNm);
@@ -160,11 +157,8 @@ public class SettingRestController {
 		try {
 			String split = cdto.getId();
 			String[] sarr = split.split(",");
-			System.out.println(sarr[0]);
-			System.out.println(sarr[1]);
 			cdto.setCode(sarr[1]);
 			cdto.setSortCd(sarr[0]);
-			System.out.println(cdto);
 			commonService.codeListRemove(cdto);
 			rdto.setMsg("삭제되었습니다");
 			rdto.setResult("success");

@@ -86,10 +86,11 @@ html {
   background: #ed1c24;
 }
 #top {
-  top: 10px;
-  left: 430px;
+  top: 15px;
+  left: 340px;
   position: absolute;
   /* width: 100%; */
+  transform:translate(15px);
   z-index: 9;
 }
 .dropdown-menu {
@@ -102,8 +103,11 @@ html {
 #top > div {
   display: inline-block;
   margin-right: 5px;
+  line-height: 22px;
 }
-
+.leaflet-bar{
+   height: 30px;
+}
 .marker-count.leaflet-bar {
   background: #44c8f5;
   padding: 4px;
@@ -112,8 +116,16 @@ html {
   text-align: center;
 }
 
-#receive_count {
+.total-count.leaflet-bar {
   background: #d9edf7;
+  padding: 4px;
+  color: black;
+  max-width: 70px;
+  text-align: center;
+}
+
+#receive_count {
+  background: #44c8f5;
   padding: 4px;
   color: black;
   max-width: 70px;
@@ -127,6 +139,16 @@ html {
   max-width: 120px;
   text-align: center;
 }
+
+#unused_count {
+  background: #f59644;
+  padding: 4px;
+  color: black;
+  max-width: 120px;
+  text-align: center;
+}
+
+
 .info-wrap {
   height: 600px;
   overflow: auto;

@@ -19,6 +19,7 @@ import com.seoulsi.dto.SettingDto;
 public interface SettingMapper {
   public List<SettingDto> getGuEquiList() throws Exception;
 
+
   public List<CommonDto> getCommList() throws Exception;
 
   public List<EquiDto> getEquiInfo(String equiInfoKey) throws Exception;
@@ -54,5 +55,10 @@ public interface SettingMapper {
   public void deleteUserGrant(MemberDto memberDto) throws Exception;
 
   public void updateUserGrant(MenuDto menuDto) throws Exception;
+
+  /**
+   * 2022-02-17 년도 선택 추가
+   */
+  public List<SettingDto> getInstYear() throws Exception;
 
 }

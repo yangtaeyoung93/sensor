@@ -1,29 +1,18 @@
 package com.seoulsi.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
+import com.seoulsi.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,17 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.seoulsi.dto.CommonDto;
-import com.seoulsi.dto.DailySenDto;
-import com.seoulsi.dto.ResultDto;
-import com.seoulsi.dto.SensorDto;
-import com.seoulsi.dto.StatDto;
-import com.seoulsi.dto.TotalDto;
 import com.seoulsi.dto.extend.ParamDto;
 import com.seoulsi.service.CommonService;
-import com.seoulsi.service.EmailService;
 import com.seoulsi.service.SensorService;
 import com.seoulsi.service.SettingService;
 import com.seoulsi.util.DateUtil;
@@ -162,7 +143,6 @@ public class SensorRestController {
 		sdto.setType(stx);
 		sdto.setToDate(toDate);
 		sdto.setFromDate(fromDate);
-		System.out.println(sdto);
 		Map<String, Object> lists = new HashMap<>();
 		Map<String, Object> baramLists = new HashMap<>();
 		if (stx.equals("5") || stx.equals("6")) {
@@ -208,7 +188,6 @@ public class SensorRestController {
 		sdto.setType(stx);
 		sdto.setToDate(toDate);
 		sdto.setFromDate(fromDate);
-		System.out.println(sdto);
 		Map<String, Object> lists = new HashMap<>();
 		Map<String, Object> baramLists = new HashMap<>();
 		if (stx.equals("5") || stx.equals("6")) {
@@ -232,8 +211,18 @@ public class SensorRestController {
 	public Map<String, Object> getEquiGpsInfo() throws Exception {
 		Map<String, Object> lists = new HashMap<>();
 		lists.put("data", sensorService.getEquiGpsInfo());
-
 		return lists;
+	}
+
+	@GetMapping("/searEqui")
+	public Map<String, Object> getSearEqui(SdotDTO sdotDTO) throws Exception {
+		if(sdotDTO.getTp() == null){
+			sdotDTO.setTp("");
+		}
+		Map<String, Object> list = new HashMap<>();
+		list.put("data", sensorService.getSearEqui(sdotDTO));
+		list.put("totalCount", sensorService.getEquiCount(sdotDTO));
+		return list;
 	}
 
 	@PostMapping("/sensor/statList")

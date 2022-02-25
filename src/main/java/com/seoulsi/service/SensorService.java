@@ -2,14 +2,10 @@ package com.seoulsi.service;
 
 import java.util.List;
 
+import com.seoulsi.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.seoulsi.dto.DailySenDto;
-import com.seoulsi.dto.GuDto;
-import com.seoulsi.dto.SensorDto;
-import com.seoulsi.dto.StatDto;
-import com.seoulsi.dto.TotalDto;
 import com.seoulsi.mapper.SensorMapper;
 
 @Service
@@ -137,4 +133,16 @@ public class SensorService implements SensorMapper {
 		// TODO Auto-generated method stub
 		return sensorMapper.getEquiCnt();
 	}
+
+	@Override
+	public Integer getEquiCount(SdotDTO sdotDTO) throws Exception {
+		return sensorMapper.getEquiCount(sdotDTO);
+	}
+
+	@Override
+	public List<SensorDto> getSearEqui(SdotDTO sdotDTO) throws Exception {
+		return sensorMapper.getSearEqui(sdotDTO);
+	}
+
+
 }

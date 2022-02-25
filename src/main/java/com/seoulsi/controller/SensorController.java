@@ -2,6 +2,7 @@ package com.seoulsi.controller;
 
 import java.util.List;
 
+import com.seoulsi.dto.SdotDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,10 +44,19 @@ public class SensorController {
     }
 
     // 실시간 수치 농도 지도 조회
+    private static final int initYear = 2019;
     @GetMapping("/map")
     public String sensorMap(Model model) throws Exception {
         List<SettingDto> lists = settingService.getGuEquiList();
+        List<SettingDto> instYear = settingService.getInstYear();
+        for (SettingDto dto : instYear) {
+            dto.setInstYear(dto.getInstYear() + initYear);
+        }
         model.addAttribute("gu", lists);
+        model.addAttribute("instYear", instYear);
+        SdotDTO sdotDTO = new SdotDTO();
+        sdotDTO.setTarget("");
+        model.addAttribute("totalCount", sensorService.getEquiCount(sdotDTO));
         return "/sensor/map";
     }
 

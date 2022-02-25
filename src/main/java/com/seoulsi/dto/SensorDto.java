@@ -72,4 +72,10 @@ public class SensorDto extends ParamDto {
 	private String h2s;
 	private String o3;
 
+	/**
+	 * 요소추가 [20220216]
+	 */
+
+	private int instYear;
+	private String guTp2;
 }
