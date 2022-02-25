@@ -8,7 +8,7 @@
 
 	<select id="sensorEquiList" parameterType="String" resultType="com.seoulsi.dto.SensorDto">
   	SELECT 
-  			UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN
+  			UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN
   	, EQUI_INFO_KEY, VISTOR_SEN_ID from TB_MM_EQU_INFO B where gu_tp = #{guNum} AND DECODE(B.AIR_YN, 'Y', B.AIR_YN, NULL) IS NULL AND DECODE(B.BARAM_YN, 'Y', B.AIR_YN, NULL) IS NULL ORDER BY B.MNG_NUM
   </select>
 
@@ -939,19 +939,82 @@ and baram_yn='Y'
 where INFO.BARAM_NM is not null
 group by INFO.BARAM_NM
   </select>
-	<select id="getEquiGpsInfo" resultType="com.seoulsi.dto.SensorDto">
-		SELECT AA.*, DECODE(AA.WIND_DIRE_CALC, -999, AA.WIND_DIRE_CALC, AA.WIND_DIRE_CALC/10) AS WIND_DIRE  FROM (
-			SELECT A.*,AE AS EQUI_INFO_KEY,CC_DUST_RANGE('미세먼지', A.PM10) AS PM10_HAN,CC_DUST_RANGE('초미세먼지', A.PM25) AS PM25_HAN,UF_GETCODENAME('설치년도',A.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',A.SENSE_TP)||UF_GETCODENAME('용도1',A.USE_TP1)||UF_GETCODENAME('용도3',A.USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',A.GU_TP)||'-'||A.MNG_NUM AS EQUI_INFO_KEY_HAN , UF_GETCODENAME('설치년도',A.INST_YEAR) TO_DATE,
+<select id="getEquiGpsInfo" resultType="com.seoulsi.dto.SensorDto">
+	SELECT
+		AA.*,
+		DECODE(AA.WIND_DIRE_CALC, -999, AA.WIND_DIRE_CALC, AA.WIND_DIRE_CALC/10) AS WIND_DIRE
+	FROM (
+		SELECT
+			A.*,
+			AE AS EQUI_INFO_KEY,
+			CC_DUST_RANGE('미세먼지', A.PM10) AS PM10_HAN,
+			CC_DUST_RANGE('초미세먼지', A.PM25) AS PM25_HAN,
+			UF_GETCODENAME('서울시구정의',A.GU_TP)||'-'||A.MNG_NUM AS EQUI_INFO_KEY_HAN ,
+			UF_GETCODENAME('설치년도',A.INST_YEAR) TO_DATE,
 			case when REG_DATE > sysdate - 10/24/60 then 1 else 0 end TIME_CHECK
-			FROM (
-				SELECT A.VISTOR_SEN_ID,B.TM8,B.PM1,B.TEMP,B.HUMI,B.WIND_DIRE AS WIND_DIRE_CALC,DECODE(B.WIND_SPEED, '-999', '-', B.WIND_SPEED/10) WIND_SPEED,B.GUST_DIRE,
-			B.GUST_SPEED,B.INTE_ILLU,B.ULTRA_RAYS/10 ULTRA_RAYS,B.NOISE,B.VIBR_X/100 VIBR_X ,B.VIBR_Y/100 VIBR_Y ,B.VIBR_Z/100 VIBR_Z ,B.VIBR_X_MAX/100 VIBR_X_MAX ,
-			B.VIBR_Y_MAX/100 VIBR_Y_MAX ,B.VIBR_Z_MAX/100 VIBR_Z_MAX ,B.EFFE_TEMP AS EFFE_TEMP,B.SEN_STAT,B.ETC1,B.ETC2,B.ETC3,B.PM25_STD AS PM25,B.PM10_STD AS PM10, B.CO, B.NO2, B.SO2, B.NH3, B.H2S, B.O3, 
-			B.PM1_STD,B.REG_DATE, A.MNG_NUM, A.GU_TP,A.SENSE_TP, A.BARAM_YN, A.BARAM_MNG_NUM, A.AIR_YN, A.AIR_MNG_NUM, A.USE_TP1, A.USE_TP2, A.USE_TP3, A.INST_YEAR, A.GPS_ABB, A.GPS_LAT, A.EQUI_INFO_KEY AE, B.EQUI_INFO_KEY BE FROM TB_MM_EQU_INFO A LEFT OUTER JOIN TB_SL_DOT_SEN_LAST B 
-				ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY and B.tm8=to_char(SYSDATE,'YYYYMMDD') where A.use_yn='Y'
-				) A
-				) AA
-  </select>
+		FROM (
+			SELECT
+				A.VISTOR_SEN_ID,
+				B.TM8,B.PM1,
+				B.TEMP,
+				B.HUMI,
+				B.WIND_DIRE AS WIND_DIRE_CALC,
+				DECODE(B.WIND_SPEED, '-999', '-', B.WIND_SPEED/10) WIND_SPEED,
+				B.GUST_DIRE,
+				B.GUST_SPEED,
+				B.INTE_ILLU,
+				B.ULTRA_RAYS/10 ULTRA_RAYS,
+				B.NOISE,
+				B.VIBR_X/100 VIBR_X ,
+				B.VIBR_Y/100 VIBR_Y ,
+				B.VIBR_Z/100 VIBR_Z ,
+				B.VIBR_X_MAX/100 VIBR_X_MAX ,
+				B.VIBR_Y_MAX/100 VIBR_Y_MAX ,
+				B.VIBR_Z_MAX/100 VIBR_Z_MAX ,
+				B.EFFE_TEMP AS EFFE_TEMP,
+				B.SEN_STAT,
+				B.ETC1,
+				B.ETC2,
+				B.ETC3,
+				B.PM25_STD AS PM25,
+				B.PM10_STD AS PM10,
+				B.CO,
+				B.NO2,
+				B.SO2,
+				B.NH3,
+				B.H2S,
+				B.O3,
+				B.PM1_STD,
+				B.REG_DATE,
+				A.MNG_NUM,
+				A.GU_TP,
+				A.SENSE_TP,
+				A.BARAM_YN,
+				A.BARAM_MNG_NUM,
+				A.AIR_YN,
+				A.AIR_MNG_NUM,
+				A.USE_TP1,
+				A.USE_TP2,
+				A.USE_TP3,
+				A.INST_YEAR,
+				A.GPS_ABB,
+				A.GPS_LAT,
+				A.INST_LOC,
+				A.EQUI_INFO_KEY AE,
+				B.EQUI_INFO_KEY BE,
+				CASE WHEN A.BARAM_YN = 'Y' then '25'
+				WHEN A.AIR_YN = 'Y' then '26'
+				ELSE GU_TP END AS GU_TP2
+			FROM
+				TB_MM_EQU_INFO A
+			LEFT OUTER JOIN
+				TB_SL_DOT_SEN_LAST B
+			ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
+			and B.tm8=to_char(SYSDATE,'YYYYMMDD')
+			where A.use_yn='Y'
+			) A
+		) AA
+</select>
 
 	<select id="getStatList" parameterType="com.seoulsi.dto.StatDto" resultType="com.seoulsi.dto.StatDto">
   	SELECT * FROM (SELECT A.*, ROWNUM NUM FROM (
@@ -1216,4 +1279,169 @@ group by INFO.BARAM_NM
 			SELECT DISTINCT(EQUI_INFO_KEY) FROM "TB_SL_DOT_SEN_LAST" WHERE tm8 = to_char(sysdate, 'yyyymmdd')
 			) GROUP BY GU_TP order by gu_tp) A, (SELECT UF_GETCODENAME('서울시구정의', gu_tp) gu_tp, count(gu_tp) totalCnt FROM TB_MM_EQU_INFO GROUP BY GU_TP  order by gu_tp) B WHERE A.GU_TP=B.GU_TP
 	</select>
+
+	<select id="getSearEqui" resultType="com.seoulsi.dto.SensorDto" parameterType="com.seoulsi.dto.SdotDTO">
+		SELECT
+		AA.*,
+		DECODE(AA.WIND_DIRE_CALC, -999, AA.WIND_DIRE_CALC, AA.WIND_DIRE_CALC/10) AS WIND_DIRE
+		FROM (
+		SELECT
+		A.*,
+		AE AS EQUI_INFO_KEY,
+		CC_DUST_RANGE('미세먼지', A.PM10) AS PM10_HAN,
+		CC_DUST_RANGE('초미세먼지', A.PM25) AS PM25_HAN,
+		UF_GETCODENAME('서울시구정의',A.GU_TP)||'-'||A.MNG_NUM AS EQUI_INFO_KEY_HAN ,
+		UF_GETCODENAME('설치년도',A.INST_YEAR) TO_DATE,
+		case when REG_DATE > sysdate - 10/24/60 then 1 else 0 end TIME_CHECK
+		FROM (
+		SELECT
+		A.VISTOR_SEN_ID,
+		B.TM8,B.PM1,
+		B.TEMP,
+		B.HUMI,
+		B.WIND_DIRE AS WIND_DIRE_CALC,
+		DECODE(B.WIND_SPEED, '-999', '-', B.WIND_SPEED/10) WIND_SPEED,
+		B.GUST_DIRE,
+		B.GUST_SPEED,
+		B.INTE_ILLU,
+		B.ULTRA_RAYS/10 ULTRA_RAYS,
+		B.NOISE,
+		B.VIBR_X/100 VIBR_X ,
+		B.VIBR_Y/100 VIBR_Y ,
+		B.VIBR_Z/100 VIBR_Z ,
+		B.VIBR_X_MAX/100 VIBR_X_MAX ,
+		B.VIBR_Y_MAX/100 VIBR_Y_MAX ,
+		B.VIBR_Z_MAX/100 VIBR_Z_MAX ,
+		B.EFFE_TEMP AS EFFE_TEMP,
+		B.SEN_STAT,
+		B.ETC1,
+		B.ETC2,
+		B.ETC3,
+		B.PM25_STD AS PM25,
+		B.PM10_STD AS PM10,
+		B.CO,
+		B.NO2,
+		B.SO2,
+		B.NH3,
+		B.H2S,
+		B.O3,
+		B.PM1_STD,
+		B.REG_DATE,
+		A.MNG_NUM,
+		A.GU_TP,
+		A.SENSE_TP,
+		A.BARAM_YN,
+		A.BARAM_MNG_NUM,
+		A.AIR_YN,
+		A.AIR_MNG_NUM,
+		A.USE_TP1,
+		A.USE_TP2,
+		A.USE_TP3,
+		A.INST_YEAR,
+		A.GPS_ABB,
+		A.GPS_LAT,
+		A.INST_LOC,
+		A.EQUI_INFO_KEY AE,
+		B.EQUI_INFO_KEY BE,
+		CASE WHEN A.BARAM_YN = 'Y' then '25'
+			 WHEN A.AIR_YN = 'Y' then '26'
+			 ELSE GU_TP END AS GU_TP2
+		FROM
+		TB_MM_EQU_INFO A
+		LEFT OUTER JOIN
+		TB_SL_DOT_SEN_LAST B
+		ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
+		INNER JOIN TB_MM_EQU_INFO_CARD C
+		ON A.EQUI_INFO_KEY = C.EQUI_INFO_KEY
+		and B.tm8=to_char(SYSDATE,'YYYYMMDD')
+		where A.use_yn='Y'
+
+
+		<include refid="choose_YN" />
+		<if test="instYear != -1">
+			and a.inst_Year = #{instYear}
+		</if>
+		) A
+		<if test="tp != null and tp != ''">
+			WHERE A.GU_TP2 = #{tp}
+		</if>
+		ORDER BY EQUI_INFO_KEY_HAN
+		) AA
+	</select>
+	<select id="getEquiCount" resultType="INTEGER" parameterType="com.seoulsi.dto.SdotDTO">
+		SELECT
+			COUNT(*)
+		FROM
+			(
+				SELECT
+						A.*,
+						CASE WHEN A.BARAM_YN = 'Y' then '25'
+							 WHEN A.AIR_YN = 'Y' THEN '26'
+							 ELSE A.GU_TP end as GU_TP2
+				FROM
+					(
+						SELECT *
+						FROM TB_MM_EQU_INFO A
+						INNER JOIN TB_MM_EQU_INFO_CARD B
+						ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
+					)A
+			)C
+		WHERE 1 = 1
+		<if test="tp != null and tp != ''">
+			and C.GU_TP2 = #{tp}
+		</if>
+		<if test="instYear != -1">
+			and C.inst_Year = #{instYear}
+		</if>
+		<include refid="choose_YN" />
+	</select>
+	<sql id="choose_YN">
+		<choose>
+			<when test="target.equals('humi')">
+				and C.SENSOR_HUMI = 'Y'
+			</when>
+			<when test="target.equals('o3')">
+				and C.SENSOR_O3 = 'Y'
+			</when>
+			<when test="target.equals('effeTemp')">
+				and C.SENSOR_EFFE_TEMP = 'Y'
+			</when>
+			<when test="target.equals('pm25')">
+				and C.SENSOR_PM25 = 'Y'
+			</when>
+			<when test="target.equals('inteIllu')">
+				and C.SENSOR_ILLU = 'Y'
+			</when>
+			<when test="target.equals('co')">
+				and C.SENSOR_CO = 'Y'
+			</when>
+			<when test="target.equals('nh3')">
+				and C.SENSOR_NH3 = 'Y'
+			</when>
+			<when test="target.equals('noise')">
+				and C.SENSOR_NOISE = 'Y'
+			</when>
+			<when test="target.equals('pm10')">
+				and C.SENSOR_PM10 = 'Y'
+			</when>
+			<when test="target.equals('ultraRays')">
+				and C.SENSOR_UV = 'Y'
+			</when>
+			<when test="target.equals('temp')">
+				and C.SENSOR_TEMP = 'Y'
+			</when>
+			<when test="target.equals('no2')">
+				and C.SENSOR_NO2 = 'Y'
+			</when>
+			<when test="target.equals('so2')">
+				and C.SENSOR_SO2 = 'Y'
+			</when>
+			<when test="target.equals('h2s')">
+				and C.SENSOR_H2S = 'Y'
+			</when>
+			<when test="target.equals('vibr')">
+				and C.SENSOR_VIBR = 'Y'
+			</when>
+		</choose>
+	</sql>
 </mapper>

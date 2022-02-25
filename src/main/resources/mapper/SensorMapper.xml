@@ -1002,15 +1002,15 @@ group by INFO.BARAM_NM
 				A.INST_LOC,
 				A.EQUI_INFO_KEY AE,
 				B.EQUI_INFO_KEY BE,
-				CASE WHEN A.BARAM_YN = 'Y' then 25
-				WHEN A.AIR_YN = 'Y' then 26
+				CASE WHEN A.BARAM_YN = 'Y' then '25'
+				WHEN A.AIR_YN = 'Y' then '26'
 				ELSE GU_TP END AS GU_TP2
 			FROM
 				TB_MM_EQU_INFO A
 			LEFT OUTER JOIN
 				TB_SL_DOT_SEN_LAST B
 			ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
-			and B.tm8=to_char('20220214')
+			and B.tm8=to_char(SYSDATE,'YYYYMMDD')
 			where A.use_yn='Y'
 			) A
 		) AA
@@ -1343,8 +1343,8 @@ group by INFO.BARAM_NM
 		A.INST_LOC,
 		A.EQUI_INFO_KEY AE,
 		B.EQUI_INFO_KEY BE,
-		CASE WHEN A.BARAM_YN = 'Y' then 25
-			 WHEN A.AIR_YN = 'Y' then 26
+		CASE WHEN A.BARAM_YN = 'Y' then '25'
+			 WHEN A.AIR_YN = 'Y' then '26'
 			 ELSE GU_TP END AS GU_TP2
 		FROM
 		TB_MM_EQU_INFO A
@@ -1353,7 +1353,7 @@ group by INFO.BARAM_NM
 		ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
 		INNER JOIN TB_MM_EQU_INFO_CARD C
 		ON A.EQUI_INFO_KEY = C.EQUI_INFO_KEY
-		and B.tm8=to_char('20220214')
+		and B.tm8=to_char(SYSDATE,'YYYYMMDD')
 		where A.use_yn='Y'
 
 
@@ -1375,8 +1375,8 @@ group by INFO.BARAM_NM
 			(
 				SELECT
 						A.*,
-						CASE WHEN A.BARAM_YN = 'Y' then 25
-							 WHEN A.AIR_YN = 'Y' THEN 26
+						CASE WHEN A.BARAM_YN = 'Y' then '25'
+							 WHEN A.AIR_YN = 'Y' THEN '26'
 							 ELSE A.GU_TP end as GU_TP2
 				FROM
 					(
