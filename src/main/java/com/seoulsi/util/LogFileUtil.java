@@ -26,7 +26,6 @@ public class LogFileUtil {
 			bWriter.write(msg);
 			bWriter.flush();
 
-			System.out.println("DONE");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

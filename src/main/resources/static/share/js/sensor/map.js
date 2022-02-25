@@ -196,7 +196,9 @@ var mapjs = {
             		img = 'common.png';
             		color = '00';
             	}
-            } 
+            }else if(target == "sensors"){
+                img = 'common.png';
+            }
             
             if(b['pm25'] == null){
                     color2 = '00';

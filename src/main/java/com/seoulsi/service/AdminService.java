@@ -98,7 +98,6 @@ public class AdminService implements AdminMapper {
 		try {
 			for (CardDto cdto : list) {
 				int result = adminMapper.cardInfoUpdate(cdto);
-				System.out.println(":::::::::::::::::::" + result);
 				if (result == 0) {
 					txManager.rollback(sts);
 				}
@@ -146,30 +145,23 @@ public class AdminService implements AdminMapper {
 		TransactionStatus sts = txManager.getTransaction(def);
 
 		try {
-			System.out.println(resultMap);
 			for (Map.Entry<String, Object> elem : resultMap.entrySet()) {
-				// System.out.println(String.format("키 : %s", elem.getKey()));
-				// System.out.println(resultMap.get(elem.getKey()));
 				String key = elem.getKey();
 				Map<String, Object> value = (Map<String, Object>) resultMap.get(elem.getKey());
 				for (Map.Entry<String, Object> elemValue : value.entrySet()) {
 					String valueKey = elemValue.getKey();
-					System.out.println(key + " - " + valueKey + "시작합니다.");
 					if (valueKey.equals("left")) {
 						EquiDto valueEquLoc = (EquiDto) value.get(valueKey);
-						// System.out.println(valueEquLoc.getEquiStru());
 						adminMapper.updateLoc(valueEquLoc);
 					}
 
 					if (valueKey.equals("right")) {
 						Map<String, EquLocDetail> valueMap = (Map<String, EquLocDetail>) value.get(valueKey);
-						// System.out.println(valueMap);
 						for (Map.Entry<String, EquLocDetail> elemValueMap : valueMap.entrySet()) {
 							String valueMapKey = elemValueMap.getKey();
 							EquLocDetail valueMapValue = valueMap.get(valueMapKey);
 							valueMapValue.setLocDetailTp(valueMapKey);
 							valueMapValue.setEquiInfoKey(key);
-							// System.out.println(valueMapValue);
 							adminMapper.updateLocDetail(valueMapValue);
 						}
 					}

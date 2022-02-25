@@ -23,51 +23,55 @@
 	pageContext.setAttribute("popup", popup);
 %>
 <div id="sensor" style="height: calc(100vh - 185px)">
-	<div class="loader" id="loader-1" style="z-index:99; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);"></div>
+   	<div class="loader" id="loader-1" style="z-index:99; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);"></div>
 	<div class="map_wrap">
 <!-- 			센서 현황/초미세먼지/미세먼지 -->
 				<div class="map-control">
 					<div class="btn-group">
-						<a class="leaflet-bar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">구별 데이터 <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-						    <li data-tp="all"><a>전체</a></li>
-						  <c:forEach items="${gu}" var="gu">
-						  	<li data-tp="${gu.guTp}"><a >${gu.gu}</a></li>
-						  </c:forEach>
-						</ul>
+						<select id="gu" name="gu" class="leaflet-bar">
+							<option value="">전체</option>
+							<c:forEach var="gu" items="${gu}">
+							   <option value="${gu.guTp2}">${gu.gu}</option>
+							</c:forEach>
+						</select>
 					</div>
 					<div class="btn-group">
-						<a class="leaflet-bar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">년도 선택 <span class="caret"></span></a>
-						<ul class="dropdown-menu year">
-						    <li data-tp="all"><a>전체</a></li>
-						    <li data-tp="19"><a>2019년</a></li>
-						    <li data-tp="20"><a>2020년</a></li>
-						    <li data-tp="21"><a>2021년</a></li>
-						</ul>
+						<select id="instYear" name="instYear" class="leaflet-bar">
+							<option value="-1">년도선택</option>
+							<c:forEach var="y" items="${instYear}">
+							   <option value="${y.instYear - 2019}">${y.instYear}년</option>
+							</c:forEach>
+						</select>
 					</div>
-					<a class="leaflet-bar" id="sensorStatus">센서 현황</a>
-					<a class="leaflet-bar" id="pm25Status">초미세먼지</a>
-					<a class="leaflet-bar" id="pm10Status">미세먼지</a>
+					<div class="btn-group">
+					    <select name="sensor" class="leaflet-bar" id="sensors">
+                            <option value="all">센서현황</option>
+                                <option value="pm25">초미세먼지</option>
+                                <option value="pm10">미세먼지</option>
+                                <option value="temp">온도</option>
+								<option value="humi"> 습도 </option>
+								<option value="noise"> 소음</option>
+                                <option value="inteIllu"> 조도 </option>
+                                <option value="vibr"> 진동</option>
+								<option value="ultraRays"> 자외선</option>
+                                <option value="effeTemp"> 흑구 </option>
+								<option value="o3"> 오존</option>
+								<option value="co"> 일산화탄소</option>
+								<option value="so2"> 이산화황</option>
+								<option value="no2"> 이산화질소</option>
+								<option value="nh3"> 암모니아</option>
+								<option value="h2s"> 황화수소</option>
+
+					    </select>
+                    </div>
 				</div>
 				<div id="top">
-					<div class="marker-count leaflet-bar">총 <span></span>대</div>
+				    <div class="total-count leaflet-bar" id="totalCount">총 <span>${totalCount}</span>대</div>
 					<div id = "receive_count" class="leaflet-bar">수신 <span></span>대</div>
 					<div id = "unreceive_count" class="leaflet-bar">미수신 <span></span>대</div>
+					<div id = "unused_count" class="leaflet-bar">미사용 <span></span>대</div>
 				</div>
 				
-				<!--<div class="notice">
-				  <p>이 자료는 미세먼지 간이측정기(2등급)을 사용하여 측정된 자료입니다.&nbsp;&nbsp;<a>상세내용 확인</a></p>
-				</div> 
-				<div class="notice-box">
-				  <p>* 대기환경보전법 제3조에 따른 측정망을 통해 측정된 대기오염도를 나타내는 것 아닙니다.</p>
-				  <p>** 간이측정기(2등급) 권장 사용처: <br>
-				  - 1등급에 비해 신뢰도는 낮지만, 초미세먼지(PM-2.5) 농도의 상대적인 농도차이를 구분할 수 있는 수준의 측정장비<br>
-				  - 지역 내 대형 공장 등 배출원의 주변 영향 인지, 미세먼지 지도제작 등 미세먼지 농도의 단계적 확인을 위한 용도
-				  
-				  
-				  </p>
-				  
-				</div>-->
 				<div class="pm-divide pm25Table">
 				  <table>
 				    <thead>
@@ -110,10 +114,8 @@
 				  
 				</div>
 				<div id="map" class="map">
-				</div><!-- map -->
-
-		
-
+				</div>
+                <!-- map -->
 				<div class="state" style="display: none;">
 					<div class="board">
 						<form>
@@ -339,7 +341,6 @@
 		};
 
 		$(document).ready(function() {
-
 			function popupCreate() {
 				var popupWidth = 780;
 				var popupHeight = 1000;
@@ -359,26 +360,23 @@
 			</c:if>
 			
 				
-			function receivedCount(totalData) {
+			function receivedCount(totalData,totalCount) {
 				var timeDiff;
 				var receiveNum = 0;
 				var unreceiveNum = 0;
 				var recentDate = new Date();
+				var unUsedCount;
 
 				for (var i in totalData) {
-					// timeDiff = recentDate.getTime() - new Date(totalData[i].regDate);
-
-					// if ((timeDiff/1000/60) >= 10) {
-					// 	unreceiveNum++;
-					// }
 					if(totalData[i].timeCheck == 0){
 						unreceiveNum++;
 					}
 				}
 
 				receiveNum = totalData.length - unreceiveNum;
+				unUsedCount = totalCount - totalData.length;
 
-				return [receiveNum, unreceiveNum];
+				return [receiveNum, unreceiveNum,unUsedCount];
 			}
 			function loader(flag) {
 				if (flag) {
@@ -411,73 +409,26 @@
 						parseData = r.data;
 
 						recCount = receivedCount(parseData);
+						let totalCount = $('.total-count span').text();
 
 						// count 표출 부분
 						$('#receive_count span').html(recCount[0]);
 						$('#unreceive_count span').html(recCount[1]);
+						$('#unused_count span').html(totalCount - parseData.length);
 
-						$('.marker-count span').html(parseData.length)
 						map.setView([37.5302862, 126.9854131], 6);
 						mapjs.marker(parseData, "sensor");
 					},
 					complete: function() {
 						loader(false);
 					}
-				})
+				});
+
 				$('.notice a').click(function() {
 				  $('.notice-box').toggle();
 				})
-				$('#sensorStatus').click(function() {
-					loader(true);
-					map.setView([37.5302862, 126.9854131], 6);
-					map.closePopup()
-					$('.pm25Table').hide();
-					$('.pm10Table').hide();
-					$('.notice').hide();
-					$('.notice-box').hide();
-					$('.leaflet-marker-icon').remove()
 
-					recCount = receivedCount(parseData);
-					$('#receive_count span').html(recCount[0]);
-					$('#unreceive_count span').html(recCount[1]);
-
-					$('.marker-count span').html(parseData.length)
-					mapjs.marker(parseData, "sensor");
-					loader(false);
-				})
-				$('#pm10Status').click(function() {
-				  $('.notice').show();
-				  $('.notice-box').hide();
-				  $('.pm25Table').hide();
-					$('.pm10Table').show();
-					map.setView([37.5302862, 126.9854131], 6);
-					map.closePopup()
-
-					recCount = receivedCount(parseData);
-					$('#receive_count span').html(recCount[0]);
-					$('#unreceive_count span').html(recCount[1]);
-					console.log(parseData)
-					$('.marker-count span').html(parseData.length)
-					$('.leaflet-marker-icon').remove()
-					var parseNum = mapjs.marker(parseData, "pm10");
-					console.log(parseNum)
-					<c:choose>
-						<c:when test="${id eq rid}">
-								setTimeout(function() {
-									listSet('good', parseNum)
-									listSet('normal', parseNum)
-									listSet('bad', parseNum)
-									listSet('crit', parseNum)
-								}, 3000);
-								$('.pm10Table thead th:nth-child(1)').text('좋음 ('+parseNum.good.num+')')
-								$('.pm10Table thead th:nth-child(2)').text('보통 ('+parseNum.normal.num+')')
-								$('.pm10Table thead th:nth-child(3)').text('나쁨 ('+parseNum.bad.num+')')
-								$('.pm10Table thead th:nth-child(4)').text('매우나쁨 ('+parseNum.crit.num+')')
-							</c:when>
-					</c:choose>
-				})
-				
-				function listSet(target, data) {
+				/*function listSet(target, data) {
 						$('#'+target+'ListTable').html('');
 						var tableNo = 0;
 						text = "<tr><th style='width: 60px;'><h5><strong>NO</strong></h5></th>" +
@@ -492,123 +443,132 @@
 							$('#'+target+'ListTable').html(text);
 						})
 						
-				}
+				}*/
 				
-				$('#pm25Status').click(function() {
-				  $('.notice').show();
-				  $('.notice-box').hide();
-				  $('.pm25Table').show();
-					$('.pm10Table').hide();
-					map.setView([37.5302862, 126.9854131], 6);
-					map.closePopup()
-
-					recCount = receivedCount(parseData);
-					$('#receive_count span').html(recCount[0]);
-					$('#unreceive_count span').html(recCount[1]);
-
-					$('.marker-count span').html(parseData.length)
-					$('.leaflet-marker-icon').remove()
-					var parseNum =  mapjs.marker(parseData, "pm25");
-					console.log(parseNum)
-					<c:choose>
-						<c:when test="${id eq rid}">
-								setTimeout(function() {
-									listSet('good', parseNum)
-									listSet('normal', parseNum)
-									listSet('bad', parseNum)
-									listSet('crit', parseNum)
-								}, 3000);
-								$('.pm25Table thead th:nth-child(1)').text('좋음 ('+parseNum.good.num+')')
-								$('.pm25Table thead th:nth-child(2)').text('보통 ('+parseNum.normal.num+')')
-								$('.pm25Table thead th:nth-child(3)').text('나쁨 ('+parseNum.bad.num+')')
-								$('.pm25Table thead th:nth-child(4)').text('매우나쁨 ('+parseNum.crit.num+')')
-						</c:when>
-					</c:choose>
+				$('#instYear').change(function() {
+					initMap();
+					const hi = $("#sensors").val();
+					const tp = $("#gu").val();
+					const instYear = this.value;
+					let target = makeTarget(hi);
+				 	makeMarker(hi,target,tp,instYear);
 				})
-				$('.dropdown-menu.year li').click(function() {
-					map.setView([37.5302862, 126.9854131], 6);
-					$('.notice').hide();
-					$('.notice-box').hide();
-					$('.pm25Table').hide();
-					$('.pm10Table').hide();
-					map.closePopup()
-					$('.leaflet-marker-icon').remove()
-					console.log($(this).data('tp'))
-					var tp = $(this).data('tp')
-					if(tp == "all"){
-					  	parseData = mapjs.data.data;
-						recCount = receivedCount(parseData);
-						$('#receive_count span').html(recCount[0]);
-						$('#unreceive_count span').html(recCount[1]);
+				$('#gu').change(function() {
+					initMap();
+					const hi = $("#sensors").val();
+					const instYear = $("#instYear").val();
+					const tp = this.value;
+					let target = makeTarget(hi);
+					makeMarker(hi,target,tp,instYear,"false");
+			
+				});
 
-						$('.marker-count span').html(parseData.length)
-					  	mapjs.marker(mapjs.data.data, "sensor");
-					} else {
-						parseData = mapjs.data.data;
-						parseData = parseData.filter(function(list) {
-							return list.toDate == tp;
+                $("#sensors").change(function(){
+					initMap();
+                    const hi = this.value;
+					const tp = $("#gu").val();
+					const instYear = $("#instYear").val();
+					let target = makeTarget(hi);
+                    makeMarker(hi,target,tp,instYear);
+		        });
+
+			 function makeTarget(hi){
+				let target = hi;
+				if(hi == 'pm25'){
+					showPm25();
+				}else if (hi == 'pm10'){
+					showPm10();
+				}else if(hi == 'all'){
+					target = "sensor";
+				}else target = "sensors";
+
+				 return target;
+			 }
+
+		     function makeMarker(hi,target,tp,instYear,option){
+				const ob = new Object();
+				ob.target = hi;
+				ob.tp = tp;
+				ob.instYear = instYear;
+				let totalCount;
+				$.ajax({
+					url:'/api/searEqui',
+					type: 'GET',
+					data: ob,
+					dataType: 'json',
+					success: function(data) {
+						parseData =[];
+						let mapLat = 37.5302862;
+						let mapLong = 126.9854131;
+						let idx = 0;
+						$.each(data.data, function(i,v) {
+							
+							if(v.guTp2 == tp) {
+								if(option == "false" && (target != "pm25" || target != "pm10")){
+									if(v.baramYn == "Y" || v.airYn == "Y" || v.guTp2 == 27){
+										target = "sensor";
+									}else{
+										idx += 1;
+										if(idx == 1){
+											mapLat = data.data[i].gpsAbb;
+											mapLong = data.data[i].gpsLat;
+										}
+									}
+									
+								}else if(v.baramYn != "Y" && v.airYn != "Y" && v.guTp2 != 27){
+									mapLat = data.data[0].gpsAbb;
+									mapLong = data.data[0].gpsLat;
+								}
+								parseData.push(data.data[i]);
+								
+							}else if(tp == ""){
+								parseData.push(data.data[i]);
+							}
 						});
-						recCount = receivedCount(parseData);
+						
+						setView(mapLat,mapLong);
+						totalCount  = data.totalCount;
+						recCount = receivedCount(parseData,totalCount);
+
 						$('#receive_count span').html(recCount[0]);
 						$('#unreceive_count span').html(recCount[1]);
-
-						$('.marker-count span').html(parseData.length)
-					  	mapjs.marker(parseData, "sensor");
+						$('#unused_count span').html(recCount[2]);
+						$('.total-count span').html(totalCount);
+						
+						mapjs.marker(parseData,target);
+						loader(false);
 					}
-				})
-				$('.dropdown-menu:not(.year) li').click(function() {
-					map.setView([37.5302862, 126.9854131], 6);
-					$('.notice').hide();
-					$('.notice-box').hide();
-					$('.pm25Table').hide();
-					$('.pm10Table').hide();
-					map.closePopup()
-					$('.leaflet-marker-icon').remove()
-					console.log($(this).data('tp'))
-					var tp = $(this).data('tp')
-					if(tp == "all"){
-					  	parseData = mapjs.data.data;
-						recCount = receivedCount(parseData);
-						$('#receive_count span').html(recCount[0]);
-						$('#unreceive_count span').html(recCount[1]);
 
-						$('.marker-count span').html(parseData.length)
-					  	mapjs.marker(mapjs.data.data, "sensor");
-					} else {
-					  parseData = [];
-					  console.log(parseData);
-		  			$.each(mapjs.data.data, function(a,b) {
-		  				if(tp == "baramYn=Y") {
-		  					if(b.baramYn=="Y") {
-			  					parseData.push(mapjs.data.data[a]);	
-		  					}
-		  				}
-		  				if(tp == "airYn=Y") {
-		  					if(b.airYn=="Y") {
-			  					parseData.push(mapjs.data.data[a]);	
-		  					}
-		  				}
-		  				if(b.guTp == tp) {
-		  					if(b.baramYn != "Y" && b.airYn != "Y"){
-			  					parseData.push(mapjs.data.data[a]);
-		  					}
-		  					if(b.airYn == "Y") {
-			  					parseData.push(mapjs.data.data[a]);
-		  					}
-		  				}
-		  			})
+				
+				});
 
-		  			recCount = receivedCount(parseData);
-					$('#receive_count span').html(recCount[0]);
-					$('#unreceive_count span').html(recCount[1]);
+				$('#totalCount span').html(totalCount);	
+             }
+			 function setView(mapLat,mapLong){
+				map.setView([mapLat, mapLong], 6);	
+			 }
+			 function showPm25(){
+				$('.notice').show();
+				$('.notice-box').hide();
+				$('.pm25Table').show();
+				$('.pm10Table').hide();
+			 }
 
-		  			$('.marker-count span').html(parseData.length)
-		  			mapjs.marker(parseData, "sensor");
-					}
-					
-					
-				})
+			 function showPm10(){
+				$('.notice').show();
+				$('.notice-box').hide();
+				$('.pm25Table').hide();
+				$('.pm10Table').show();
+			 }
 
+			 function initMap(){
+				$('.notice').hide();
+				$('.notice-box').hide();
+				$('.pm25Table').hide();
+				$('.pm10Table').hide();
+				map.closePopup()
+				$('.leaflet-marker-icon').remove();
+			 }
 			});
 
 			

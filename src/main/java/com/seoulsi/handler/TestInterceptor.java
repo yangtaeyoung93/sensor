@@ -35,6 +35,7 @@ import com.seoulsi.util.SeedScrtyUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class TestInterceptor extends HandlerInterceptorAdapter {
 
@@ -59,7 +60,6 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		// System.out.println("interceptor : " + active);
 
 		// 쿠키값 가져오기
 		Optional<Map<String, String>> cOp = Optional.ofNullable(CookieLoginUtil.getCookie(request));
@@ -69,7 +69,6 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		}
 		// 쿠키 유무 확인
 		if (!cookieNullCheck(cookieMap)) {
-			// System.out.println("cookieNullCHeck");
 
 			// 개발서버의 경우
 			if (active.equals("local")) {
@@ -99,6 +98,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 
 			// 로그인 히스토리 추가 (로그인 쿠키가 없으면)
 			if (cookieMap.get("init") == null) {
+				log.info("history = {}");
 				response.addCookie(new Cookie("init", "true"));
 				LoginDto ldto = new LoginDto();
 				ldto.setUserId(id);
@@ -220,10 +220,12 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		Cookie cookie2 = new Cookie("SDOT_NAME", "NQ900k4+E5qf9ldwdgbRNQ==");
 		Cookie cookie3 = new Cookie("SDOT_LOGIN_EXPIRATION_TIME", "Kp+tc7FNhuZEeMyNctLDWQ==");
 		Cookie cookie4 = new Cookie("SDOT_ID", "nZmONxz1Y7chjz4yA+Q8NQ==");
+		Cookie cookie5 = new Cookie("SDOT_EMAIL", "nZmONxz1Y7chjz4yA+Q8NQ==");
 		response.addCookie(cookie);
 		response.addCookie(cookie2);
 		response.addCookie(cookie3);
 		response.addCookie(cookie4);
+		response.addCookie(cookie5);
 
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setCharacterEncoding("UTF-8");
@@ -241,7 +243,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	public Boolean cookieNullCheck(Map<String, String> cookies) {
-		String[] cookieName = { "SDOT_LOGIN_DATE", "SDOT_LOGIN_EXPIRATION_TIME", "SDOT_NAME", "SDOT_ID" };
+		String[] cookieName = { "SDOT_LOGIN_DATE", "SDOT_LOGIN_EXPIRATION_TIME", "SDOT_NAME", "SDOT_ID" ,"SDOT_EMAIL"};
 		if (cookies == null) {
 			return false;
 		}

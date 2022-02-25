@@ -25,7 +25,6 @@ public class SecurityRestConfig implements AuthenticationEntryPoint {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			MemberDto mdto = (MemberDto) authentication.getPrincipal();
-			System.out.println(mdto);
 		} catch(Exception e) {
 			response.sendError(response.SC_UNAUTHORIZED);
 		}

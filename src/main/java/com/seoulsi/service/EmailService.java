@@ -17,7 +17,6 @@ public class EmailService {
 
         try {
             SimpleMailMessage message = createMessage(to, subject, text);
-            System.out.println(message);
             emailSender.send(message);
         } catch (Exception e) {
 

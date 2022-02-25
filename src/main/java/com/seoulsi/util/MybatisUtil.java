@@ -6,7 +6,6 @@ import java.io.IOException;
 
 public class MybatisUtil {
 	public static Boolean isFileEmpty(String file) {
-		System.out.println(file);
 		return !file.equals("octet-stream");
 	}
 	
@@ -23,9 +22,6 @@ public class MybatisUtil {
 			lFileOutputStream.write(target);
 			
 			lFileOutputStream.close();
-			
-			
-			
 			return true;
 		} else {
 			return false;

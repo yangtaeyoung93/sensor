@@ -2,13 +2,8 @@ package com.seoulsi.mapper;
 
 import java.util.List;
 
+import com.seoulsi.dto.*;
 import org.apache.ibatis.annotations.Mapper;
-
-import com.seoulsi.dto.DailySenDto;
-import com.seoulsi.dto.GuDto;
-import com.seoulsi.dto.SensorDto;
-import com.seoulsi.dto.StatDto;
-import com.seoulsi.dto.TotalDto;
 
 @Mapper
 public interface SensorMapper {
@@ -39,6 +34,8 @@ public interface SensorMapper {
 
 	public List<SensorDto> getEquiGpsInfo() throws Exception;
 
+	public List<SensorDto> getSearEqui(SdotDTO sdotDTO) throws Exception;
+
 	public List<StatDto> getStatList(StatDto statDto) throws Exception;
 
 	public List<StatDto> getStatLastUpdate(String wareName) throws Exception;
@@ -60,4 +57,6 @@ public interface SensorMapper {
 	public List<SensorDto> getStatisticAllData(SensorDto sensorDto) throws Exception;
 
 	public List<DailySenDto> getEquiCnt() throws Exception;
+
+	public Integer getEquiCount(SdotDTO sdotDTO) throws Exception;
 }

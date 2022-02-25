@@ -145,6 +145,11 @@ public class SettingService implements SettingMapper {
 	}
 
 	@Override
+	public List<SettingDto> getInstYear() throws Exception {
+		return settingMapper.getInstYear();
+	}
+
+	@Override
 	public void deleteCardByEquiInfoKey(EquiDto edto) throws Exception {
 		// TODO Auto-generated method stub
 		settingMapper.deleteCardByEquiInfoKey(edto);
