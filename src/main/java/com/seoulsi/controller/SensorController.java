@@ -2,7 +2,9 @@ package com.seoulsi.controller;
 
 import java.util.List;
 
+import com.seoulsi.dto.EquListExcelDTO;
 import com.seoulsi.dto.SdotDTO;
+import com.seoulsi.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,9 @@ import com.seoulsi.dto.SettingDto;
 import com.seoulsi.service.CommonService;
 import com.seoulsi.service.SensorService;
 import com.seoulsi.service.SettingService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * SensorController
@@ -109,5 +114,12 @@ public class SensorController {
     @GetMapping("/itemVisual")
     public String itemVisual(Model model) throws Exception {
         return "/sensor/itemVisual";
+    }
+
+    @GetMapping("/excel")
+    public void euqilistDownload(HttpServletRequest request, HttpServletResponse response) throws  Exception{
+        List<EquListExcelDTO> lists = sensorService.getEquiList();
+        ExcelUtil excelUtil = new ExcelUtil();
+        excelUtil.download(request,response,lists);
     }
 }
