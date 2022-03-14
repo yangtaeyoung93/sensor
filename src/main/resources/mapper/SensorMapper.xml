@@ -1444,4 +1444,54 @@ group by INFO.BARAM_NM
 			</when>
 		</choose>
 	</sql>
+
+	<select id="getEquList" resultType="com.seoulsi.dto.EquListExcelDTO">
+		SELECT
+			ROWNUM ID,
+			C.*
+		FROM
+		(
+			SELECT
+				A.EQUI_INFO_KEY,
+				UF_GETCODENAME('서울시구정의',A.GU_TP)||'구' as gu,
+				UF_GETCODENAME('서울시구정의',A.GU_TP)||'-'||A.MNG_NUM AS EQUI_INFO_KEY_HAN,
+				a.inst_loc,
+				a.ADMIN_DONG,
+				a.COURT_DONG,
+				a.CCTV_NUMBER,
+				a.INST_PLACE,
+				case
+					when a.baram_yn = 'Y' then '바람길'
+					when a.air_yn = 'Y' then '대기측정소'
+					when a.VISTOR_SEN_ID is not null then '유동인구'
+					else  '일반형'
+				end as gubun,
+				uf_getcoderel('용도1',a.use_tp1) useTp1,
+				uf_getcoderel('용도2',a.use_tp2) useTp2,
+				uf_getcoderel('용도3',a.use_tp3) useTp3,
+				a.gps_abb,
+				a.gps_lat,
+				DECODE(b.sensor_pm10,'Y','O','') sensor_pm10,
+				DECODE(b.sensor_pm25,'Y','O','') sensor_pm25,
+				DECODE(b.sensor_temp,'Y','O','') sensor_temp,
+				DECODE(b.sensor_noise,'Y','O','') sensor_noise,
+				DECODE(b.sensor_illu,'Y','O','') sensor_illu,
+				DECODE(b.sensor_vibr,'Y','O','') sensor_vibr,
+				DECODE(b.sensor_uv,'Y','O','') sensor_uv,
+				DECODE(b.sensor_wind_sp,'Y','O','') sensor_wind_sp,
+				DECODE(b.sensor_wind,'Y','O','') sensor_wind,
+				DECODE(b.sensor_visitor,'Y','O','') sensor_visitor,
+				DECODE(b.sensor_effe_temp,'Y','O','') sensor_effe_temp,
+				DECODE(b.sensor_co,'Y','O','') sensor_co,
+				DECODE(b.sensor_no2,'Y','O','') sensor_no2,
+				DECODE(b.sensor_so2,'Y','O','') sensor_so2,
+				DECODE(b.sensor_nh3,'Y','O','')sensor_nh3,
+				DECODE(b.sensor_nh3,'Y','O','')sensor_h2s
+			FROM TB_MM_EQU_INFO A
+			INNER JOIN TB_MM_EQU_INFO_CARD B
+			ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
+			ORDER BY GU
+		)C
+		ORDER BY ID
+	</select>
 </mapper>

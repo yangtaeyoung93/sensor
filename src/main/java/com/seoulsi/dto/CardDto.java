@@ -46,4 +46,10 @@ public class CardDto {
 	private String sensorVibr;
 
 	private String guTp;
+
+	/**
+	 * 2022-02-24 요소 추가
+	 */
+
+	private String instLoc;
 }
