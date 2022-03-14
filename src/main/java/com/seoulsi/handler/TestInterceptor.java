@@ -87,6 +87,7 @@ public class TestInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		Long calcTime = loginTime + expirationTime;
+
 		String userName = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_NAME"));
 		String userId = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_ID"));
 		String email = SeedScrtyUtil.decryptCBCText(cookieMap.get("SDOT_EMAIL"));

@@ -62,6 +62,10 @@ public class SensorService implements SensorMapper {
 		return sensorMapper.baramGuData(sensorDto);
 	}
 
+	public List<EquListExcelDTO> getEquiList() throws Exception{
+		return sensorMapper.getEquList();
+	}
+
 	@Override
 	public List<SensorDto> getEquiGpsInfo() throws Exception {
 		// TODO Auto-generated method stub
@@ -137,6 +141,11 @@ public class SensorService implements SensorMapper {
 	@Override
 	public Integer getEquiCount(SdotDTO sdotDTO) throws Exception {
 		return sensorMapper.getEquiCount(sdotDTO);
+	}
+
+	@Override
+	public List<EquListExcelDTO> getEquList() throws Exception {
+		return sensorMapper.getEquList();
 	}
 
 	@Override

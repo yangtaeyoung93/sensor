@@ -59,4 +59,6 @@ public interface SensorMapper {
 	public List<DailySenDto> getEquiCnt() throws Exception;
 
 	public Integer getEquiCount(SdotDTO sdotDTO) throws Exception;
+
+	public List<EquListExcelDTO> getEquList()throws Exception;
 }
