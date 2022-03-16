@@ -61,6 +61,8 @@ public interface AdminMapper {
 
 	public List<WareDto> wareSearch(WareDto mdto) throws Exception;
 
+	public List<WareDto> inspHis(String key) throws Exception;
+
 	public void wareUpdate(WareDto mdto) throws Exception;
 
 	public void wareDelete(WareDto mdto) throws Exception;

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class WareDto {
+
    private String workDt;
    private String workTm;
    private String swHwTp;
@@ -15,4 +16,9 @@ public class WareDto {
 
    private String toDate;
    private String fromDate;
+
+   /**
+    * 2022-03-10 요소추가
+    */
+   private Long id;
 }
