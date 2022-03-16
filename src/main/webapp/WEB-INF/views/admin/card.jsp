@@ -27,7 +27,6 @@
 	padding: 15px;
 	background: white;
 	margin-left: 30px;
-	height: 1080px;
 }
 
 .tree2 {
@@ -70,6 +69,29 @@
 .alCneter{
 	text-align:center;
 }
+.searchForm{
+	text-align: right;
+	border-bottom: 1px solid #c9c9c9;
+	padding-bottom: 15px;
+	width: 95.8%;
+	margin-bottom: 15px;
+}
+
+#search_text{
+	display: inline-block;
+	width: 18.7%;
+	padding: 0px;
+	border: 1px solid #c9c9c9;
+	margin-right: 6px;
+}
+#search_button{
+	border: 1px solid #c9c9c9;
+	width: 7.3%;
+
+}
+.inspHis th, .inspHis td{
+	border: 1px solid #666;
+}
 </style>
 <%
 String grant = (String)request.getAttribute("grant"); 
@@ -95,7 +117,7 @@ pageContext.setAttribute("grant", grant);
 				<div class="info-wrap">
 					<form id="form">
 						<div class="form-group">
-							<div class="row array" style="border-bottom: 1px solid #c9c9c9; padding-bottom: 15px;">
+							<div class="row array">
 								<div class="col-xs-7" id="equiName" style="line-height: 30px;">
 								</div>
 								<div class="col-xs-5">
@@ -111,7 +133,17 @@ pageContext.setAttribute("grant", grant);
 										<input class="search_btn col-xs-offset-1 col-xs-2" id="save" type="submit" value="저장" style="margin-left: 10px;"/>
 									</c:if>
 								</div>
+								
 							</div>
+							<div class="searchForm">
+								<select>
+									<option value="">선택</option>
+									<option value="0">주소</option>
+								</select>
+								<input type="text" value="" id="search_text"/>
+								<input type="button" value="검색" id="search_button"/>
+							</div>
+							    <form>
 								<div class="row">
 									<div class="col-xs-1 title"><label for="">제품명</label></div>
 									<div class="col-xs-3">
@@ -287,6 +319,29 @@ pageContext.setAttribute("grant", grant);
 										})
 									</script>
 								</div>
+								<div class="row">
+                                    <div class="col-xs-1 title"><label for="">점검이력</label></div>
+                                    <div class="col-xs-9">
+                                       <table class="inspHis" >
+										   <colgroup>
+												<col style= "width:5%">
+												<col style= "width:20%">
+												<col style= "width:10%">
+												<col style= "width:20%">
+											</colgroup>
+										   <thead>
+												<tr style="border: 1px solid #4b4949;">
+													<th width="10%">번호</th>
+													<th width="20%">접수일자</th>
+													<th width="50%">점검이유</th>
+													<th width="50%">점검내용</th>
+													<th width="20%">작업일자</th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+									   </table>
+                                    </div>
+                                </div>
 						</div>
 					</form>
 				</div>
@@ -299,68 +354,108 @@ $(document).ready(function() {
 	$('#addWares').click(function() {
 		$('.upload-name').val('파일선택')
 	})
-	$('.easyui-tree').tree({
-		onClick: function(node){
-			console.log(node)
+	searchEqui();
+
+	$('#search_button').click(function(){
+		const id = $('#search_text').val();
+		searchEqui(id);	
+	});
+	
+})
+
+	function searchEqui(val){
+		$('.easyui-tree').tree({
+			onClick: function(node){
 			if(!node.children) {
 				console.log(node)
 				var id = node.text;
-				$.ajax({
-					url: "/api/admin/card/info/"+id,
-					type: "GET",
-					dataType: "json",
-					success: function(r) {
-						var result = r.data;
-						console.log(result);
-						$.each(result, function(a,b) {
-							if($('#'+a)[0] != undefined){
-								
-								if($('#'+a)[0].type == "checkbox") {
-									if(b == 'Y') {
-										$('#'+a).prop('checked', true)
-									}
-									if(b == 'N' || b == null){
-										$('#'+a).prop('checked', false)
-									}
-								}
-								else if($('#'+a)[0].type == "radio") {
-									if(b == 0) {
-										$('#'+a).prop('checked', true)
-									} else {
-										$('#'+a+b).prop('checked', true);
-									}
-								}
-								else if($('#'+a)[0].type == "select-one") {
-									$('#'+a).val(b)
-								}
-								else if(a == "serialNm"){
-									$('#serialNm').val(b)
-									$('#serialNm2').val(b)
-								} 
-								else if(a == "picFront"){
-									$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picFront+"."+r.data.picFrontTp+"?tm="+new Date().getTime())
-									
-								}
-								else if(a == "picBack"){
-									$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picBack+"."+r.data.picBackTp+"?tm="+new Date().getTime())
-								}
-								else if(a == "picSide"){
-									$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picSide+"."+r.data.picSideTp+"?tm="+new Date().getTime())
-								}
-								else {
-									$('#'+a).val(b);
-								}
+				go(id);
+			}
+			}
+		});
+		go(val);
+	}
+
+	function go(id){
+		$.ajax({
+			url: "/api/admin/card/info/"+id,
+			type: "GET",
+			dataType: "json",
+			success: function(r) {
+				var result = r.data;
+				console.log(result);
+				$.each(result, function(a,b) {
+					if($('#'+a)[0] != undefined){
+						if($('#'+a)[0].type == "checkbox") {
+							if(b == 'Y') {
+								$('#'+a).prop('checked', true)
 							}
-						})
-						//설치년도
-						infoSelectSet('sel-7', result.instYear)
-					
+							if(b == 'N' || b == null){
+								$('#'+a).prop('checked', false)
+							}
+						}
+						else if($('#'+a)[0].type == "radio") {
+							if(b == 0) {
+								$('#'+a).prop('checked', true)
+							} else {
+								$('#'+a+b).prop('checked', true);
+							}
+						}
+						else if($('#'+a)[0].type == "select-one") {
+							$('#'+a).val(b)
+						}
+						else if(a == "serialNm"){
+							$('#serialNm').val(b)
+							$('#serialNm2').val(b)
+						} 
+						else if(a == "picFront"){
+							$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picFront+"."+r.data.picFrontTp+"?tm="+new Date().getTime())
+						}
+						else if(a == "picBack"){
+							$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picBack+"."+r.data.picBackTp+"?tm="+new Date().getTime())
+						}
+						else if(a == "picSide"){
+							$('#'+a+'Img').attr('src', '/api/admin/cardLoc/img/'+r.data.equiInfoKey+"/"+r.data.picSide+"."+r.data.picSideTp+"?tm="+new Date().getTime())
+						}
+						else {
+							$('#'+a).val(b);
+						}
 					}
 				})
-			}
-		}
-	});
-})
+				//설치년도
+				infoSelectSet('sel-7', result.instYear)
+					}
+				})
+
+				$.ajax({
+					url: "/api/admin/card/inspHis/"+id,
+					type: "GET",
+					dataType: "json",
+					success : function(data){
+						var html = "";
+						for(var i = 0; i < data.length; i += 1){
+							html += "<tr>";
+							html += "<td>";
+							html += data[i].id;
+							html += "</td>";
+							html += "<td>";
+							html += data[i].workDt;
+							html += "</td>";
+							html += "<td>";
+							html += data[i].chgReason;
+							html += "</td>";
+							html += "<td>";
+							html += data[i].bigo;
+							html += "</td>";
+							html += "<td>";
+							html += data[i].workYmd;
+							html += "</td>";
+							html += "</tr>";
+						}
+						$(".inspHis tbody").html(html);
+					}
+				});
+	}	
 	function infoSelect(target, data, parse) {
 		var text = "";
 		$.each(data, function(a,b) {

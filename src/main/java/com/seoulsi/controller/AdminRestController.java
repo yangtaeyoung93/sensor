@@ -612,6 +612,11 @@ public class AdminRestController {
 		info.put("data", cdto);
 		return info;
 	}
+
+	@GetMapping("/card/inspHis/{equiInfoKey}")
+	public List<WareDto> instHis(@PathVariable String equiInfoKey) throws Exception{
+		return adminService.inspHis(equiInfoKey);
+	}
 	// @GetMapping("/card/file/{id}/{type}")
 	// public void getFileImage(@PathVariable("id") String id, @PathVariable("type")
 	// String type, HttpServletResponse response) throws Exception {
@@ -1259,8 +1264,11 @@ public class AdminRestController {
 
 	@GetMapping("/ware/search")
 	public List<WareDto> wareSearch(WareDto mdto) throws Exception {
+
 		return adminService.wareSearch(mdto);
 	}
+
+
 
 	@PostMapping("/ware/update")
 	public ResultDto wareUpdate(@RequestBody List<WareDto> lists) throws Exception {

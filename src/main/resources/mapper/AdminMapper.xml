@@ -244,5 +244,19 @@
 	between to_timestamp(#{toDate},'YYMMDD') and to_timestamp(#{fromDate},'YYMMDDHH24MI')
   </select> 
 
-  
+  <select id="inspHis" resultType="com.seoulsi.dto.WareDto" parameterType="string">
+	  SELECT
+	  	  ROWNUM id,
+	      CHG_REASON,
+		  BIGO,
+		  CONCAT('20',TO_DATE(WORK_DT, 'YYYY-MM-DD')) work_dt,
+		  CONCAT(CONCAT('20',substr(WORK_YMD,0,1)),substr(WORK_YMD,2,8)) WORK_YMD
+	  FROM
+	 	 TB_MI_OBST_MNG
+	  WHERE
+	    BIGO IS NOT NULL
+	  	<if test="equiInfoKey.equals(null) || equiInfoKey != null">
+			AND EQUI_INFO_KEY = #{equiInfoKey}
+		</if>
+  </select>
 </mapper>

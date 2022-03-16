@@ -269,6 +269,12 @@ public class AdminService implements AdminMapper {
 	}
 
 	@Override
+	public List<WareDto> inspHis(String key) throws Exception {
+		// TODO Auto-generated method stub
+		return adminMapper.inspHis(key);
+	}
+
+	@Override
 	public void wareUpdate(WareDto mdto) throws Exception {
 		// TODO Auto-generated method stub
 		adminMapper.wareUpdate(mdto);
