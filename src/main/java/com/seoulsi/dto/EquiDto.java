@@ -31,4 +31,13 @@ public class EquiDto extends EquLoc{
 	private String regDate;
 	private String vistorSenId;
 	private String vistorSenViewNm;
+
+	/**
+	 * 2022-03-07 요소추가
+	 */
+
+	private String adminDong;
+	private String courtDong;
+	private String cctvNumber;
+	private String instPlace;
 }

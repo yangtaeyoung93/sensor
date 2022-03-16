@@ -19,7 +19,7 @@
   </select>
   
   <update id="saveEquiInfo" parameterType="com.seoulsi.dto.EquiDto">
-  	UPDATE TB_MM_EQU_INFO SET EQUI_TYPE=#{equiType}, STA_NAME=#{staName}, INST_LOC=#{instLoc}, INST_LOC2=#{instLoc2}, SENSE_TP=#{senseTp}, USE_TP1=#{useTp1}
+  	UPDATE TB_MM_EQU_INFO SET EQUI_TYPE=#{equiType}, STA_NAME=#{staName}, INST_LOC=#{instLoc}, INST_LOC2=#{instLoc2},ADMIN_DONG = #{adminDong},COURT_DONG = #{courtDong},CCTV_NUMBER = #{cctvNumber},INST_PLACE = #{instPlace}, SENSE_TP=#{senseTp}, USE_TP1=#{useTp1}
 	,USE_TP2=#{useTp2}, USE_TP3=#{useTp3}, GU_TP=#{guTp}, INST_YEAR=#{instYear}, MNG_NUM=#{mngNum}, SET_YN=#{setYn}, USE_YN=#{useYn}, GPS_ABB=#{gpsAbb}, GPS_LAT=#{gpsLat}, INST_MONTH=#{instMonth}, VISTOR_SEN_VIEW_NM=#{vistorSenViewNm}, VISTOR_SEN_ID=#{vistorSenId}
 	,BARAM_YN=#{baramYn}, BARAM_MNG_NUM=#{baramMngNum}, AIR_YN=#{airYn}, AIR_MNG_NUM=#{airMngNum}, BARAM_NM=#{baramNm} WHERE EQUI_INFO_KEY=#{equiInfoKey}
   </update>
@@ -32,6 +32,10 @@
 	STA_NAME,
 	INST_LOC,
 	INST_LOC2,
+	ADMIN_DONG,
+	COURT_DONG,
+	CCTV_NUMBER,
+	INST_PLACE,
 	SENSE_TP,
 	USE_TP1,
 	USE_TP2,
@@ -59,6 +63,10 @@
 	#{staName, jdbcType=VARCHAR},
 	#{instLoc, jdbcType=VARCHAR},
 	#{instLoc2, jdbcType=VARCHAR},
+	#{adminDong, jdbcType=VARCHAR},
+	#{courtDong, jdbcType=VARCHAR},
+	#{cctvNumber, jdbcType=VARCHAR},
+	#{instPlace, jdbcType=VARCHAR},
 	#{senseTp, jdbcType=VARCHAR},
 	#{useTp1, jdbcType=VARCHAR},
 	#{useTp2, jdbcType=VARCHAR},

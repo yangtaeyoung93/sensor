@@ -124,7 +124,24 @@
 										<input class="form-control" id="m-instLoc2" type="text" required/>
 									</div>
 								</div>
-								
+								<div class="row">
+                                    <div class="col-xs-1 title">행정동</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="m-adminDong" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">법정동</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="m-courtDong" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">cctv 고유번호</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="m-cctvNumber" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">설치 장소</div>
+                                     <div class="col-xs-2">
+                                        <input class="form-control" id="m-instplace" type="text"/>
+                                    </div>
+                                </div>
 								<div class="row">
 									<label class="col-xs-offset-1 choice-label"><input id="m-setYn" type="checkbox"><i></i>  설치여부</label>
 									<label class="choice-label"><input id="m-useYn" value="day" type="checkbox"><i></i>  완료여부</label>

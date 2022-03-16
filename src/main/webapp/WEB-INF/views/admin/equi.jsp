@@ -199,7 +199,25 @@ pageContext.setAttribute("grant", grant);
 										<input class="form-control" id="instLoc2" type="text"/>
 									</div>
 								</div>
-								
+                                <div class="row">
+                                    <div class="col-xs-1 title">행정동</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="adminDong" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">법정동</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="courtDong" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">cctv 고유번호</div>
+                                    <div class="col-xs-2">
+                                        <input class="form-control" id="cctvNumber" type="text"/>
+                                    </div>
+                                    <div class="col-xs-1 title">설치 장소</div>
+                                     <div class="col-xs-2">
+                                        <input class="form-control" id="instplace" type="text"/>
+                                    </div>
+                                </div>
+
 								<div class="row">
 									<label class="col-xs-offset-1 choice-label"><input id="setYn" type="checkbox"><i></i>  설치여부</label>
 									<label class="choice-label"><input id="useYn" value="day" type="checkbox"><i></i>  완료여부</label>
@@ -277,7 +295,13 @@ $(document).ready(function() {
 						//도로명, 행정명
 						$('#instLoc').val(result.instLoc);
 						$('#instLoc2').val(result.instLoc2);
-						
+
+						//행정동, 법정동, cctv 고유번호, 설치 장소
+						$('#adminDong').val(result.adminDong);
+                        $('#courtDong').val(result.courtDong);
+                        $('#cctvNumber').val(result.cctvNumber);
+                        $('#instPlace').val(result.instPlace);
+
 						if(result.setYn == 'Y' || result.setYn == 'y') {
 							$('#setYn').prop('checked', true)
 						} else {
@@ -348,6 +372,10 @@ $(document).ready(function() {
 		var staName;
 		var instLoc;
 		var instLoc2;
+		var adminDong;
+		var courtDong;
+		var cctvNumber;
+		var instPlace;
 		var locInfo;
 		var gpsAbb;
 		var gpsLat;
@@ -370,9 +398,9 @@ $(document).ready(function() {
 		var regDate;
 		console.log(option)
 		if(option == "modal") {
-			return {equiInfoKey: $('#m-equiInfoKey').val(), equiType : $('#m-sel-2').val() , staName : $('#m-staName').val(), instLoc : $('#m-instLoc').val(), instLoc2 : $('#m-instLoc2').val(), gpsAbb : $('#m-gpsAbb').val(), gpsLat : $('#m-gpsLat').val(), senseTp : $('#m-sel-3').val(), useTp1 : $('#m-sel-4').val(), useTp2 : $('#m-sel-5').val(), useTp3 : $('#m-sel-6').val(), guTp : $('#m-sel-8').val(), instYear : $('#m-sel-7').val(), mngNum : $('#m-mngNum').val(), "setYn":msetYn , "useYn":museYn, "baramYn":mbaramYn, "airYn":mairYn, baramMngNum: $('#mbaramMngNum').val(), airMngNum: $('#mairMngNum').val(), baramNm: $('#mbaramNm').val(), instMonth: $('#instMonth2').val(), vistorSenId: $('#m-vistorSenId').val(), vistorSenViewNm: $('#m-vistorSenViewNm').val(),"${_csrf.parameterName}" : "${_csrf.token}",}
+			return {equiInfoKey: $('#m-equiInfoKey').val(), equiType : $('#m-sel-2').val() , staName : $('#m-staName').val(), instLoc : $('#m-instLoc').val(), instLoc2 : $('#m-instLoc2').val(),adminDong : $('#m-adminDong').val(),courtDong : $('#m-courtDong').val(),cctvNumber : $('#m-cctvNumber').val(),instPlace : $('#m-instPlace').val(), gpsAbb : $('#m-gpsAbb').val(), gpsLat : $('#m-gpsLat').val(), senseTp : $('#m-sel-3').val(), useTp1 : $('#m-sel-4').val(), useTp2 : $('#m-sel-5').val(), useTp3 : $('#m-sel-6').val(), guTp : $('#m-sel-8').val(), instYear : $('#m-sel-7').val(), mngNum : $('#m-mngNum').val(), "setYn":msetYn , "useYn":museYn, "baramYn":mbaramYn, "airYn":mairYn, baramMngNum: $('#mbaramMngNum').val(), airMngNum: $('#mairMngNum').val(), baramNm: $('#mbaramNm').val(), instMonth: $('#instMonth2').val(), vistorSenId: $('#m-vistorSenId').val(), vistorSenViewNm: $('#m-vistorSenViewNm').val(),"${_csrf.parameterName}" : "${_csrf.token}",}
 		} else {
-			return {equiInfoKey : $('.tree-node-selected .tree-title').text() , equiType : $('#sel-2').val() , staName : $('#staName').val(), instLoc : $('#instLoc').val(), instLoc2 : $('#instLoc2').val(), gpsAbb : $('#gpsAbb').val(), gpsLat : $('#gpsLat').val(), senseTp : $('#sel-3').val(), useTp1 : $('#sel-4').val(), useTp2 : $('#sel-5').val(), useTp3 : $('#sel-6').val(), guTp : $('#sel-8').val(), instYear : $('#sel-7').val(), mngNum : $('#mngNum').val(), "setYn":setYn , "useYn":useYn, "baramYn":baramYn, "airYn":airYn,baramMngNum: $('#baramMngNum').val(), airMngNum: $('#airMngNum').val(), baramNm: $('#baramNm').val(), instMonth: $('#instMonth').val(), vistorSenId: $('#vistorSenId').val(), vistorSenViewNm: $('#vistorSenViewNm').val(),"${_csrf.parameterName}" : "${_csrf.token}",}
+			return {equiInfoKey : $('.tree-node-selected .tree-title').text() , equiType : $('#sel-2').val() , staName : $('#staName').val(), instLoc : $('#instLoc').val(), instLoc2 : $('#instLoc2').val(),adminDong : $('#adminDong').val(),courtDong : $('#courtDong').val(),cctvNumber : $('#cctvNumber').val(),instPlace : $('#instPlace').val(), gpsAbb : $('#gpsAbb').val(), gpsLat : $('#gpsLat').val(), senseTp : $('#sel-3').val(), useTp1 : $('#sel-4').val(), useTp2 : $('#sel-5').val(), useTp3 : $('#sel-6').val(), guTp : $('#sel-8').val(), instYear : $('#sel-7').val(), mngNum : $('#mngNum').val(), "setYn":setYn , "useYn":useYn, "baramYn":baramYn, "airYn":airYn,baramMngNum: $('#baramMngNum').val(), airMngNum: $('#airMngNum').val(), baramNm: $('#baramNm').val(), instMonth: $('#instMonth').val(), vistorSenId: $('#vistorSenId').val(), vistorSenViewNm: $('#vistorSenViewNm').val(),"${_csrf.parameterName}" : "${_csrf.token}",}
 		}
 	}
 	function checkedChange(t, option) {
