@@ -1014,16 +1014,40 @@ group by INFO.BARAM_NM
 			where A.use_yn='Y'
 			) A
 		) AA
-</select>
+  </select>
 
 	<select id="getStatList" parameterType="com.seoulsi.dto.StatDto" resultType="com.seoulsi.dto.StatDto">
-  	SELECT * FROM (SELECT A.*, ROWNUM NUM FROM (
-	    SELECT * FROM (
-	    SELECT A.*,B.GU_TP, UF_GETCODENAME('설치년도',B.INST_YEAR)||'-'||UF_GETCODENAME('센서유형',B.SENSE_TP)||UF_GETCODENAME('용도1',USE_TP1)||UF_GETCODENAME('용도3',USE_TP3)||'-'||UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN, UF_GETCODENAME('서울시구정의',B.GU_TP) 
-	    FROM TB_SL_DOD_MON A, TB_MM_EQU_INFO B 
-	    WHERE TO_DATE(TM8,'YYYYMMDD') BETWEEN TO_DATE(#{toDate},'YYYYMMDD') AND TO_DATE(#{fromDate},'YYYYMMDD') AND A.EQUI_INFO_KEY=B.EQUI_INFO_KEY AND A.EQUI_INFO_KEY=#{equiInfoKey}
-	    ORDER BY TO_DATE(A.TM8||A.TM6,'YYYY-MM-DD HH24:MI:SS') DESC)
-	) A )
+		SELECT
+			*
+		FROM (
+			SELECT
+				A.*,
+				ROWNUM NUM
+			FROM (
+				SELECT
+					*
+				FROM (
+					SELECT
+						A.*,
+						B.GU_TP,
+						UF_GETCODENAME('서울시구정의',B.GU_TP)||'-'||B.MNG_NUM AS EQUI_INFO_KEY_HAN,
+						UF_GETCODENAME('서울시구정의',B.GU_TP)
+					FROM
+						TB_SL_DOD_MON A,
+						TB_MM_EQU_INFO B
+					WHERE
+						TO_DATE(TM8,'YYYYMMDD') BETWEEN TO_DATE(#{toDate},'YYYYMMDD')
+					AND
+						TO_DATE(#{fromDate},'YYYYMMDD')
+					AND
+						A.EQUI_INFO_KEY=B.EQUI_INFO_KEY
+					AND
+						A.EQUI_INFO_KEY=#{equiInfoKey}
+					ORDER BY
+						TO_DATE(A.TM8||A.TM6,'YYYY-MM-DD HH24:MI:SS') DESC
+				)
+			) A
+		)
   </select>
 
 	<select id="getStatAllList" parameterType="com.seoulsi.dto.StatDto" resultType="com.seoulsi.dto.StatDto">
