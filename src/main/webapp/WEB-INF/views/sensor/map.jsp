@@ -53,15 +53,16 @@
 								<option value="noise"> 소음</option>
                                 <option value="inteIllu"> 조도 </option>
                                 <option value="vibr"> 진동</option>
+                                <option value="wind"> 풍향/풍속</option>
 								<option value="ultraRays"> 자외선</option>
                                 <option value="effeTemp"> 흑구 </option>
+                                <option value="visit">유동인구</option>
 								<option value="o3"> 오존</option>
 								<option value="co"> 일산화탄소</option>
 								<option value="so2"> 이산화황</option>
 								<option value="no2"> 이산화질소</option>
 								<option value="nh3"> 암모니아</option>
 								<option value="h2s"> 황화수소</option>
-
 					    </select>
                     </div>
 				</div>
@@ -469,6 +470,8 @@
 					const tp = $("#gu").val();
 					const instYear = $("#instYear").val();
 					let target = makeTarget(hi);
+
+					console.log(tp);
                     makeMarker(hi,target,tp,instYear);
 		        });
 
@@ -478,7 +481,7 @@
 					showPm25();
 				}else if (hi == 'pm10'){
 					showPm10();
-				}else if(hi == 'all'){
+				}else if(hi == 'all' || hi =='wind'){
 					target = "sensor";
 				}else target = "sensors";
 
@@ -500,52 +503,61 @@
 						parseData =[];
 						let mapLat = 37.5302862;
 						let mapLong = 126.9854131;
-						let idx = 0;
+						if(data.totalCount == 0){
+						    map.setView([mapLat, mapLong], 6);
+						    setCount(data.totalCount);
+						    return;
+						}
+						
+						let zoomSize = 6;
 						$.each(data.data, function(i,v) {
-							
-							if(v.guTp2 == tp) {
-								if(option == "false" && (target != "pm25" || target != "pm10")){
-									if(v.baramYn == "Y" || v.airYn == "Y" || v.guTp2 == 27){
-										target = "sensor";
-									}else{
-										idx += 1;
-										if(idx == 1){
-											mapLat = data.data[i].gpsAbb;
-											mapLong = data.data[i].gpsLat;
-										}
+							if(v.guTp2 == tp && (v.airYn != "Y" && v.guTp2 != 27)) {
+								if(option == "false"){
+									if( tp != "" ){
+										let x = data.data.length / 2;
+										if((v.baramYn == "Y" || v.senseTp == 1)   && (target != "pm25" && target != "pm10")){
+											target = "sensor";
+										}	
+										mapLat = data.data[x.toFixed()-1].gpsAbb;
+										mapLong = data.data[x.toFixed()-1].gpsLat;
 									}
-									
-								}else if(v.baramYn != "Y" && v.airYn != "Y" && v.guTp2 != 27){
-									mapLat = data.data[0].gpsAbb;
-									mapLong = data.data[0].gpsLat;
+								}else {
+									if(tp != ""){
+									   let x = data.data.length / 2;
+									   console.log(target);
+									   if((v.baramYn == "Y" || v.senseTp == 1) && (target != "pm25" && target != "pm10")){
+											target = "sensor";
+										}	
+                                       mapLat = data.data[x.toFixed()-1].gpsAbb;
+                                       mapLong = data.data[x.toFixed()-1].gpsLat;
+                                    }
 								}
 								parseData.push(data.data[i]);
-								
-							}else if(tp == ""){
-								parseData.push(data.data[i]);
+								zoomSize = 8;
+							}else{
+								parseData.push(data.data[i]);		
 							}
 						});
-						
-						setView(mapLat,mapLong);
-						totalCount  = data.totalCount;
-						recCount = receivedCount(parseData,totalCount);
-
-						$('#receive_count span').html(recCount[0]);
-						$('#unreceive_count span').html(recCount[1]);
-						$('#unused_count span').html(recCount[2]);
-						$('.total-count span').html(totalCount);
-						
+						setView(mapLat,mapLong,zoomSize);
+					    totalCount  = data.totalCount;
+						setCount(totalCount);
 						mapjs.marker(parseData,target);
 						loader(false);
 					}
-
-				
 				});
-
-				$('#totalCount span').html(totalCount);	
+				$('#totalCount span').html(totalCount);
              }
-			 function setView(mapLat,mapLong){
-				map.setView([mapLat, mapLong], 6);	
+
+             function setCount(totalCount){
+                recCount = receivedCount(parseData,totalCount);
+                $('#receive_count span').html(recCount[0]);
+                $('#unreceive_count span').html(recCount[1]);
+                $('#unused_count span').html(recCount[2]);
+                $('.total-count span').html(totalCount);
+             }
+
+			 function setView(mapLat,mapLong,zoomSize){
+                    map.setView([mapLat, mapLong], zoomSize);
 			 }
 			 function showPm25(){
 				$('.notice').show();
