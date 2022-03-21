@@ -1466,6 +1466,12 @@ group by INFO.BARAM_NM
 			<when test="target.equals('vibr')">
 				and C.SENSOR_VIBR = 'Y'
 			</when>
+			<when test="target.equals('wind')">
+				and C.SENSOR_WIND = 'Y'
+			</when>
+			<when test="target.equals('visit')">
+				and C.SENSOR_VISITOR = 'Y'
+			</when>
 		</choose>
 	</sql>
 
