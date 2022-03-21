@@ -512,23 +512,15 @@
 						$.each(data.data, function(i,v) {
 							if(v.guTp2 == tp && (v.airYn != "Y" && v.guTp2 != 27)) {
 								if(option == "false"){
-									console.log(target);
 									if( tp != "" ){
-										
 										let x = data.data.length / 2;
-										//if((v.baramYn == "Y" || v.senseTp == 1)  && (target != "pm25" && target != "pm10")){
-										//	target = "sensor";
-										//}	
 										mapLat = data.data[x.toFixed()-1].gpsAbb;
 										mapLong = data.data[x.toFixed()-1].gpsLat;
 									}
 								}else {
 									if(tp != ""){
 									   let x = data.data.length / 2;
-									   console.log(target);
-									  // if((v.baramYn == "Y" || v.senseTp == 1) && (target != "pm25" && target != "pm10")){
-									//		target = "sensor";
-									///	}	
+
                                        mapLat = data.data[x.toFixed()-1].gpsAbb;
                                        mapLong = data.data[x.toFixed()-1].gpsLat;
                                     }
