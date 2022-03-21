@@ -1343,8 +1343,7 @@ group by INFO.BARAM_NM
 		A.INST_LOC,
 		A.EQUI_INFO_KEY AE,
 		B.EQUI_INFO_KEY BE,
-		CASE WHEN A.BARAM_YN = 'Y' then 25
-			 WHEN A.AIR_YN = 'Y' then 26
+		CASE WHEN A.AIR_YN = 'Y' then 26
 			 ELSE GU_TP END AS GU_TP2
 		FROM
 		TB_MM_EQU_INFO A
@@ -1375,8 +1374,7 @@ group by INFO.BARAM_NM
 			(
 				SELECT
 						A.*,
-						CASE WHEN A.BARAM_YN = 'Y' then 25
-							 WHEN A.AIR_YN = 'Y' THEN 26
+						CASE WHEN A.AIR_YN = 'Y' THEN 26
 							 ELSE A.GU_TP end as GU_TP2
 				FROM
 					(
@@ -1441,6 +1439,12 @@ group by INFO.BARAM_NM
 			</when>
 			<when test="target.equals('vibr')">
 				and C.SENSOR_VIBR = 'Y'
+			</when>
+			<when test="target.equals('wind')">
+				and C.SENSOR_WIND = 'Y'
+			</when>
+			<when test="target.equals('visit')">
+				and C.SENSOR_VISITOR = 'Y'
 			</when>
 		</choose>
 	</sql>

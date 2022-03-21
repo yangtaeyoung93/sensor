@@ -196,7 +196,7 @@ var mapjs = {
             		img = 'common.png';
             		color = '00';
             	}
-            }else if(target == "sensors"){
+            }else{
                 img = 'common.png';
             }
             
