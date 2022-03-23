@@ -28,7 +28,7 @@
 	  WHERE A.EQUI_INFO_KEY=#{equiInfoKey}
   </select>
   <update id="cardInfoUpdate" parameterType="com.seoulsi.dto.CardDto">
-  	UPDATE TB_MM_EQU_INFO_CARD SET MANU_COM=#{manuCom},SIZE_WIDTH=#{sizeWidth},SIZE_HEIGHT=#{sizeHeight},SIZE_THICK=#{sizeThick},SENSOR_PM10=#{sensorPm10},SENSOR_PM25=#{sensorPm25},SENSOR_WIND=#{sensorWind},SENSOR_WIND_SP=#{sensorWindSp},SENSOR_TEMP=#{sensorTemp},SENSOR_HUMI=#{sensorHumi},SENSOR_ILLU=#{sensorIllu},SENSOR_NOISE=#{sensorNoise},SENSOR_UV=#{sensorUv},SENSOR_VISITOR=#{sensorVisitor},SENSOR_ETC=#{sensorEtc}, SENSOR_CO=#{sensorCo},SENSOR_NO2=#{sensorNo2},SENSOR_SO2=#{sensorSo2},SENSOR_NH3=#{sensorNh3},SENSOR_H2S=#{sensorH2S},SENSOR_O3=#{sensorO3}, COMM_TP=#{commTp},ELEC_TP=#{elecTp},SW_VERSION=#{swVersion, jdbcType=VARCHAR},WORK_ID=#{workId, jdbcType=VARCHAR},WORK_TM=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
+  	UPDATE TB_MM_EQU_INFO_CARD SET MANU_COM=#{manuCom},SIZE_WIDTH=#{sizeWidth},SIZE_HEIGHT=#{sizeHeight},SIZE_THICK=#{sizeThick},SENSOR_PM10=#{sensorPm10},SENSOR_PM25=#{sensorPm25},SENSOR_WIND=#{sensorWind},SENSOR_WIND_SP=#{sensorWindSp},SENSOR_TEMP=#{sensorTemp},SENSOR_HUMI=#{sensorHumi},SENSOR_ILLU=#{sensorIllu},SENSOR_NOISE=#{sensorNoise},SENSOR_UV=#{sensorUv},SENSOR_VISITOR=#{sensorVisitor},SENSOR_ETC=#{sensorEtc}, SENSOR_CO=#{sensorCo},SENSOR_NO2=#{sensorNo2},SENSOR_SO2=#{sensorSo2},SENSOR_NH3=#{sensorNh3},SENSOR_H2S=#{sensorH2S},SENSOR_O3=#{sensorO3}, SENSOR_EFFE_TEMP=#{sensorEffeTemp}, SENSOR_VIBR=#{sensorVibr}, COMM_TP=#{commTp},ELEC_TP=#{elecTp},SW_VERSION=#{swVersion, jdbcType=VARCHAR},WORK_ID=#{workId, jdbcType=VARCHAR},WORK_TM=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
   </update>
   <update id="cardFileSide" parameterType="com.seoulsi.dto.CardDto">
   	UPDATE TB_MM_EQU_INFO_CARD 
@@ -61,7 +61,9 @@
 	WHERE EI.EQUI_INFO_KEY = EIL.EQUI_INFO_KEY and EI.EQUI_INFO_KEY = EILD.EQUI_INFO_KEY
 	and EI.EQUI_INFO_KEY = #{equiInfoKey}
   </select>
-  
+
+
+
   <update id="updateLoc" parameterType="com.seoulsi.dto.EquiDto">
   	UPDATE TB_MM_EQU_INFO_LOC SET EQUI_STRU=#{equiStru},SUPER_DEPT_CD=#{superDeptCd}, DEPT_CD=#{deptCd}, MNG_NM_JUNG=#{mngNmJung}, MNG_NM_JUNG_TEL=#{mngNmJungTel}, MNG_NM_BU=#{mngNmBu}, TOT_OPIN=#{totOpin}, WORK_YMD=SYSDATE WHERE EQUI_INFO_KEY=#{equiInfoKey}
   </update>
@@ -243,7 +245,7 @@
 	ORDER BY EI.EQUI_INFO_KEY, LOC_DETAIL_TP
   </select>
 
-   <select id="getUserHistory" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.MemberDto">
+  <select id="getUserHistory" parameterType="com.seoulsi.dto.extend.ParamDto" resultType="com.seoulsi.dto.MemberDto">
  	select a.user_id,b.user_name, to_char(a.reg_date,'YYYY-MM-DD HH24:MI') as reg_date
 	from 
 	(select user_id, max(reg_date) reg_date from tb_cc_user_history  group by user_id)a,
@@ -252,5 +254,21 @@
 	and
 	a.reg_date
 	between to_timestamp(#{toDate},'YYMMDD') and to_timestamp(#{fromDate},'YYMMDDHH24MI')
-  </select>  
+  </select>
+
+  <select id="inspHis" resultType="com.seoulsi.dto.WareDto" parameterType="string">
+	  SELECT
+	  	  ROWNUM id,
+	      CHG_REASON,
+		  BIGO,
+		  WORK_DT,
+		  WORK_YMD
+	  FROM
+	 	 TB_MI_OBST_MNG
+	  WHERE
+	    BIGO IS NOT NULL
+	  	<if test="equiInfoKey.equals(null) || equiInfoKey != null">
+			AND EQUI_INFO_KEY = #{equiInfoKey}
+		</if>
+  </select>
 </mapper>
