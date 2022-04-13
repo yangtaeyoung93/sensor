@@ -512,18 +512,18 @@
 						$.each(data.data, function(i,v) {
 							if(v.guTp2 == tp && (v.airYn != "Y" && v.guTp2 != 27)) {
 								if(option == "false"){
-									if( tp != "" ){
-										let x = data.data.length / 2;
-										mapLat = data.data[x.toFixed()-1].gpsAbb;
-										mapLong = data.data[x.toFixed()-1].gpsLat;
-									}
-								}else {
-									if(tp != ""){
+								//	if( tp != "" ){
+										//let x = data.data.length / 2;
+									//	mapLat = data.data[x.toFixed()-1].gpsAbb;
+									//	mapLong = data.data[x.toFixed()-1].gpsLat;
+									//}
+								//}else {
+									//if(tp != ""){
 									   let x = data.data.length / 2;
 
                                        mapLat = data.data[x.toFixed()-1].gpsAbb;
                                        mapLong = data.data[x.toFixed()-1].gpsLat;
-                                    }
+                                  //  }
 								}
 								parseData.push(data.data[i]);
 								zoomSize = 8;

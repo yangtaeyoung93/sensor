@@ -96,7 +96,7 @@
 			<div class="gnb">
 				<div class="container">
 					<div class="logo">
-						<img src="../../img/common/top_logo.png">
+						<img src="../../img/common/top_logo.png" onclick="location.href='/sensor/map'" style="cursor:pointer;">
 					</div>
 					<div class="my">
 						<c:if test="${popup}">
@@ -111,9 +111,9 @@
 			<div class="menu_wrap">
 				<div class="container">
 					<div class="row">
-						<div class="col-xs-5">
+						<a class="col-xs-5" href="/sensor/map">
 							스마트 서울 도시데이터 센서 (S-DoT) 운영시스템
-						</div>
+						</p>
 						<div class="col-xs-7 top_menu">
 							<ul class="row rows">
 								<jsp:include page="./menu.jsp"></jsp:include>
