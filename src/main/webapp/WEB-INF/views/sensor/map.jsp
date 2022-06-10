@@ -374,7 +374,7 @@
 					}
 				}
 
-				receiveNum = totalData.length - unreceiveNum;
+				receiveNum = totalCount - unreceiveNum;
 				unUsedCount = totalCount - totalData.length;
 
 				return [receiveNum, unreceiveNum,unUsedCount];
@@ -399,7 +399,7 @@
 						loader(true);
 					},
 					success: function(r) {
-						console.log(r.data);
+						//console.log(r.data);
 						mapjs.data.data = r.data;
 						
 						<c:choose>
@@ -471,7 +471,7 @@
 					const instYear = $("#instYear").val();
 					let target = makeTarget(hi);
 
-					console.log(tp);
+					//console.log(tp);
                     makeMarker(hi,target,tp,instYear);
 		        });
 
@@ -482,7 +482,11 @@
 				}else if (hi == 'pm10'){
 					showPm10();
 				
-				}else target = "sensor";
+				}else if(hi =='temp'){
+
+				}else {
+					target = "sensor";
+				} 
 
 				 return target;
 			 }
