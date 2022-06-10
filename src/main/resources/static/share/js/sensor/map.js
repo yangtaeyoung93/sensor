@@ -185,8 +185,26 @@ var mapjs = {
             		no++;
             		img = 'area_06.png';
             	}
-            }
-            else if(target == "sensor") {
+            }else if (target == "temp"){
+                if(b[target] == null){
+                    img = 'area_06.png';
+                }else if(b[target] >= 25) {
+            		//crit++;
+            		img = 'area_05.png';
+            	} else if(b[target] >= 15){
+            		//bad++;
+            		img = 'area_04.png';
+            	} else if(b[target] >= 5) {
+            		//normal++;
+            		img = 'area_02.png';
+            	} else if(b[target]  >= -20 && b[target] < 0) {
+            		//good++;
+            		img = 'area_01.png';
+            	} else {
+            		//no++;
+            		img = 'area_06.png';
+            	}
+            }else if(target == "sensor") {
             	if(b['baramYn'] == "Y") {
             		img = 'wind.png';
             	} else if(b['guTp'] == "26"){
@@ -260,7 +278,7 @@ var mapjs = {
                 '<div class="info" style="top: -320px; left: -173px;">'+
                 '	<div class="close" onclick="map.closePopup();"><i class="xi-close"></i></div>'+
                 title+
-                '	<p style="margin: 6px 0">주소 : '+b.instLoc +'</p>'+
+                '	<a style="margin: 6px 0" href="https://map.kakao.com/?q='+b.instLoc+'" target="_blank">주소 : '+b.instLoc +'</a>'+
                    
                 '	<table>'+
                 '		<tr>'+
