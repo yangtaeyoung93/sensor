@@ -73,6 +73,46 @@ public class SensorRestController {
 		return list;
 	}
 
+	@GetMapping("/insTempSend")
+	public boolean insTempSend(@RequestParam(value="params") String params) throws Exception{
+		String[] str = params.split(",");
+		logger.info("insTempSend = {}",str[0]);
+		if(str[0].equals("connect") || str[0].equals("n_connect") || str[0].equals("dayconnect")|| str[0].equals("users") || str[0].equals("mtr")){
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[3]);
+			return sensorService.insTempSend(vo);
+		}else{
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[4],str[3]);
+			return sensorService.minsTempSend(vo);
+		}
+	}
+
+	@GetMapping("/updERRTempSend")
+	public void updERRTempSend(@RequestParam(value="params") String params) throws Exception{
+		String[] str = params.split(",");
+		logger.info("updERRTempSend = {},flag ={}",str[0],str[2]);
+		if(str[0].equals("connect") || str[0].equals("n_connect") || str[0].equals("dayconnect") || str[0].equals("users") || str[0].equals("mtr")){
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[3]);
+			sensorService.updERRTempSend(vo);
+		}else{
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[4],str[3]);
+			sensorService.mupdERRTempSend(vo);
+		}
+	}
+
+	@GetMapping("/updTempSend")
+	public void updTempSend(@RequestParam(value="params") String params) throws Exception{
+		String[] str = params.split(",");
+		logger.info("updTempSend = {}",str[0]);
+		if(str[0].equals("connect") || str[0].equals("n_connect") || str[0].equals("dayconnect")|| str[0].equals("users") || str[0].equals("mtr")){
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[3]);
+			sensorService.updTempSend(vo);
+		}else{
+			TempVO vo = new TempVO(str[0],str[1],str[2],str[4],str[3]);
+			sensorService.minupdTempSend(vo);
+		}
+
+	}
+
 	@PostMapping("/sensor/equiSearchList")
 	public Map<String, Object> equiSearchList(@RequestParam(value = "gu") String gu,
 			@RequestParam(value = "equiInfoKey") String equi, @RequestParam(value = "toDate") String toDate,
@@ -195,9 +235,7 @@ public class SensorRestController {
 				String date = DateUtil.dateAdd("yyyy/mm/dd", toDate, "DATE", i);
 				String[] date_arr = date.split("/");
 				date = date_arr[0] + date_arr[1] + date_arr[2];
-				logger.warn(date);
 				sdto.setToDate(date);
-				logger.warn("{}", sensorService.baramGuData(sdto));
 				baramLists.put(date, sensorService.baramGuData(sdto));
 			}
 			lists.put("data", baramLists);

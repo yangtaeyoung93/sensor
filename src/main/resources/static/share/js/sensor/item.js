@@ -33,6 +33,7 @@ var item = {
 				'    <th>중랑구</th>'+
 				'    <th>중구</th>'+
 				'    <th>종로구</th>'+
+				'    <th>이동형</th>'+
 				'</tr>';
     	}
 
@@ -109,6 +110,7 @@ var item = {
                     _this.parseColor(_this.parseNumber(Number(b.jr), type), type)+
                     _this.parseColor(_this.parseNumber(Number(b.jg), type), type)+
                     _this.parseColor(_this.parseNumber(Number(b.jn), type), type)+                                                                                 
+                    _this.parseColor(_this.parseNumber(Number(b.mov), type), type)+
                     '</tr>';
         	}
         })

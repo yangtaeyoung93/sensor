@@ -139,12 +139,13 @@ var mapjs = {
         var critData = [];
         var no = 0;
         var noData = [];
+        
         $.each(data, function(a, b) {
             //마커이미지
             var img = '';
             var color = '';
             var color2 = '';
-
+           
             if(target == "pm10"){
                 if(b[target] == null){
                     img = 'area_06.png';
@@ -196,7 +197,7 @@ var mapjs = {
             		img = 'common.png';
             		color = '00';
             	}
-            }else if(target == "sensors"){
+            }else{
                 img = 'common.png';
             }
             
@@ -251,11 +252,16 @@ var mapjs = {
             if(b['airYn'] == "Y") {
             	title = '	<h3>대기'+b.airMngNum+'('+b.equiInfoKeyHan+')</h3>';
             }
+
+            /*if(b.senseTp == 1){
+                `p style="margin: 6px 0">유동인구 : ${}</p>`+
+            }*/
             var content =
                 '<div class="info" style="top: -320px; left: -173px;">'+
                 '	<div class="close" onclick="map.closePopup();"><i class="xi-close"></i></div>'+
                 title+
                 '	<p style="margin: 6px 0">주소 : '+b.instLoc +'</p>'+
+                   
                 '	<table>'+
                 '		<tr>'+
                 '			<th>미세먼지(㎍/㎥)</th><td class="co_step'+color+'">'+pm10+'</td>'+

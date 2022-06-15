@@ -285,6 +285,7 @@ $(document).ready(function () {
                 { data: "jr", title: "중랑구" },
                 { data: "jg", title: "중구" },
                 { data: "jn", title: "종로구" },
+                { data: "mov", title: "이동형" }
               ],
               columnDefs: columnRender,
             });
@@ -304,7 +305,7 @@ $(document).ready(function () {
                   count++;
                 }
               });
-              // console.log(count);
+               console.log(count);
               if (count < 24) {
                 return list;
               }

@@ -136,6 +136,7 @@
 							<th>중랑구</th>
 							<th>중구</th>
 							<th>종로구</th>
+							<th>이동형</th>
 						</tr>
 					</table>
 					
@@ -216,6 +217,7 @@
 							{ data: "jr", title: "중랑구" },
 							{ data: "jg", title: "중구" },
 							{ data: "jn", title: "종로구" },
+							{ data: "mov", title: "이동형" }
 						],
 						});
 

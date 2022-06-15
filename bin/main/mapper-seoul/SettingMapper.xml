@@ -5,17 +5,12 @@
    <select id ="getGuEquiList" resultType="com.seoulsi.dto.SettingDto">
 	   SELECT
 	   '대기측정소' AS GU,
-	   case when AIR_YN = 'Y' then '26' end as GU_TP,
+	   case when AIR_YN = 'Y' then 26 end as GU_TP,
 	   LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(ORDER BY EQUI_INFO_KEY) AS EQUI
 	   FROM TB_MM_EQU_INFO WHERE AIR_YN='Y' GROUP BY AIR_YN
+
 	   UNION
-	   SELECT
-	   '바람길' AS GU,
-	   case when BARAM_YN = 'Y' then '25' end as GU_TP,
-	   LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(ORDER BY EQUI_INFO_KEY) AS EQUI
-	   FROM TB_MM_EQU_INFO WHERE BARAM_YN='Y' GROUP BY BARAM_YN
-	   UNION
-	   SELECT UF_GETCODENAME('서울시구정의',GU_TP) AS GU ,  GU_TP as GU_TP,
+	   SELECT UF_GETCODENAME('서울시구정의',GU_TP) AS GU ,  TO_NUMBER(GU_TP) as GU_TP,
 	   LISTAGG(EQUI_INFO_KEY,',') WITHIN GROUP(ORDER BY EQUI_INFO_KEY) AS EQUI
 	   FROM TB_MM_EQU_INFO  GROUP BY UF_GETCODENAME('서울시구정의',GU_TP), GU_TP
 	   ORDER BY GU_TP
@@ -30,7 +25,7 @@
   </select>
   
   <update id="saveEquiInfo" parameterType="com.seoulsi.dto.EquiDto">
-  	UPDATE TB_MM_EQU_INFO SET EQUI_TYPE=#{equiType}, STA_NAME=#{staName}, INST_LOC=#{instLoc}, INST_LOC2=#{instLoc2}, SENSE_TP=#{senseTp}, USE_TP1=#{useTp1}
+  	UPDATE TB_MM_EQU_INFO SET EQUI_TYPE=#{equiType}, STA_NAME=#{staName}, INST_LOC=#{instLoc}, INST_LOC2=#{instLoc2},ADMIN_DONG = #{adminDong},COURT_DONG = #{courtDong},CCTV_NUMBER = #{cctvNumber},INST_PLACE = #{instPlace}, SENSE_TP=#{senseTp}, USE_TP1=#{useTp1}
 	,USE_TP2=#{useTp2}, USE_TP3=#{useTp3}, GU_TP=#{guTp}, INST_YEAR=#{instYear}, MNG_NUM=#{mngNum}, SET_YN=#{setYn}, USE_YN=#{useYn}, GPS_ABB=#{gpsAbb}, GPS_LAT=#{gpsLat}, INST_MONTH=#{instMonth}, VISTOR_SEN_VIEW_NM=#{vistorSenViewNm}, VISTOR_SEN_ID=#{vistorSenId}
 	,BARAM_YN=#{baramYn}, BARAM_MNG_NUM=#{baramMngNum}, AIR_YN=#{airYn}, AIR_MNG_NUM=#{airMngNum}, BARAM_NM=#{baramNm} WHERE EQUI_INFO_KEY=#{equiInfoKey}
   </update>
@@ -43,6 +38,10 @@
 	STA_NAME,
 	INST_LOC,
 	INST_LOC2,
+	ADMIN_DONG,
+	COURT_DONG,
+	CCTV_NUMBER,
+	INST_PLACE,
 	SENSE_TP,
 	USE_TP1,
 	USE_TP2,
@@ -70,6 +69,10 @@
 	#{staName, jdbcType=VARCHAR},
 	#{instLoc, jdbcType=VARCHAR},
 	#{instLoc2, jdbcType=VARCHAR},
+	#{adminDong, jdbcType=VARCHAR},
+	#{courtDong, jdbcType=VARCHAR},
+	#{cctvNumber, jdbcType=VARCHAR},
+	#{instPlace, jdbcType=VARCHAR},
 	#{senseTp, jdbcType=VARCHAR},
 	#{useTp1, jdbcType=VARCHAR},
 	#{useTp2, jdbcType=VARCHAR},

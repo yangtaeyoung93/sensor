@@ -224,6 +224,7 @@ $(document).ready(function () {
               { type: "jr", data: r.data[0]["jr"], title: "중랑구" },
               { type: "jg", data: r.data[0]["jg"], title: "중구" },
               { type: "jn", data: r.data[0]["jn"], title: "종로구" },
+              { type: "mov", data: r.data[0]["mov"], title: "이동형" }
             ];
 
             // Create axes

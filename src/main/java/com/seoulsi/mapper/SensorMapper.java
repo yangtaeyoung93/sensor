@@ -61,4 +61,12 @@ public interface SensorMapper {
 	public Integer getEquiCount(SdotDTO sdotDTO) throws Exception;
 
 	public List<EquListExcelDTO> getEquList()throws Exception;
+	public boolean insTempSend(TempVO vo)throws Exception;
+	public void updERRTempSend(TempVO vo)throws Exception;
+	public int chekTemp(TempVO vo);
+	public int minchekTemp(TempVO vo);
+	public void updTempSend(TempVO vo)throws Exception;
+	public boolean minsTempSend(TempVO vo)throws Exception;
+	public void mupdERRTempSend(TempVO vo)throws Exception;
+	public void minupdTempSend(TempVO vo)throws Exception;
 }

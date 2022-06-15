@@ -153,5 +153,44 @@ public class SensorService implements SensorMapper {
 		return sensorMapper.getSearEqui(sdotDTO);
 	}
 
+	@Override
+	public boolean insTempSend(TempVO vo) throws Exception{
+		sensorMapper.insTempSend(vo);
+		return true;
+	}
 
+	@Override
+	public void updTempSend(TempVO vo) throws Exception{
+		sensorMapper.updTempSend(vo);
+	}
+	@Override
+	public void minupdTempSend(TempVO vo) throws Exception{
+		sensorMapper.minupdTempSend(vo);
+	}
+
+	@Override
+	public void updERRTempSend(TempVO vo) throws Exception{
+		sensorMapper.updERRTempSend(vo);
+	}
+
+	@Override
+	public int chekTemp(TempVO vo) {
+		return 0;
+	}
+
+	@Override
+	public int minchekTemp(TempVO vo) {
+		return 0;
+	}
+
+	@Override
+	public void mupdERRTempSend(TempVO vo) throws Exception{
+		sensorMapper.mupdERRTempSend(vo);
+	}
+
+	@Override
+	public boolean minsTempSend(TempVO vo) throws Exception{
+			sensorMapper.minsTempSend(vo);
+		return true;
+	}
 }

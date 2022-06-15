@@ -30,7 +30,8 @@ public class GuDto {
 	private String jr;
 	private String jn;
 	private String jg;
-	
+	private String mov;
+
 	private String windDire;
 	private String windSpeed;
 	private String baramNm;
