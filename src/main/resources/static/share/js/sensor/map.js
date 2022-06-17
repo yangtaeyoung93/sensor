@@ -186,18 +186,19 @@ var mapjs = {
             		img = 'area_06.png';
             	}
             }else if (target == "temp"){
-                if(b[target] == null){
+            let temp = +_this.parseNumber(b[target], target);
+                if(temp == null){
                     img = 'area_06.png';
-                }else if(b[target] >= 25) {
+                }else if(temp >= 25) {
             		//crit++;
             		img = 'area_05.png';
-            	} else if(b[target] >= 15){
+            	} else if(temp >= 20){
             		//bad++;
             		img = 'area_04.png';
-            	} else if(b[target] >= 5) {
+            	} else if(temp >= 10) {
             		//normal++;
             		img = 'area_02.png';
-            	} else if(b[target]  >= -20 && b[target] < 0) {
+            	} else if(temp  >= 0 && temp < 10) {
             		//good++;
             		img = 'area_01.png';
             	} else {

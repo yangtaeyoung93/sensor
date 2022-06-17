@@ -10,4 +10,5 @@ public class SdotDTO {
     private String target;
     private String tp;
     private int instYear = -1;
+    private String gubun;
 }

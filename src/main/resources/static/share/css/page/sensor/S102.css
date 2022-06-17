@@ -71,23 +71,26 @@ html {
 }
 
 .pm-divide thead tr th:nth-child(1) {
+  background: #4a4b4b;
+}
+.pm-divide thead tr th:nth-child(2) {
   background: #44c8f5;
 }
 
-.pm-divide thead tr th:nth-child(2) {
+.pm-divide thead tr th:nth-child(3) {
   background: #8cc63f;
 }
 
-.pm-divide thead tr th:nth-child(3) {
+.pm-divide thead tr th:nth-child(4) {
   background: #f37021;
 }
 
-.pm-divide thead tr th:nth-child(4) {
+.pm-divide thead tr th:nth-child(5) {
   background: #ed1c24;
 }
 #top {
   top: 15px;
-  left: 340px;
+  left: 425px;
   position: absolute;
   /* width: 100%; */
   transform:translate(15px);

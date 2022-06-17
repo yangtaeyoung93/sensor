@@ -28,10 +28,17 @@
 <!-- 			센서 현황/초미세먼지/미세먼지 -->
 				<div class="map-control">
 					<div class="btn-group">
+						<select id="gubun" name="gubun" class="leaflet-bar">
+							<option value="">전체</option>
+							<option value="Y">서울시</option>
+							<option value="N">자치구</option>
+						</select>
+					</div>
+					<div class="btn-group">
 						<select id="gu" name="gu" class="leaflet-bar">
 							<option value="">전체</option>
 							<c:forEach var="gu" items="${gu}">
-							   <option value="${gu.guTp2}">${gu.gu}</option>
+							   <option value="${gu.guTp}">${gu.gu}</option>
 							</c:forEach>
 						</select>
 					</div>
@@ -114,6 +121,30 @@
 				  </table>
 				  
 				</div>
+				<div class="pm-divide tempTable">
+					<table>
+					  <thead>
+						<tr>
+						  <th id="crit" data-toggle="modal" data-target=".minusList"></th>
+						  <th id="good" data-toggle="modal" data-target=".goodList"></th>
+						  <th id="normal" data-toggle="modal" data-target=".normalList"></th>
+						  <th id="bad" data-toggle="modal" data-target=".badList"></th>
+						  <th id="crit" data-toggle="modal" data-target=".critList"></th>
+						  
+						</tr>
+					  </thead>
+					  <tbody>
+						<tr>
+							<td>~0</td>
+						  <td>0~9</td>
+						  <td>10~20</td>
+						  <td>21~24</td>
+						  <td>25~</td>
+						</tr>
+					  </tbody>
+					</table>
+					
+				  </div>
 				<div id="map" class="map">
 				</div>
                 <!-- map -->
@@ -451,16 +482,30 @@
 					const hi = $("#sensors").val();
 					const tp = $("#gu").val();
 					const instYear = this.value;
+					const gubun = $("#gubun").val();
 					let target = makeTarget(hi);
-				 	makeMarker(hi,target,tp,instYear);
+					makeMarker(hi,target,tp,instYear,gubun);
 				})
+
+				$('#gubun').change(function() {
+					initMap();
+					const hi = $("#sensors").val();
+					const instYear = $("#instYear").val();
+					const gubun = this.value;
+					const tp = $("#gu").val();
+					let target = makeTarget(hi);
+					makeMarker(hi,target,tp,instYear,gubun,"false");
+			
+				});
+
 				$('#gu').change(function() {
 					initMap();
 					const hi = $("#sensors").val();
 					const instYear = $("#instYear").val();
 					const tp = this.value;
+					const gubun = $("#gubun").val();
 					let target = makeTarget(hi);
-					makeMarker(hi,target,tp,instYear,"false");
+					makeMarker(hi,target,tp,instYear,gubun,"false");
 			
 				});
 
@@ -468,11 +513,12 @@
 					initMap();
                     const hi = this.value;
 					const tp = $("#gu").val();
+					const gubun = $("#gubun").val();
 					const instYear = $("#instYear").val();
 					let target = makeTarget(hi);
 
 					//console.log(tp);
-                    makeMarker(hi,target,tp,instYear);
+                    makeMarker(hi,target,tp,instYear,gubun);
 		        });
 
 			 function makeTarget(hi){
@@ -483,7 +529,7 @@
 					showPm10();
 				
 				}else if(hi =='temp'){
-
+					showTemp();
 				}else {
 					target = "sensor";
 				} 
@@ -491,11 +537,12 @@
 				 return target;
 			 }
 
-		     function makeMarker(hi,target,tp,instYear,option){
+		     function makeMarker(hi,target,tp,instYear,gubun,option){
 				const ob = new Object();
 				ob.target = hi;
 				ob.tp = tp;
 				ob.instYear = instYear;
+				ob.gubun = gubun;
 				let totalCount;
 				$.ajax({
 					url:'/api/searEqui',
@@ -561,6 +608,7 @@
 				$('.notice-box').hide();
 				$('.pm25Table').show();
 				$('.pm10Table').hide();
+				$('.tempTable').hide();
 			 }
 
 			 function showPm10(){
@@ -568,6 +616,15 @@
 				$('.notice-box').hide();
 				$('.pm25Table').hide();
 				$('.pm10Table').show();
+				$('.tempTable').hide();
+			 }
+
+			 function showTemp(){
+				$('.notice').show();
+				$('.notice-box').hide();
+				$('.tempTable').show();
+				$('.pm10Table').hide();
+				$('.pm25Table').hide();
 			 }
 
 			 function initMap(){

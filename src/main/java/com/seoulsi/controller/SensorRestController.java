@@ -1,5 +1,6 @@
 package com.seoulsi.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -73,7 +68,7 @@ public class SensorRestController {
 		return list;
 	}
 
-	@GetMapping("/insTempSend")
+	/*@GetMapping("/insTempSend")
 	public boolean insTempSend(@RequestParam(value="params") String params) throws Exception{
 		String[] str = params.split(",");
 		logger.info("insTempSend = {}",str[0]);
@@ -111,7 +106,7 @@ public class SensorRestController {
 			sensorService.minupdTempSend(vo);
 		}
 
-	}
+	}*/
 
 	@PostMapping("/sensor/equiSearchList")
 	public Map<String, Object> equiSearchList(@RequestParam(value = "gu") String gu,
@@ -244,6 +239,16 @@ public class SensorRestController {
 		}
 		return lists;
 	}
+
+	/*@GetMapping("/insTempSend")
+	public boolean insTempSend(@RequestParam(value = "params") String params ){
+
+		String[] str = params.split(",");
+		String redDate = String.valueOf( LocalDateTime.now().getYear()) + String.valueOf(LocalDateTime.now().getMonthValue()) + String.valueOf(LocalDateTime.now().getDayOfMonth());
+		TempVO vo = new TempVO(str[0],str[1],str[2],redDate);
+
+		return sensorService.insTempSend(vo);
+	}*/
 
 	@GetMapping("/equiGps")
 	public Map<String, Object> getEquiGpsInfo() throws Exception {
