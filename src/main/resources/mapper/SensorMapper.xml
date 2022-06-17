@@ -528,7 +528,60 @@
 				round(AVG(decode(GU_TP, '24', decode(sign(effe_temp)-1,0,effe_temp)))/10)-100 jg,
 				round(AVG(decode(GU_TP, '27', decode(sign(effe_temp)-1,0,effe_temp)))/10)-100 mov
 			</when>
-
+			<when test='type.equals("15")'>
+				round(AVG(decode(GU_TP, '0', decode(   sign(effetemp),-1,0,effetemp)))) gn,
+				round(AVG(decode(GU_TP, '1', decode(   sign(effetemp),-1,0,effetemp)))) gd,
+				round(AVG(decode(GU_TP, '2', decode(   sign(effetemp),-1,0,effetemp)))) gb,
+				round(AVG(decode(GU_TP, '3', decode(   sign(effetemp),-1,0,effetemp)))) gs,
+				round(AVG(decode(GU_TP, '4', decode(   sign(effetemp),-1,0,effetemp)))) ga,
+				round(AVG(decode(GU_TP, '5', decode(   sign(effetemp),-1,0,effetemp)))) gi,
+				round(AVG(decode(GU_TP, '6', decode(   sign(effetemp),-1,0,effetemp)))) gr,
+				round(AVG(decode(GU_TP, '7', decode(   sign(effetemp),-1,0,effetemp)))) gc,
+				round(AVG(decode(GU_TP, '8', decode(   sign(effetemp),-1,0,effetemp)))) no,
+				round(AVG(decode(GU_TP, '9', decode(   sign(effetemp),-1,0,effetemp)))) db,
+				round(AVG(decode(GU_TP, '10', decode(   sign(effetemp),-1,0,effetemp)))) ddm,
+				round(AVG(decode(GU_TP, '11', decode(   sign(effetemp),-1,0,effetemp)))) dj,
+				round(AVG(decode(GU_TP, '12', decode(   sign(effetemp),-1,0,effetemp)))) mp,
+				round(AVG(decode(GU_TP, '13', decode(   sign(effetemp),-1,0,effetemp)))) sdm,
+				round(AVG(decode(GU_TP, '14', decode(   sign(effetemp),-1,0,effetemp)))) sc,
+				round(AVG(decode(GU_TP, '15', decode(   sign(effetemp),-1,0,effetemp)))) sd,
+				round(AVG(decode(GU_TP, '16', decode(   sign(effetemp),-1,0,effetemp)))) sb,
+				round(AVG(decode(GU_TP, '17', decode(   sign(effetemp),-1,0,effetemp)))) sp,
+				round(AVG(decode(GU_TP, '18', decode(   sign(effetemp),-1,0,effetemp)))) yc,
+				round(AVG(decode(GU_TP, '19', decode(   sign(effetemp),-1,0,effetemp)))) ydp,
+				round(AVG(decode(GU_TP, '20', decode(   sign(effetemp),-1,0,effetemp)))) ys,
+				round(AVG(decode(GU_TP, '21', decode(   sign(effetemp),-1,0,effetemp)))) ep,
+				round(AVG(decode(GU_TP, '22', decode(   sign(effetemp),-1,0,effetemp)))) jr,
+				round(AVG(decode(GU_TP, '23', decode(   sign(effetemp),-1,0,effetemp)))) jn,
+				round(AVG(decode(GU_TP, '24', decode(   sign(effetemp),-1,0,effetemp)))) jg
+			</when>
+			<when test='type.equals("14")'>
+				round(AVG(decode(GU_TP, '0', decode(   sign(vibrx),-1,0,vibrx)))) gn,
+				round(AVG(decode(GU_TP, '1', decode(   sign(vibrx),-1,0,vibrx)))) gd,
+				round(AVG(decode(GU_TP, '2', decode(   sign(vibrx),-1,0,vibrx)))) gb,
+				round(AVG(decode(GU_TP, '3', decode(   sign(vibrx),-1,0,vibrx)))) gs,
+				round(AVG(decode(GU_TP, '4', decode(   sign(vibrx),-1,0,vibrx)))) ga,
+				round(AVG(decode(GU_TP, '5', decode(   sign(vibrx),-1,0,vibrx)))) gi,
+				round(AVG(decode(GU_TP, '6', decode(   sign(vibrx),-1,0,vibrx)))) gr,
+				round(AVG(decode(GU_TP, '7', decode(   sign(vibrx),-1,0,vibrx)))) gc,
+				round(AVG(decode(GU_TP, '8', decode(   sign(vibrx),-1,0,vibrx)))) no,
+				round(AVG(decode(GU_TP, '9', decode(   sign(vibrx),-1,0,vibrx)))) db,
+				round(AVG(decode(GU_TP, '10', decode(   sign(vibrx),-1,0,vibrx)))) ddm,
+				round(AVG(decode(GU_TP, '11', decode(   sign(vibrx),-1,0,vibrx)))) dj,
+				round(AVG(decode(GU_TP, '12', decode(   sign(vibrx),-1,0,vibrx)))) mp,
+				round(AVG(decode(GU_TP, '13', decode(   sign(vibrx),-1,0,vibrx)))) sdm,
+				round(AVG(decode(GU_TP, '14', decode(   sign(vibrx),-1,0,vibrx)))) sc,
+				round(AVG(decode(GU_TP, '15', decode(   sign(vibrx),-1,0,vibrx)))) sd,
+				round(AVG(decode(GU_TP, '16', decode(   sign(vibrx),-1,0,vibrx)))) sb,
+				round(AVG(decode(GU_TP, '17', decode(   sign(vibrx),-1,0,vibrx)))) sp,
+				round(AVG(decode(GU_TP, '18', decode(   sign(vibrx),-1,0,vibrx)))) yc,
+				round(AVG(decode(GU_TP, '19', decode(   sign(vibrx),-1,0,vibrx)))) ydp,
+				round(AVG(decode(GU_TP, '20', decode(   sign(vibrx),-1,0,vibrx)))) ys,
+				round(AVG(decode(GU_TP, '21', decode(   sign(vibrx),-1,0,vibrx)))) ep,
+				round(AVG(decode(GU_TP, '22', decode(   sign(vibrx),-1,0,vibrx)))) jr,
+				round(AVG(decode(GU_TP, '23', decode(   sign(vibrx),-1,0,vibrx)))) jn,
+				round(AVG(decode(GU_TP, '24', decode(   sign(vibrx),-1,0,vibrx)))) jg
+			</when>
 		</choose>
 		FROM  TB_SL_DOT_SEN  SEN, TB_MM_EQU_INFO  INFO
 	WHERE SEN.EQUI_INFO_KEY = INFO.EQUI_INFO_KEY 
@@ -1488,9 +1541,7 @@ group by INFO.BARAM_NM
 		A.GPS_LAT,
 		A.INST_LOC,
 		A.EQUI_INFO_KEY AE,
-		B.EQUI_INFO_KEY BE,
-		CASE WHEN A.AIR_YN = 'Y' then 26
-			 ELSE GU_TP END AS GU_TP2
+		B.EQUI_INFO_KEY BE
 		FROM
 		TB_MM_EQU_INFO A
 		LEFT OUTER JOIN
@@ -1506,10 +1557,18 @@ group by INFO.BARAM_NM
 		<if test="instYear != -1">
 			and a.inst_Year = #{instYear}
 		</if>
-		) A
-		<if test="tp != null and tp != ''">
-			WHERE A.GU_TP2 = #{tp}
+		<if test="tp != null and tp != '' and tp == 26">
+			and A.AIR_YN = 'Y'
 		</if>
+		<if test="tp != null and tp != '' and tp != 26">
+			and A.GU_TP = #{tp}
+		</if>
+		<if test="gubun != null and gubun != ''">
+			and A.GUBUN = #{gubun}
+		</if>
+		) A
+
+
 		ORDER BY EQUI_INFO_KEY_HAN
 		) AA
 	</select>
@@ -1519,20 +1578,25 @@ group by INFO.BARAM_NM
 		FROM
 			(
 				SELECT
-						A.*,
-						CASE WHEN A.AIR_YN = 'Y' THEN 26
-							 ELSE A.GU_TP end as GU_TP2
+						A.*
 				FROM
 					(
 						SELECT *
 						FROM TB_MM_EQU_INFO A
 						INNER JOIN TB_MM_EQU_INFO_CARD B
 						ON A.EQUI_INFO_KEY = B.EQUI_INFO_KEY
+						<if test="gubun != null and gubun != ''">
+							WHERE A.GUBUN = #{gubun}
+						</if>
+
 					)A
 			)C
 		WHERE 1 = 1
-		<if test="tp != null and tp != ''">
-			and C.GU_TP2 = #{tp}
+		<if test="tp != null and tp != '' and tp == 26">
+			and C.AIR_YN = 'Y'
+		</if>
+		<if test="tp != null and tp != '' and tp != 26">
+			and C.GU_TP = #{tp}
 		</if>
 		<if test="instYear != -1">
 			and C.inst_Year = #{instYear}
@@ -1638,4 +1702,10 @@ group by INFO.BARAM_NM
 		)C
 		ORDER BY ID
 	</select>
+
+	<insert id="insTempSend" parameterType="com.seoulsi.dto.TempVO">
+		INSERT INTO TB_TEMP
+		(IDX,PATH,EQUI_INFO_KEY,FLAG,REG_DATE)
+		VALUES(EMP_SEQ.NEXTVAL, #{PATH},#{EQUI_INFO_KEY},#{FLAG},#{REG_DATE})
+	</insert>
 </mapper>
